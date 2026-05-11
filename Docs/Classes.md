@@ -14,6 +14,7 @@
 - Seguidores: List<Seguidor>
 - Publicacoes: List<Publicacao>
 - Comentarios: List<Comentario>
+- Bazes: List<Baze>
 
 
 ## Seguidor
