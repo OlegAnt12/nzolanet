@@ -8,6 +8,23 @@ Rede social para comunicação, partilha de informação e interação entre uti
 
 # Requisitos Técnicos
 
+- FrontEnd
+    * Angular
+- Backend
+    * .NET Web API
+- Base de Dados
+    * SQL SERVER
+
+- Arquitectura de separação de camadas
+    * Controllers
+    * Data
+    * DTOs
+    * Interfaces
+    * Mappers
+    * Models
+    * Repositories
+    * Services
+
 # Equipa Técnica
 
 - Eduarda Malungo
