@@ -9,8 +9,8 @@
 - FotoPerfil: byte[]
 - Biografia: string
 - Privacidade: EstadoAcesso
-- EstadoConta: EstadoConta
-- DataRegisto: DateTime
+- EstadoConta: EstadoConta  
+- DataRegisto: DateTime  
 - Seguidores: List<Seguidor>
 - Publicacoes: List<Publicacao>
 - Comentarios: List<Comentario>

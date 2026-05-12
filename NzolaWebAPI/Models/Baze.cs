@@ -7,6 +7,9 @@ namespace NzolaWebAPI.Models
 {
     public class Baze
     {
-        
+        public int Id {get; set;}
+        public int PublicacaoId {get; set;}
+        public int UtilizadorId {get; set;}
+        public DateTime DataInteracao {get; set;}
     }
 }
