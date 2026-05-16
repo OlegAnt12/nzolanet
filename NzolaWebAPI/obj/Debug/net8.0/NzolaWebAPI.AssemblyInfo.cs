@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("NzolaWebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+18c183cb4372e52b6ee866602e7d3a790897f4da")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+77be63ed3c1c36380fcb4ebde80475bb9aa3563b")]
 [assembly: System.Reflection.AssemblyProductAttribute("NzolaWebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("NzolaWebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
