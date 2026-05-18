@@ -1,8 +1,9 @@
 using NzolaWebAPI.Models;
-using NzolaWebAPI.Dtos.Notificacao;
+using NzolaWebAPI.DTOs.Notificacao;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using NzolaWebAPI.DTOs.Notificacao;
 
 
 namespace NzolaWebAPI.Mappers
@@ -21,6 +22,17 @@ namespace NzolaWebAPI.Mappers
                 Lida = notificacaoModel.Lida,
                 CriadoEm = notificacaoModel.CriadoEm
 
+            };
+        }
+
+        public static Notificacao ToNotificacaoFromCriarDto(this CriarNotificacaoDto criarNotificacaoDto)
+        {
+            return new Notificacao
+            {
+                UtilizadorId = criarNotificacaoDto.UtilizadorId,
+                Tipo = criarNotificacaoDto.Tipo,
+                OrigemId = criarNotificacaoDto.OrigemId,
+                Mensagem = criarNotificacaoDto.Mensagem
             };
         }
         

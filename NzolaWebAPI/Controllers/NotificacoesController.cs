@@ -1,8 +1,9 @@
 using NzolaWebAPI.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
-using NzolaWebAPI.Models;
+
 using System.Linq;
+using NzolaWebAPI.DTOs.Notificacao;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -34,6 +35,50 @@ namespace NzolaWebAPI.Controllers
                 return NotFound();
             }
             return Ok(notificacao.ToNotificacaoDto());
+        }
+
+        [HttpPost]
+        public IActionResult Criar([FromBody] CriarNotificacaoDto criarNotificacaoDto)
+        {
+            var notificacao = criarNotificacaoDto.ToNotificacaoFromCriarDto();
+
+            _context.Notificacoes.Add(notificacao);
+            _context.SaveChanges();
+
+            return CreatedAtAction(nameof(BuscarPorId), new {id = notificacao.Id}, notificacao.ToNotificacaoDto());  
+        }
+
+        [HttpPut("{id}/lida")]
+        public IActionResult MarcarComoLida([FromRoute] int id)
+        {
+            var notificacao = _context.Notificacoes.Find(id);
+
+            if (notificacao == null)
+            {
+                return NotFound();
+            }
+
+            notificacao.Lida = true;
+
+            _context.SaveChanges();
+
+            return Ok(notificacao.ToNotificacaoDto());
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Apagar ([FromRoute] int id)
+        {
+            var notificacao = _context.Notificacoes.Find(id);
+
+            if(notificacao == null)
+            {
+                return NotFound();
+            }
+
+            _context.Notificacoes.Remove(notificacao);
+            _context.SaveChanges();
+
+            return NoContent();
         }
 
        

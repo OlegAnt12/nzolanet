@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
-namespace NzolaWebAPI.Dtos.Notificacao
+namespace NzolaWebAPI.DTOs.Notificacao
 {
     public class NotificacaoDto
     {
