@@ -1,3 +1,4 @@
+using NzolaWebAPI.Mappers;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.Models;
@@ -17,21 +18,22 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetALL()
+        public IActionResult Listar()
         {
-            var notificacoes =  _context.Notificacoes.ToList();
+            var notificacoes =  _context.Notificacoes
+                .Select(n => n.ToNotificacaoDto()).ToList();
             return Ok(notificacoes);
         }
         [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        public IActionResult BuscarPorId([FromRoute] int id)
         {
-            var Notificacao = _context.Notificacoes.Find(id);
+            var notificacao = _context.Notificacoes.Find(id);
 
-            if(Notificacao == null)
+            if(notificacao == null)
             {
                 return NotFound();
             }
-            return Ok(Notificacao);
+            return Ok(notificacao.ToNotificacaoDto());
         }
 
        

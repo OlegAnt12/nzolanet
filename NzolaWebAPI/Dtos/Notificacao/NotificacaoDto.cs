@@ -11,10 +11,10 @@ namespace NzolaWebAPI.Dtos.Notificacao
         
         public int Id {get; set;}
         public int UtilizadorId {get; set;}
-        public string Tipo {get; set;} 
+        public string Tipo {get; set;} ="";
         public int OrigemId {get; set;}
         public string? Mensagem {get; set;}
-        public bool Lida {get; set;} =false;
+        public bool Lida {get; set;} 
         public DateTime CriadoEm {get; set;} 
     }
     
