@@ -19,7 +19,7 @@ namespace NzolaWebAPI.Models
         [ForeignKey("PublicacaoId")]
         public Publicacao Publicacao {get; set;}
         public string Conteudo {get; set;}
-        public TipoConteudo TipoConteudo { get; set; }
+        public TipoConteudo TipoConteudo { get; set; } = TipoConteudo.Texto;
         public int Ordem { get; set; }
     }
 }
