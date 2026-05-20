@@ -19,14 +19,14 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult ListarPublicacoes()
+        public IActionResult GetPublicacoes()
         {
             var publicacoes =  _contexto.Publicacoes.ToList();
             return Ok(publicacoes);
         }
 
         [HttpGet("{id}")]
-        public IActionResult RetornarPublicacao(int id)
+        public IActionResult GetPublicacao(int id)
         {
             var publicacao =  _contexto.Publicacoes.Find(id);
 

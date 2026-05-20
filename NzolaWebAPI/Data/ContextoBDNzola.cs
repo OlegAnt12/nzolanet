@@ -9,9 +9,8 @@ namespace NzolaWebAPI.Data
 {
     public class ContextoBDNzola : DbContext
     {
-        public ContextoBDNzola() { }
 
-        public ContextoBDNzola(DbContextOptions<ContextoBDNzola> options) : base(options)
+        public ContextoBDNzola(DbContextOptions options) : base(options)
         {
             
         }
