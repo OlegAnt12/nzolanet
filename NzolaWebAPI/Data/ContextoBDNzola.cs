@@ -9,9 +9,8 @@ namespace NzolaWebAPI.Data
 {
     public class ContextoBDNzola : DbContext
     {
-        public ContextoBDNzola() { }
 
-        public ContextoBDNzola(DbContextOptions<ContextoBDNzola> options) : base(options)
+        public ContextoBDNzola(DbContextOptions options) : base(options)
         {
             
         }
@@ -21,6 +20,10 @@ namespace NzolaWebAPI.Data
         public DbSet<Comentario> Comentarios { get; set; }
         public DbSet<Baze> Bazes { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
+<<<<<<< HEAD
         public DbSet<Utilizador> Utilizadores{get; set;}    
+=======
+        public DbSet<ConteudoPublicacao> ConteudoPublicacoes { get; set; }
+>>>>>>> 06e3b83d6759d7db998380d4c73453663624f315
     }
 }
