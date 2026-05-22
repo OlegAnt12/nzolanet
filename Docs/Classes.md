@@ -16,7 +16,7 @@
 - Comentarios: List<Comentario>
 - Bazes: List<Baze>
 
-
+ 
 ## Seguidor
 
 - Id: int
