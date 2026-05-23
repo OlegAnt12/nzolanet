@@ -38,13 +38,21 @@ namespace NzolaWebAPI.Controllers
             
             return Ok(publicacao.ToPublicacaoDto());
         }
-        /*
-        [HttpPost]
-        public IActionResult PublicarConteudo()
+        
+        [HttpPost("{utilizadorId}")]
+        public IActionResult PublicarConteudo([FromRoute] int utilizadorId, [FromBody] CriarPublicacaoRequestDto publicacaoDto)
         {
+            utilizadorExiste = _contexto.Utilizadores.AnyAsync(u => u.Id == utilizadorId);
+            if (!utilizadorExiste)
+            {
+                return BadRequest("Este Utilizador não existente");
+            }
+
+            var publicacao = publicacaoDto.ParaPublicacaoDePublicacaoDto(utilizadorId);
+            _contexto.Publicacoes.Add(publicacao);
+            _contexto.Publicacoes.SaveChanges();
+            return CreatedAtAction(nameof(SelecionarPublicacao), new {id = publicacao.Id}, publicacao.ToPublicacaoDto());
 
         }
-*/
-
     }
 }

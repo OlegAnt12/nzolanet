@@ -20,5 +20,15 @@ namespace NzolaWebAPI.Mappers
                 DataPublicacao = modelPublicacao
             };
         }
+
+        public static Publicacao ParaPublicacaoDePublicacaoDto(int autorId)
+        {
+            return new Publicacao
+            {
+                AutorId = autorId,
+                QuantidadeBazes = 0,
+                QuantidadeComentarios = 0
+            };
+        }
     }
 }
