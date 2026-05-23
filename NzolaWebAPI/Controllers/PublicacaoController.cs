@@ -19,14 +19,15 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetPublicacoes()
+        public IActionResult ListarPublicacoes()
         {
-            var publicacoes =  _contexto.Publicacoes.ToList();
+            var publicacoes =  _contexto.Publicacoes.ToList()
+            .Select(p=>p.ToPublicacaoDto());
             return Ok(publicacoes);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetPublicacao(int id)
+        public IActionResult SelecionarPublicacao(int id)
         {
             var publicacao =  _contexto.Publicacoes.Find(id);
 
@@ -35,7 +36,7 @@ namespace NzolaWebAPI.Controllers
                 return NotFound();
             }
             
-            return Ok(publicacao);
+            return Ok(publicacao.ToPublicacaoDto());
         }
         /*
         [HttpPost]

@@ -1,0 +1,8 @@
+C:\Users\vittara\Videos\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\OI\Oleg\ISPTEC\AW\Projecto\NZOLANET\NzolaWebAPI\obj\Debug\net8.0\NzolaWebAPI.csproj.AssemblyReference.cache
+C:\Users\vittara\Videos\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\OI\Oleg\ISPTEC\AW\Projecto\NZOLANET\NzolaWebAPI\obj\Debug\net8.0\NzolaWebAPI.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\vittara\Videos\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\OI\Oleg\ISPTEC\AW\Projecto\NZOLANET\NzolaWebAPI\obj\Debug\net8.0\NzolaWebAPI.AssemblyInfoInputs.cache
+C:\Users\vittara\Videos\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\OI\Oleg\ISPTEC\AW\Projecto\NZOLANET\NzolaWebAPI\obj\Debug\net8.0\NzolaWebAPI.AssemblyInfo.cs
+C:\Users\vittara\Videos\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\OI\Oleg\ISPTEC\AW\Projecto\NZOLANET\NzolaWebAPI\obj\Debug\net8.0\NzolaWebAPI.csproj.CoreCompileInputs.cache
+C:\Users\vittara\Videos\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\OI\Oleg\ISPTEC\AW\Projecto\NZOLANET\NzolaWebAPI\obj\Debug\net8.0\NzolaWebAPI.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\vittara\Videos\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\OI\Oleg\ISPTEC\AW\Projecto\NZOLANET\NzolaWebAPI\obj\Debug\net8.0\NzolaWebAPI.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\vittara\Videos\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\OI\Oleg\ISPTEC\AW\Projecto\NZOLANET\NzolaWebAPI\obj\Debug\net8.0\NzolaWebAPI.sourcelink.json

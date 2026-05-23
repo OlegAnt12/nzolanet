@@ -20,10 +20,6 @@ namespace NzolaWebAPI.Data
         public DbSet<Comentario> Comentarios { get; set; }
         public DbSet<Baze> Bazes { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
-<<<<<<< HEAD
         public DbSet<Utilizador> Utilizadores{get; set;}    
-=======
-        public DbSet<ConteudoPublicacao> ConteudoPublicacoes { get; set; }
->>>>>>> 06e3b83d6759d7db998380d4c73453663624f315
     }
 }

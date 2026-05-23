@@ -19,7 +19,7 @@ namespace NzolaWebAPI.Models
         public Publicacao Publicacao {get; set;}
         public int UtilizadorId {get; set;}
         [ForeignKey("UtilizadorId")]
-        //public Utilizador Utilizador {get; set;}
+        public Utilizador Utilizador {get; set;}
         public string ConteudoComentario {get; set;}
         public DateTime DataComentario {get; set;} = DateTime.Now;
         public DateTime DataActualizacao {get; set;}
