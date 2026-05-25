@@ -14,10 +14,11 @@ namespace NzolaWebAPI.Mappers
             return new PublicacaoDto
             {
                 Id = modelPublicacao.Id,
-                AutorId = modelPublicacao,
-                QuantidadeBazes = modelPublicacao,
-                QuantidadeComentarios = modelPublicacao,
-                DataPublicacao = modelPublicacao
+                AutorId = modelPublicacao.AutorId,
+                QuantidadeBazes = modelPublicacao.QuantidadeBazes,
+                QuantidadeComentarios = modelPublicacao.QuantidadeComentarios,
+                DataPublicacao = modelPublicacao.DataPublicacao,
+                Conteudos = modelPublicacao.Conteudos.Select(c => c.ToConteudoPublicacaoDto()).ToList()
             };
         }
 

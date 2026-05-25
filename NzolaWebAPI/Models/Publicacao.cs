@@ -20,6 +20,7 @@ namespace NzolaWebAPI.Models
         public int QuantidadeBazes { get; set; }
         public int QuantidadeComentarios { get; set; }
         public DateTime DataPublicacao { get; set; } = DateTime.Now;
+        public DateTime DataAtualizacaoPublicacao { get; set; }
         public List<ConteudoPublicacao> Conteudos { get; set; } = new List<ConteudoPublicacao>();
         public List<Comentario> Comentarios {get; set;} = new List<Comentario>();
     }

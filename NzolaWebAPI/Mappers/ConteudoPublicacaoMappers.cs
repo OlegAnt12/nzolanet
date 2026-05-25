@@ -10,7 +10,9 @@ namespace NzolaWebAPI.Mappers
 {
     public static class ConteudoPublicacaoMappers
     {
-        public static ConteudoPublicacaoDto ToConteudoPublicacaoDto(this ConteudoPublicacao conteudoPublicacaoModel)
+        public static ConteudoPublicacaoDto ToConteudoPublicacaoDto(
+            this ConteudoPublicacao conteudoPublicacaoModel
+        )
         {
             return new ConteudoPublicacaoDto
             {
@@ -18,7 +20,20 @@ namespace NzolaWebAPI.Mappers
                 PublicacaoId = conteudoPublicacaoModel.PublicacaoId,
                 Conteudo = conteudoPublicacaoModel.Conteudo,
                 TipoConteudo = conteudoPublicacaoModel.TipoConteudo,
-                Ordem = conteudoPublicacaoModel.Ordem
+                Ordem = conteudoPublicacaoModel.Ordem,
+            };
+        }
+
+        public static ConteudoPublicacao ParaConteudoPublicacaoDeConteudoPublicacaoDto(
+            this AdicionarConteudoPublicacaRequestDto conteudoDto
+        )
+        {
+            return new ConteudoPublicacao
+            {
+                PublicacaoId = conteudoDto.PublicacaoId,
+                Conteudo = conteudoDto.Conteudo,
+                TipoConteudo = conteudoDto.TipoConteudo,
+                Ordem = conteudoDto.Ordem,
             };
         }
     }
