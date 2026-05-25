@@ -84,11 +84,13 @@ namespace NzolaWebAPI.Controllers
 
         [HttpDelete]
         [Route("{Id}")]
-        public IActionResult EliminarConteudoPublicacao ([FromRoute] int Id)
+        public IActionResult EliminarConteudoPublicacao([FromRoute] int Id)
         {
-            var conteudoPublicacao = _contexto.ConteudosPublicacao.FirstOrDefault(cp => cp.Id == Id);
+            var conteudoPublicacao = _contexto.ConteudosPublicacao.FirstOrDefault(cp =>
+                cp.Id == Id
+            );
 
-            if(conteudoPublicacao == null)
+            if (conteudoPublicacao == null)
             {
                 return NotFound();
             }
