@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NzolaWebAPI.Models;
 using NzolaWebAPI.DTOs.Publicacao;
+using NzolaWebAPI.Models;
 
 namespace NzolaWebAPI.Mappers
 {
-    public class PublicacaoMappers
+    public static class PublicacaoMappers
     {
         public static PublicacaoDto ToPublicacaoDto(this Publicacao modelPublicacao)
         {
@@ -18,18 +18,35 @@ namespace NzolaWebAPI.Mappers
                 QuantidadeBazes = modelPublicacao.QuantidadeBazes,
                 QuantidadeComentarios = modelPublicacao.QuantidadeComentarios,
                 DataPublicacao = modelPublicacao.DataPublicacao,
-                Conteudos = modelPublicacao.Conteudos.Select(c => c.ToConteudoPublicacaoDto()).ToList()
+                Conteudos = modelPublicacao
+                    .Conteudos.Select(ct => ct.ToConteudoPublicacaoDto())
+                    .ToList(),
+                Comentarios = modelPublicacao
+                    .Comentarios.Select(cm => cm.ToComentarioDto())
+                    .ToList(),
             };
         }
 
-        public static Publicacao ParaPublicacaoDePublicacaoDto(int autorId)
+        public static Publicacao ParaPublicacaoDePublicacaoDto(
+            this PublicacaoDto publicacaoDto,
+            int autorId
+        )
         {
-            return new Publicacao
+            var publicacao = new Publicacao
             {
                 AutorId = autorId,
                 QuantidadeBazes = 0,
-                QuantidadeComentarios = 0
+                QuantidadeComentarios = 0,
             };
+
+            foreach (var conteudoPubDto in publicacaoDto.Conteudos)
+            {
+                var conteudoPublicacao = new ConteudoPublicacao();
+                conteudoPublicacao = conteudoPubDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto();
+                publicacao.Conteudos.Add(conteudoPublicacao);
+            }
+
+            return publicacao;
         }
     }
 }

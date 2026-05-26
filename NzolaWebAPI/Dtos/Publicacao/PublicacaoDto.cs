@@ -14,5 +14,6 @@ namespace NzolaWebAPI.DTOs.Publicacao
         public int QuantidadeComentarios { get; set; }
         public DateTime DataPublicacao { get; set; } = DateTime.Now;
         public List<ConteudoPublicacaoDto> Conteudos { get; set; } = new List<ConteudoPublicacaoDto>();
+        public List<Comentario> Comentarios {get; set;} = new List<Comentario>();
     }
 }

@@ -20,16 +20,17 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpGet]
-        public IActionResult ListarPublicacoes()
+        public async Task<IActionResult> ListarPublicacoes()
         {
-            var publicacoes = _contexto.Publicacoes.ToList().Select(p => p.ToPublicacaoDto());
+            var publicacoes = await _contexto.Publicacoes.ToListAsync()
+            .Select(p => p.ToPublicacaoDto());
             return Ok(publicacoes);
         }
 
         [HttpGet("{id}")]
-        public IActionResult SelecionarPublicacao(int id)
+        public async Task<IActionResult> SelecionarPublicacao(int id)
         {
-            var publicacao = _contexto.Publicacoes.Find(id);
+            var publicacao = await _contexto.Publicacoes.FindAsync(id);
 
             if (publicacao == null)
             {
@@ -40,20 +41,29 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpPost("{utilizadorId}")]
-        public IActionResult PublicarConteudo(
+        public async Task<IActionResult> PublicarConteudo(
             [FromRoute] int utilizadorId,
             [FromBody] CriarPublicacaoRequestDto publicacaoDto
         )
         {
-            utilizadorExiste = _contexto.Utilizadores.AnyAsync(u => u.Id == utilizadorId);
+            utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u => u.Id == utilizadorId);
             if (!utilizadorExiste)
             {
                 return BadRequest("Este Utilizador não existente");
             }
 
+            var strategy = _contexto.Database.CreateExecutionStrategy();
+
+             return await strategy.ExecuteAsync(async () =>
+            {
+                await using var transaction = await _contexto.Database.BeginTransactionAsync();
+                var conteudos = new List<ConteudoPublicacao>();
+            });
+
             var publicacao = publicacaoDto.ParaPublicacaoDePublicacaoDto(utilizadorId);
-            _contexto.Publicacoes.Add(publicacao);
-            _contexto.Publicacoes.SaveChanges();
+            await _contexto.Publicacoes.AddAsync(publicacao);
+            await _contexto.Publicacoes.SaveChangesAsync();
+            await transaction.CommitAsync();
             return CreatedAtAction(
                 nameof(SelecionarPublicacao),
                 new { id = publicacao.Id },
@@ -63,12 +73,12 @@ namespace NzolaWebAPI.Controllers
 
         [HttpPut]
         [Route("{Id}")]
-        public IActionResult ActualizarPublicacao(
+        public async Task<IActionResult> ActualizarPublicacao(
             [FromRoute] int Id,
             [FromBody] ActualizarPublicacaoRequestDto putPublicacaoDto
         )
         {
-            var publicacao = _contexto.Publicacoes.FirstOrDefault(p => p.Id == Id);
+            var publicacao = await _contexto.Publicacoes.FirstOrDefaultAsync(p => p.Id == Id);
 
             if (publicacao == null)
             {
@@ -79,16 +89,16 @@ namespace NzolaWebAPI.Controllers
             publicacao.QuantidadeComentarios = putPublicacaoDto.QuantidadeComentarios;
             publicacao.DataAtualizacaoPublicacao = DateTime.Now;
 
-            contexto.SaveChanges();
+            await contexto.SaveChangesAsync();
 
             return Ok(publicacao.ToPublicacaoDto());
         }
 
         [HttpDelete]
         [Route("{Id}")]
-        public IActionResult EliminarPublicacao([FromRoute] int Id)
+        public async Task<IActionResult> EliminarPublicacao([FromRoute] int Id)
         {
-            var publicacao = _contexto.Publicacoes.FirstOrDefault(p => p.Id == Id);
+            var publicacao = _contexto.Publicacoes.FirstOrDefaultAsync(p => p.Id == Id);
 
             if (publicacao == null)
             {
@@ -96,7 +106,7 @@ namespace NzolaWebAPI.Controllers
             }
 
             _contexto.Publicacoes.Remove(publicacao);
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
 
             return NoContent();
         }
