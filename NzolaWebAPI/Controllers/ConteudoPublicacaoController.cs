@@ -42,13 +42,19 @@ namespace NzolaWebAPI.Controllers
             return Ok(comentario.ToConteudoPublicacaoDto());
         }
 
-        [HttpPost]
+        [HttpPost("{publicacaoId}")]
         public IActionResult AdicionarConteudo(
-            [FromBody] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto
+            [FromBody] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto, int publicacaoId
         )
         {
+            bool publicacaoExiste = _contexto.Publicacoes.Any(u => u.publicacaoId == publicacaoId);
+            if(!publicacaoExiste)
+            {
+                return BadRequest("Esta publicacao Não existe");
+            }
+
             var conteudoPublicacao =
-                conteudoPublicacaoDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto();
+                conteudoPublicacaoDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto(publicacaoId);
             _contexto.ConteudosPublicacao.Add(conteudoPublicacao);
             _contexto.SaveChanges();
 

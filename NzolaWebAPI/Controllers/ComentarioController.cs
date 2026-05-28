@@ -40,5 +40,32 @@ namespace NzolaWebAPI.Controllers
             
             return Ok(comentario);
         }
+
+        [HttpPost("publicacaoId", "utilizadorId")]
+        public IActionResult AdicionarComentario ([FromBody] AdicionarComentarioRequestDto comentarioDto, [FromRoute] int publicacaoId, int utilizadorId)
+        {
+            bool utilizadorExiste = _contexto.Utilizadores.Any(u => u.Id ==  utilizadorId);
+
+            if(!utilizadorExiste)
+            {
+                return BadRequest("Este Utilizador Não Existe");
+            }
+
+            bool publicacaoExiste = _contexto.Publicacoes.Any(p => p.Id == publicacaoId);
+
+            if(!publicacaoExiste)
+            {
+                return BadRequest("Esta Publicacao Não Existe");
+            }
+
+            var comentario = comentarioDto.ParaComentarioDeComentarioDto(publicacaoId, utilizadorId);
+            _contexto.Comentarios.Add(comentario);
+            _contexto.Comentarios.SaveChanges();
+            return CreatedAtAction(
+                nameof(GetComentario),
+                new { id = comentario.Id },
+                comentario.ToComentarioDto()
+            );
+        }
     }
 }

@@ -2,16 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NzolaWebAPI.Models.Enums;
 
-namespace NzolaWebAPI.DTOs.Baze
+namespace NzolaWebAPI.DTOs.Comentario
 {
-    public class BazeDto
+    public class AdicionarComentarioRequestDto
     {
         public int Id { get; set; }
         public int PublicacaoId { get; set; }
         public int UtilizadorId { get; set; }
-        public EstadoBaze EstadoBaze { get; set; }
-        public DateTime DataInteracao { get; set; }
+        public string Texto { get; set; }
+        public DateTime DataComentario { get; set; }
     }
 }

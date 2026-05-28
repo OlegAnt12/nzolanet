@@ -21,5 +21,17 @@ namespace NzolaWebAPI.Mappers
                 DataActualizacao = comentario.DataActualizacao,
             };
         }
+
+        public static Comentario ParaComentarioDeComentarioDto(this AdicionarComentarioRequestDto comentarioDto, int publicacaoId, int utilizadorId)
+        {
+            return new Comentario
+            {
+                Id = comentario.Id,
+                PublicacaoId = publicacaoId,
+                UtilizadorId = utilizadorId,
+                ConteudoComentario = comentario.ConteudoComentario,
+                DataComentario = comentario.DataComentario
+            };
+        }
     }
 }

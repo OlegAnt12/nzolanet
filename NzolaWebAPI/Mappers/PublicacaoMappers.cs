@@ -27,8 +27,8 @@ namespace NzolaWebAPI.Mappers
             };
         }
 
-        public static Publicacao ParaPublicacaoDePublicacaoDto(
-            this PublicacaoDto publicacaoDto,
+        public static Publicacao ParaPublicacaoDePublicacaoDto (
+            this CriarPublicacaoRequestDto publicacaoDto,
             int autorId
         )
         {
@@ -37,13 +37,17 @@ namespace NzolaWebAPI.Mappers
                 AutorId = autorId,
                 QuantidadeBazes = 0,
                 QuantidadeComentarios = 0,
+                Conteudos = new List<ConteudoPublicacao>(),
+                Comentarios = new List<Comentario>(),
             };
 
-            foreach (var conteudoPubDto in publicacaoDto.Conteudos)
+            if (publicacaoDto.Conteudos != null)
             {
-                var conteudoPublicacao = new ConteudoPublicacao();
-                conteudoPublicacao = conteudoPubDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto();
-                publicacao.Conteudos.Add(conteudoPublicacao);
+                foreach (var conteudoPubDto in publicacaoDto.Conteudos)
+                {
+                    conteudoPublicacao = conteudoPubDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto();
+                    publicacao.Conteudos.Add(conteudoPublicacao);
+                }
             }
 
             return publicacao;

@@ -22,8 +22,9 @@ namespace NzolaWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> ListarPublicacoes()
         {
-            var publicacoes = await _contexto.Publicacoes.ToListAsync()
-            .Select(p => p.ToPublicacaoDto());
+            var publicacoes = await _contexto
+                .Publicacoes.ToListAsync()
+                .Select(p => p.ToPublicacaoDto());
             return Ok(publicacoes);
         }
 
@@ -43,10 +44,12 @@ namespace NzolaWebAPI.Controllers
         [HttpPost("{utilizadorId}")]
         public async Task<IActionResult> PublicarConteudo(
             [FromRoute] int utilizadorId,
-            [FromBody] CriarPublicacaoRequestDto publicacaoDto
+            [FromBody] ParaPublicacaoDePublicacaoDto publicacaoDto
         )
         {
-            utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u => u.Id == utilizadorId);
+            bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
+                u.Id == utilizadorId
+            );
             if (!utilizadorExiste)
             {
                 return BadRequest("Este Utilizador não existente");
@@ -54,7 +57,7 @@ namespace NzolaWebAPI.Controllers
 
             var strategy = _contexto.Database.CreateExecutionStrategy();
 
-             return await strategy.ExecuteAsync(async () =>
+            return await strategy.ExecuteAsync(async () =>
             {
                 await using var transaction = await _contexto.Database.BeginTransactionAsync();
                 var conteudos = new List<ConteudoPublicacao>();

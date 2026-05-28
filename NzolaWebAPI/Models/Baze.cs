@@ -21,6 +21,7 @@ namespace NzolaWebAPI.Models
         public int UtilizadorId {get; set;}
         [ForeignKey("UtilizadorId")]
         public Utilizador Utilizador {get; set;}
+        public EstadoBaze EstadoBaze { get; set; } = EstadoBaze.Dado;
         public DateTime DataInteracao {get; set;} = DateTime.Now;
     }
 }
