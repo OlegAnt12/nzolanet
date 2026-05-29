@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\vittara\\Videos\\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\\OI\\Oleg\\ISPTEC\\AW\\Projecto\\NZOLANET\\NzolaWebAPI\\NzolaWebAPI.csproj": {}
+    "C:\\Users\\sebas\\nzolanet\\NzolaWebAPI\\NzolaWebAPI.csproj": {}
   },
   "projects": {
-    "C:\\Users\\vittara\\Videos\\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\\OI\\Oleg\\ISPTEC\\AW\\Projecto\\NZOLANET\\NzolaWebAPI\\NzolaWebAPI.csproj": {
+    "C:\\Users\\sebas\\nzolanet\\NzolaWebAPI\\NzolaWebAPI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\vittara\\Videos\\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\\OI\\Oleg\\ISPTEC\\AW\\Projecto\\NZOLANET\\NzolaWebAPI\\NzolaWebAPI.csproj",
+        "projectUniqueName": "C:\\Users\\sebas\\nzolanet\\NzolaWebAPI\\NzolaWebAPI.csproj",
         "projectName": "NzolaWebAPI",
-        "projectPath": "C:\\Users\\vittara\\Videos\\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\\OI\\Oleg\\ISPTEC\\AW\\Projecto\\NZOLANET\\NzolaWebAPI\\NzolaWebAPI.csproj",
-        "packagesPath": "C:\\Users\\vittara\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\vittara\\Videos\\Sonic.3.O.Filme.2024.1080p.FULL.HD.WEB-DL.DUAL.5.1\\OI\\Oleg\\ISPTEC\\AW\\Projecto\\NZOLANET\\NzolaWebAPI\\obj\\",
+        "projectPath": "C:\\Users\\sebas\\nzolanet\\NzolaWebAPI\\NzolaWebAPI.csproj",
+        "packagesPath": "C:\\Users\\sebas\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\sebas\\nzolanet\\NzolaWebAPI\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\vittara\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\sebas\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
@@ -87,7 +87,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.420/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
