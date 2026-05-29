@@ -45,7 +45,7 @@ namespace NzolaWebAPI.Controllers
             var notificacao = criarNotificacaoDto.ToNotificacaoFromCriarDto();
 
             _contexto.Notificacoes.Add(notificacao);
-            _contexto.SaveChanges();
+            _contexto.Notificacoes.SaveChanges();
 
             return CreatedAtAction(
                 nameof(BuscarPorId),
@@ -65,7 +65,7 @@ namespace NzolaWebAPI.Controllers
             }
 
             notificacao.Lida = true;
-            _contexto.SaveChanges();
+           _contexto.Notificacoes.SaveChanges();
 
             return Ok(notificacao.ToNotificacaoDto());
         }
@@ -81,7 +81,7 @@ namespace NzolaWebAPI.Controllers
             }
 
             _contexto.Notificacoes.Remove(notificacao);
-            _contexto.SaveChanges();
+           _contexto.Notificacoes.SaveChanges();
 
             return NoContent();
         }

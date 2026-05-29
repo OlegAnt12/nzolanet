@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Seguidor;
 using NzolaWebAPI.Mappers;
+using NzolaWebAPI.Models;
 
 
 namespace NzolaWebAPI.Controllers
@@ -48,10 +49,26 @@ namespace NzolaWebAPI.Controllers
             var seguidor = criarSeguidorDto.ToSeguidorFromCriarDto();
 
             _contexto.Seguidores.Add(seguidor);
-            _contexto.SaveChanges();
+            _contexto.Seguidores.SaveChanges();
 
             return CreatedAtAction(nameof(SelecionarSeguidor), new {id = seguidor.Id}, seguidor.ToSeguidorDto());
             
+        }
+
+        [HttpDelete]
+        public IActionResult Apagar ([FromRoute] int id)
+        {
+            var seguidor = _contexto.Seguidores.Find(id);
+
+            if(seguidor = null)
+            {
+                return NotFound();
+            }
+
+            _contexto.Seguidores.Remove(seguidor);
+            _contexto.Seguidores.SaveChanges();
+
+            return NoContent();
         }
 
     
