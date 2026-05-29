@@ -17,6 +17,7 @@ namespace NzolaWebAPI.Models
         public EstadoAcesso Privacidade {get; set}
         public EstadoConta EstadoConta{get; set;}
         public DataTime DataRegistro{get; set;}
+
         public List<Seguidor> Seguidor {get; set;} = new List<Seguidor>();
         public List<Publicacao> Publicacoes{get; set;} = new List<Publicacao>();
         public List<Comentario> Comentarios {get; set;} = new List<Comentario>();
