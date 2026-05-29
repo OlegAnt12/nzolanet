@@ -28,6 +28,6 @@ Rede social para comunicação, partilha de informação e interação entre uti
 # Equipa Técnica
 
 - Eduarda Malungo
-- Femiel
+- Femiel Pedro
 - Holeg António
 - Paulo Afonso

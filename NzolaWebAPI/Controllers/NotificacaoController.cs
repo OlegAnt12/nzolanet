@@ -10,17 +10,17 @@ namespace NzolaWebAPI.Controllers
     [Route("api/[controller]")]
     public class NotificacaoController : ControllerBase
     {
-        private readonly ContextoBDNzola _context;
+        private readonly ContextoBDNzola _contexto;
 
-        public NotificacaoController(ContextoBDNzola context)
+        public NotificacaoController(ContextoBDNzola contexto)
         {
-            _context = context;
+            _contexto = contexto;
         }
 
         [HttpGet]
         public IActionResult Listar()
         {
-            var notificacoes = _context
+            var notificacoes = _contexto
                 .Notificacoes.Select(notificacao => notificacao.ToNotificacaoDto())
                 .ToList();
 
@@ -30,7 +30,7 @@ namespace NzolaWebAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult BuscarPorId([FromRoute] int id)
         {
-            var notificacao = _context.Notificacoes.Find(id);
+            var notificacao = _contexto.Notificacoes.Find(id);
 
             if (notificacao == null)
             {
@@ -44,8 +44,8 @@ namespace NzolaWebAPI.Controllers
         {
             var notificacao = criarNotificacaoDto.ToNotificacaoFromCriarDto();
 
-            _context.Notificacoes.Add(notificacao);
-            _context.SaveChanges();
+            _contexto.Notificacoes.Add(notificacao);
+            _contexto.SaveChanges();
 
             return CreatedAtAction(
                 nameof(BuscarPorId),
@@ -57,7 +57,7 @@ namespace NzolaWebAPI.Controllers
         [HttpPut]
         public IActionResult MarcarComoLida([FromRoute] int id)
         {
-            var notificacao = _context.Notificacoes.Find(id);
+            var notificacao = _contexto.Notificacoes.Find(id);
 
             if (notificacao == null)
             {
@@ -65,7 +65,7 @@ namespace NzolaWebAPI.Controllers
             }
 
             notificacao.Lida = true;
-            _context.SaveChanges();
+            _contexto.SaveChanges();
 
             return Ok(notificacao.ToNotificacaoDto());
         }
@@ -73,15 +73,15 @@ namespace NzolaWebAPI.Controllers
         [HttpDelete]
         public IActionResult Apagar([FromRoute] int id)
         {
-            var notificacao = _context.Notificacoes.Find(id);
+            var notificacao = _contexto.Notificacoes.Find(id);
 
             if (notificacao == null)
             {
                 return NotFound();
             }
 
-            _context.Notificacoes.Remove(notificacao);
-            _context.SaveChanges();
+            _contexto.Notificacoes.Remove(notificacao);
+            _contexto.SaveChanges();
 
             return NoContent();
         }
