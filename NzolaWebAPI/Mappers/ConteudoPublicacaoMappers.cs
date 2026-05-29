@@ -25,7 +25,7 @@ namespace NzolaWebAPI.Mappers
         }
 
         public static ConteudoPublicacao ParaConteudoPublicacaoDeConteudoPublicacaoDto(
-            this AdicionarConteudoPublicacaRequestDto conteudoDto
+            this AdicionarConteudoPublicacaoRequestDto conteudoDto
         )
         {
             return new ConteudoPublicacao

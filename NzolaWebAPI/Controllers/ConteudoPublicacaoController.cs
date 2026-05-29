@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.Mappers;
+using NzolaWebAPI.DTOs.ConteudoPublicacao;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -43,7 +44,7 @@ namespace NzolaWebAPI.Controllers
 
         [HttpPost]
         public IActionResult AdicionarConteudo(
-            [FromBody] AdicionarConteudoPublicacaRequestDto conteudoPublicacaoDto
+            [FromBody] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto
         )
         {
             var conteudoPublicacao =
