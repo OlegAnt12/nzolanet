@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
-using NzolaWebAPI.DTOs.ConteudoPublicacao;
+using NzolaWebAPI.DTOs.Comentario;
 using NzolaWebAPI.Models;
 using NzolaWebAPI.Models.Enums;
 
@@ -16,7 +16,7 @@ namespace NzolaWebAPI.Controllers
     {
         private readonly ContextoBDNzola _contexto;
 
-        public ComentarioController(ContextoBDNzola contexto)
+        public ComentariosController(ContextoBDNzola contexto)
         {
             _contexto = contexto;
         }

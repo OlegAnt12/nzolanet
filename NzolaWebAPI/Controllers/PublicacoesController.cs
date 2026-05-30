@@ -14,7 +14,7 @@ namespace NzolaWebAPI.Controllers
     {
         private readonly ContextoBDNzola _contexto;
 
-        public PublicacaoController(ContextoBDNzola contexto)
+        public PublicacoesController(ContextoBDNzola contexto)
         {
             _contexto = contexto;
         }
@@ -44,7 +44,7 @@ namespace NzolaWebAPI.Controllers
         [HttpPost("{utilizadorId}")]
         public async Task<IActionResult> PublicarConteudo(
             [FromRoute] int utilizadorId,
-            [FromBody] ParaPublicacaoDePublicacaoDto publicacaoDto
+            [FromBody] CriarPublicacaoRequestDto publicacaoDto
         )
         {
             bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
+using NzolaWebAPI.DTOs.Baze;
 using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
@@ -14,7 +15,7 @@ namespace NzolaWebAPI.Controllers
     {
         private readonly ContextoBDNzola _contexto;
 
-        public BazeController (ContextoBDNzola contexto)
+        public BazesController(ContextoBDNzola contexto)
         {
             _contexto = contexto;
         }
@@ -28,7 +29,7 @@ namespace NzolaWebAPI.Controllers
 
         /*[HttpGet("{id}")]
         public IActionResult SelecionarBaze([FromRoute] int id)
-        {   
+        {
             var baze =  _contexto.Bazes.Find(id);
             
             if(baze == null)
@@ -57,60 +58,69 @@ namespace NzolaWebAPI.Controllers
         [HttpGet("publicacao/{id}")]
         public IActionResult GetBazesPorPublicacao([FromRoute] int id)
         {
-            var bazesPublicacao =  _contexto.Bazes.ToList().Where(b => b.PublicacaoId == id)
-            .Select(b => b.ToBazeDto());
+            var bazesPublicacao = _contexto
+                .Bazes.ToList()
+                .Where(b => b.PublicacaoId == id)
+                .Select(b => b.ToBazeDto());
 
-            if(bazesPublicacao == null)
-                {
-                    return NotFound();
-                }
-            
+            if (bazesPublicacao == null)
+            {
+                return NotFound();
+            }
+
             return Ok(bazesPublicacao);
         }
 
         [HttpPost("{publicacaoId:int}/{utilizadorId:int}")]
-        public IActionResult DarBaze([FromRoute] int publicacaoId, [FromRoute] int utilizadorId, [FromBody] DarBazeRequestDto bazeDto)
+        public IActionResult DarBaze(
+            [FromRoute] int publicacaoId,
+            [FromRoute] int utilizadorId,
+            [FromBody] DarBazeRequestDto bazeDto
+        )
         {
-            bool utilizadorExiste = _contexto.Utilizadores.Any(u => u.Id == utilizadorId)
-            
-            if(!utilizadorExiste)
+            bool utilizadorExiste = _contexto.Utilizadores.Any(u => u.Id == utilizadorId);
+
+            if (!utilizadorExiste)
             {
                 return BadRequest("Este Utilizador Não Existe");
             }
 
             var publicacao = _contexto.Publicacoes.Find(publicacaoId);
 
-            if(publicacao == null)
+            if (publicacao == null)
             {
                 return BadRequest("Esta Publicação Não Existe");
             }
 
-            var bazeExistente = _contexto.Bazes
-            .FirstOrDefault(b => b.publicacaoId == publicacaoId && b.utilizadorId == utilizadorId);
+            var bazeExistente = _contexto.Bazes.FirstOrDefault(b =>
+                b.publicacaoId == publicacaoId && b.utilizadorId == utilizadorId
+            );
 
-            if(bazeExiste != null)
+            if (bazeExiste != null)
             {
                 _contexto.Bazes.Remove(bazeExistente);
 
-                if(publicacao.QuantidadeBazes > 0)
+                if (publicacao.QuantidadeBazes > 0)
                     publicacao.QuantidadeBazes--;
 
                 _contexto.SaveChanges();
-                return Ok(new{ mensagem="Baze removido com sucesso!", quantidadeBazes = publicacao.QuantidadeBazes});
+                return Ok(
+                    new
+                    {
+                        mensagem = "Baze removido com sucesso!",
+                        quantidadeBazes = publicacao.QuantidadeBazes,
+                    }
+                );
             }
 
             var baze = bazeDto.ParaBazeDeBazeDto(publicacaoId, utilizadorId);
-            baze.DataInteracao=DateTime.Now;
+            baze.DataInteracao = DateTime.Now;
             publicacao.QuantidadeBazes++;
 
             _contexto.Bazes.Add(baze);
             _contexto.SaveChanges();
 
-            return CreatedAtAction(
-                nameof(SelecionarBaze),
-                new { id = baze.Id },
-                baze.ToBazeDto()
-            );
+            return CreatedAtAction(nameof(SelecionarBaze), new { id = baze.Id }, baze.ToBazeDto());
         }
     }
 }

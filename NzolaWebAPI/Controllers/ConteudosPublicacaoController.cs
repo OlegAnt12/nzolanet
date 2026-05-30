@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
-using NzolaWebAPI.Mappers;
 using NzolaWebAPI.DTOs.ConteudoPublicacao;
+using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -15,7 +15,7 @@ namespace NzolaWebAPI.Controllers
     {
         private readonly ContextoBDNzola _contexto;
 
-        public ConteudoPublicacaoController(ContextoBDNzola contexto)
+        public ConteudosPublicacaoController(ContextoBDNzola contexto)
         {
             _contexto = contexto;
         }
@@ -24,7 +24,8 @@ namespace NzolaWebAPI.Controllers
         public IActionResult SelecionarConteudoPublicacoes([FromRoute] int publicacaoId)
         {
             var conteudoPublicacoes = _contexto
-                .ConteudoPublicacoes.ToList().Where(c => c.publicacaoId == publicacaoId);
+                .ConteudoPublicacoes.ToList()
+                .Where(c => c.publicacaoId == publicacaoId)
                 .Select(cp => cp.ToConteudoPublicacaoDto());
             return Ok(conteudoPublicacoes);
         }
@@ -44,11 +45,12 @@ namespace NzolaWebAPI.Controllers
 
         [HttpPost("{publicacaoId}")]
         public IActionResult AdicionarConteudo(
-            [FromBody] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto, int publicacaoId
+            [FromBody] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto,
+            int publicacaoId
         )
         {
             bool publicacaoExiste = _contexto.Publicacoes.Any(u => u.publicacaoId == publicacaoId);
-            if(!publicacaoExiste)
+            if (!publicacaoExiste)
             {
                 return BadRequest("Esta publicacao Não existe");
             }
