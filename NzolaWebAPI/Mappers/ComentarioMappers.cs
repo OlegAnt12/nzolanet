@@ -26,11 +26,9 @@ namespace NzolaWebAPI.Mappers
         {
             return new Comentario
             {
-                Id = comentario.Id,
                 PublicacaoId = publicacaoId,
                 UtilizadorId = utilizadorId,
-                ConteudoComentario = comentario.ConteudoComentario,
-                DataComentario = comentario.DataComentario
+                ConteudoComentario = comentarioDto.ConteudoComentario
             };
         }
     }
