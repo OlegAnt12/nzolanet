@@ -10,11 +10,11 @@ namespace NzolaWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PublicacaoController : ControllerBase
+    public class PublicacoesController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
 
-        public PublicacaoController(ContextoBDNzola contexto)
+        public PublicacoesController(ContextoBDNzola contexto)
         {
             _contexto = contexto;
         }
@@ -22,8 +22,9 @@ namespace NzolaWebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> ListarPublicacoes()
         {
-            var publicacoes = await _contexto.Publicacoes.ToListAsync()
-            .Select(p => p.ToPublicacaoDto());
+            var publicacoes = await _contexto
+                .Publicacoes.ToListAsync()
+                .Select(p => p.ToPublicacaoDto());
             return Ok(publicacoes);
         }
 
@@ -46,7 +47,9 @@ namespace NzolaWebAPI.Controllers
             [FromBody] CriarPublicacaoRequestDto publicacaoDto
         )
         {
-            utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u => u.Id == utilizadorId);
+            bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
+                u.Id == utilizadorId
+            );
             if (!utilizadorExiste)
             {
                 return BadRequest("Este Utilizador não existente");
@@ -54,21 +57,34 @@ namespace NzolaWebAPI.Controllers
 
             var strategy = _contexto.Database.CreateExecutionStrategy();
 
-             return await strategy.ExecuteAsync(async () =>
+            return await strategy.ExecuteAsync(async () =>
             {
                 await using var transaction = await _contexto.Database.BeginTransactionAsync();
-                var conteudos = new List<ConteudoPublicacao>();
-            });
 
-            var publicacao = publicacaoDto.ParaPublicacaoDePublicacaoDto(utilizadorId);
-            await _contexto.Publicacoes.AddAsync(publicacao);
-            await _contexto.Publicacoes.SaveChangesAsync();
-            await transaction.CommitAsync();
-            return CreatedAtAction(
-                nameof(SelecionarPublicacao),
-                new { id = publicacao.Id },
-                publicacao.ToPublicacaoDto()
-            );
+                try
+                {
+                    var publicacao = publicacaoDto.ParaPublicacaoDePublicacaoDto(utilizadorId);
+                    publicacao.DataPublicacao = DateTime.Now;
+
+                    await _contexto.Publicacoes.AddAsync(publicacao);
+                    await _contexto.Publicacoes.SaveChangesAsync();
+
+                    await transaction.CommitAsync();
+                    return CreatedAtAction(
+                        nameof(SelecionarPublicacao),
+                        new { id = publicacao.Id },
+                        publicacao.ToPublicacaoDto()
+                    );
+                }
+                catch (Exception exc)
+                {
+                    await transactionRollbackAsync();
+                    return StausCode(
+                        500,
+                        $"Erro Interno ao tentar registar a publicação: {exc.Message}"
+                    );
+                }
+            });
         }
 
         [HttpPut]

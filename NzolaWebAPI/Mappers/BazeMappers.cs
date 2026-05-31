@@ -16,7 +16,23 @@ namespace NzolaWebAPI.Mappers
                 Id = bazeModel.Id,
                 PublicacaoId = bazeModel.PublicacaoId,
                 UtilizadorId = bazeModel.UtilizadorId,
-                DataInteracao = bazeModel.DataInteracao
+                EstadoBaze = bazeModel.EstadoBaze,
+                DataInteracao = bazeModel.DataInteracao,
+            };
+        }
+
+        public static Baze ParaBazeDeBazeDto(
+            this BazeDto bazeDto,
+            int publicacaoId,
+            int utilizadorId
+        )
+        {
+            return new Baze
+            {
+                PublicacaoId = publicacaoId,
+                UtilizadorId = utilizadorId,
+                EstadoBaze = bazeDto.EstadoBaze,
+                DataInteracao = bazeDto.DataInteracao,
             };
         }
     }

@@ -4,27 +4,28 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
-using NzolaWebAPI.Mappers;
 using NzolaWebAPI.DTOs.ConteudoPublicacao;
+using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ConteudoPublicacaoController : ControllerBase
+    public class ConteudosPublicacaoController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
 
-        public ConteudoPublicacaoController(ContextoBDNzola contexto)
+        public ConteudosPublicacaoController(ContextoBDNzola contexto)
         {
             _contexto = contexto;
         }
 
-        [HttpGet]
-        public IActionResult SelecionarConteudoPublicacoes()
+        [HttpGet("publicacao/{publicacaoId}")]
+        public IActionResult SelecionarConteudoPublicacoes([FromRoute] int publicacaoId)
         {
             var conteudoPublicacoes = _contexto
                 .ConteudoPublicacoes.ToList()
+                .Where(c => c.publicacaoId == publicacaoId)
                 .Select(cp => cp.ToConteudoPublicacaoDto());
             return Ok(conteudoPublicacoes);
         }
@@ -32,23 +33,30 @@ namespace NzolaWebAPI.Controllers
         [HttpGet("{id}")]
         public IActionResult SelecionarConteudoPublicacao([FromRoute] int id)
         {
-            var comentario = _contexto.ConteudoPublicacoes.Find(id);
+            var conteudo = _contexto.ConteudoPublicacoes.Find(id);
 
-            if (comentario == null)
+            if (conteudo == null)
             {
                 return NotFound();
             }
 
-            return Ok(comentario.ToConteudoPublicacaoDto());
+            return Ok(conteudo.ToConteudoPublicacaoDto());
         }
 
-        [HttpPost]
+        [HttpPost("{publicacaoId}")]
         public IActionResult AdicionarConteudo(
-            [FromBody] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto
+            [FromBody] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto,
+            int publicacaoId
         )
         {
+            bool publicacaoExiste = _contexto.Publicacoes.Any(u => u.publicacaoId == publicacaoId);
+            if (!publicacaoExiste)
+            {
+                return BadRequest("Esta publicacao Não existe");
+            }
+
             var conteudoPublicacao =
-                conteudoPublicacaoDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto();
+                conteudoPublicacaoDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto(publicacaoId);
             _contexto.ConteudosPublicacao.Add(conteudoPublicacao);
             _contexto.SaveChanges();
 
