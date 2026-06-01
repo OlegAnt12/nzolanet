@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Baze;
 using NzolaWebAPI.Mappers;
@@ -25,9 +26,9 @@ namespace NzolaWebAPI.Controllers
         {
             var bazes =  _contexto.Bazes.ToList();
             return Ok(bazes);
-        }*/
-
-        /*[HttpGet("{id}")]
+        }
+        
+        [HttpGet("{id}")]
         public IActionResult SelecionarBaze([FromRoute] int id)
         {
             var baze =  _contexto.Bazes.Find(id);
@@ -38,7 +39,21 @@ namespace NzolaWebAPI.Controllers
             }
 
             return Ok(baze);
-        }*/
+        }
+        */
+
+        [HttpGet("{id}")]
+        public IActionResult SelecionarBaze([FromRoute] int id)
+        {
+            var baze =  _contexto.Bazes.Find(id);
+            
+            if(baze == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(baze);
+        }
 
         /*[HttpGet("utilizador/{id}")]
         public IActionResult SelecionarBazesPorUtilizador([FromRoute] int id)
@@ -93,10 +108,10 @@ namespace NzolaWebAPI.Controllers
             }
 
             var bazeExistente = _contexto.Bazes.FirstOrDefault(b =>
-                b.publicacaoId == publicacaoId && b.utilizadorId == utilizadorId
+                b.PublicacaoId == publicacaoId && b.UtilizadorId == utilizadorId
             );
 
-            if (bazeExiste != null)
+            if (bazeExistente != null)
             {
                 _contexto.Bazes.Remove(bazeExistente);
 

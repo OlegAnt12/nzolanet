@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Seguidor;
 using NzolaWebAPI.Mappers;
@@ -11,7 +12,7 @@ using NzolaWebAPI.Models;
 
 namespace NzolaWebAPI.Controllers
 {
-    [Route("api/seguidor")]
+    [Route("api/[controller]")]
     [ApiController]
     public class SeguidorController : ControllerBase
     {
@@ -49,7 +50,7 @@ namespace NzolaWebAPI.Controllers
             var seguidor = criarSeguidorDto.ToSeguidorFromCriarDto();
 
             _contexto.Seguidores.Add(seguidor);
-            _contexto.Seguidores.SaveChanges();
+            _contexto.SaveChanges();
 
             return CreatedAtAction(nameof(SelecionarSeguidor), new {id = seguidor.Id}, seguidor.ToSeguidorDto());
             
@@ -60,13 +61,13 @@ namespace NzolaWebAPI.Controllers
         {
             var seguidor = _contexto.Seguidores.Find(id);
 
-            if(seguidor = null)
+            if(seguidor == null)
             {
                 return NotFound();
             }
 
             _contexto.Seguidores.Remove(seguidor);
-            _contexto.Seguidores.SaveChanges();
+            _contexto.SaveChanges();
 
             return NoContent();
         }

@@ -45,7 +45,7 @@ namespace NzolaWebAPI.Mappers
             {
                 foreach (var conteudoPubDto in publicacaoDto.Conteudos)
                 {
-                    conteudoPublicacao = conteudoPubDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto();
+                    var conteudoPublicacao = conteudoPubDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto(publicacao.Id);
                     publicacao.Conteudos.Add(conteudoPublicacao);
                 }
             }

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Publicacao;
+using NzolaWebAPI.Models;
+using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -23,8 +26,8 @@ namespace NzolaWebAPI.Controllers
         public async Task<IActionResult> ListarPublicacoes()
         {
             var publicacoes = await _contexto
-                .Publicacoes.ToListAsync()
-                .Select(p => p.ToPublicacaoDto());
+                .Publicacoes.Select(p => p.ToPublicacaoDto())
+                .ToListAsync();
             return Ok(publicacoes);
         }
 
@@ -67,7 +70,7 @@ namespace NzolaWebAPI.Controllers
                     publicacao.DataPublicacao = DateTime.Now;
 
                     await _contexto.Publicacoes.AddAsync(publicacao);
-                    await _contexto.Publicacoes.SaveChangesAsync();
+                    await _contexto.SaveChangesAsync();
 
                     await transaction.CommitAsync();
                     return CreatedAtAction(
@@ -78,8 +81,8 @@ namespace NzolaWebAPI.Controllers
                 }
                 catch (Exception exc)
                 {
-                    await transactionRollbackAsync();
-                    return StausCode(
+                    await transaction.RollbackAsync();
+                    return StatusCode(
                         500,
                         $"Erro Interno ao tentar registar a publicação: {exc.Message}"
                     );
@@ -105,7 +108,7 @@ namespace NzolaWebAPI.Controllers
             publicacao.QuantidadeComentarios = putPublicacaoDto.QuantidadeComentarios;
             publicacao.DataAtualizacaoPublicacao = DateTime.Now;
 
-            await contexto.SaveChangesAsync();
+            await _contexto.SaveChangesAsync();
 
             return Ok(publicacao.ToPublicacaoDto());
         }
@@ -114,7 +117,7 @@ namespace NzolaWebAPI.Controllers
         [Route("{Id}")]
         public async Task<IActionResult> EliminarPublicacao([FromRoute] int Id)
         {
-            var publicacao = _contexto.Publicacoes.FirstOrDefaultAsync(p => p.Id == Id);
+            var publicacao = await _contexto.Publicacoes.FirstOrDefaultAsync(p => p.Id == Id);
 
             if (publicacao == null)
             {

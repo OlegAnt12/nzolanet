@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.ConteudoPublicacao;
 using NzolaWebAPI.Mappers;
@@ -21,19 +22,20 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpGet("publicacao/{publicacaoId}")]
-        public IActionResult SelecionarConteudoPublicacoes([FromRoute] int publicacaoId)
+        public async Task<IActionResult> SelecionarConteudoPublicacoes([FromRoute] int publicacaoId)
         {
-            var conteudoPublicacoes = _contexto
-                .ConteudoPublicacoes.ToList()
-                .Where(c => c.publicacaoId == publicacaoId)
-                .Select(cp => cp.ToConteudoPublicacaoDto());
+            var conteudoPublicacoes = await _contexto
+                .ConteudosPublicacao
+                .Where(c => c.PublicacaoId == publicacaoId)
+                .Select(cp => cp.ToConteudoPublicacaoDto())
+                .ToListAsync();
             return Ok(conteudoPublicacoes);
         }
 
         [HttpGet("{id}")]
         public IActionResult SelecionarConteudoPublicacao([FromRoute] int id)
         {
-            var conteudo = _contexto.ConteudoPublicacoes.Find(id);
+            var conteudo = _contexto.ConteudosPublicacao.Find(id);
 
             if (conteudo == null)
             {
@@ -49,7 +51,7 @@ namespace NzolaWebAPI.Controllers
             int publicacaoId
         )
         {
-            bool publicacaoExiste = _contexto.Publicacoes.Any(u => u.publicacaoId == publicacaoId);
+            bool publicacaoExiste = _contexto.Publicacoes.Any(p => p.Id == publicacaoId);
             if (!publicacaoExiste)
             {
                 return BadRequest("Esta publicacao Não existe");
@@ -62,7 +64,7 @@ namespace NzolaWebAPI.Controllers
 
             return CreatedAtAction(
                 nameof(SelecionarConteudoPublicacao),
-                new(id == conteudoPublicacaoId),
+                new{id = conteudoPublicacao.Id},
                 conteudoPublicacao.ToConteudoPublicacaoDto()
             );
         }

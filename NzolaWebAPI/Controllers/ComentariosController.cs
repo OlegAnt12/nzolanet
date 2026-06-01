@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Comentario;
 using NzolaWebAPI.Models;
 using NzolaWebAPI.Models.Enums;
+using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -21,17 +23,17 @@ namespace NzolaWebAPI.Controllers
             _contexto = contexto;
         }
 
-        [HttpGet("publicacao/{id}")]
-        public IActionResult GetComentarios()
+        [HttpGet("publicacao/{Id}")]
+        public IActionResult GetComentarios([FromRoute] int Id)
         {
             var comentarios = _contexto
                 .Comentarios.ToList()
-                .Where(b => b.PublicacaoId == id)
+                .Where(b => b.PublicacaoId == Id)
                 .Select(c => c.ToComentarioDto());
             return Ok(comentarios);
         }
 
-        /*[HttpGet("{id}")]
+        [HttpGet("{id}")]
         public IActionResult GetComentario([FromRoute] int id)
         {
             var comentario =  _contexto.Comentarios.Find(id);
@@ -42,7 +44,7 @@ namespace NzolaWebAPI.Controllers
             }
             
             return Ok(comentario);
-        }*/
+        }
 
         [HttpPost("{publicacaoId:int}/{utilizadorId:int}")]
         public IActionResult AdicionarComentario(

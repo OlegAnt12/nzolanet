@@ -22,7 +22,7 @@ namespace NzolaWebAPI.Mappers
         }
 
         public static Baze ParaBazeDeBazeDto(
-            this BazeDto bazeDto,
+            this DarBazeRequestDto bazeDto,
             int publicacaoId,
             int utilizadorId
         )
