@@ -4,7 +4,7 @@
 - NomeCompleto: string
 - NomeUtilizador: string
 - Email: string
-- PlavraPasse: string
+- PalavraPasse: string
 - NivelAcesso: NivelAcesso
 - FotoPerfil: byte[]
 - Biografia: string

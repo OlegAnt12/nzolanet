@@ -7,6 +7,7 @@ using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Utilizador;
 using NzolaWebAPI.Models;   
 
+
 namespace NzolaWebAPI.Controllers{
 [Route("api/[Controller]")]
 [ApiController]
