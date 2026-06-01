@@ -5,5 +5,5 @@ namespace NzolaWebAPI.Models.Enums
         Texto,
         Imagem,
         Video
-    }
+    }   
 }

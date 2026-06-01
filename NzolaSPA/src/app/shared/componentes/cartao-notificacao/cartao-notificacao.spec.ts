@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PaginaHome } from './pagina-home';
+import { CartaoNotificacao } from './cartao-notificacao';
 
-describe('PaginaHome', () => {
-  let component: PaginaHome;
-  let fixture: ComponentFixture<PaginaHome>;
+describe('CartaoNotificacao', () => {
+  let component: CartaoNotificacao;
+  let fixture: ComponentFixture<CartaoNotificacao>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PaginaHome]
+      imports: [CartaoNotificacao]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PaginaHome);
+    fixture = TestBed.createComponent(CartaoNotificacao);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
