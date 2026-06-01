@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Login } from './login';
+import { CartaoPerfil } from './cartao-perfil';
 
-describe('Login', () => {
-  let component: Login;
-  let fixture: ComponentFixture<Login>;
+describe('CartaoPerfil', () => {
+  let component: CartaoPerfil;
+  let fixture: ComponentFixture<CartaoPerfil>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Login]
+      imports: [CartaoPerfil]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Login);
+    fixture = TestBed.createComponent(CartaoPerfil);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
