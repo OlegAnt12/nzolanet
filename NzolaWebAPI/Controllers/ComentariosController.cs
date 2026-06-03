@@ -82,5 +82,42 @@ namespace NzolaWebAPI.Controllers
                 comentario.ToComentarioDto()
             );
         }
+
+        [HttpPut("{id:int}")]
+        public IActionResult EditarComentario(
+            [FromRoute] int id,
+            [FromBody] EditarComentarioRequestDto comentarioDto
+        )
+        {
+            var comentario = _contexto.Comentarios.Find(id);
+
+            if (comentario == null)
+            {
+                return NotFound ("Comentário não encontrado");
+            }
+
+            comentario.ConteudoComentario = comentarioDto.ConteudoComentario;
+            comentario.DataActualizacao = DateTime.Now;
+
+            _contexto.SaveChanges();
+
+            return Ok (comentario.ToComentarioDto());
+        }
+
+        [HttpDelete("{id:int}")]
+        public IActionResult ExcluirComentario([FromRoute] int id)
+        {
+            var comentario = _contexto.Comentarios.Find(id);
+
+            if (comentario == null)
+            {
+                return NotFound("Comentário não encontrado");
+            }
+
+            _contexto.Comentarios.Remove(comentario);
+            _contexto.SaveChanges();
+
+            return NoContent();
+        }
     }
 }
