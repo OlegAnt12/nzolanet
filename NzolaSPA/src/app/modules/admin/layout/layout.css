@@ -1,0 +1,48 @@
+.contentor_painel
+{
+  display: flex;
+}
+
+.contentor_painel--navegacao
+{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.logotipo
+{
+  width: 48px;
+  height: 48px;
+}
+
+.logotipo img
+{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.menu_navegacao
+{
+  display: flex;
+  flex-direction: column;
+}
+
+.conteudo
+{
+  flex: 1;
+}
+
+.contentor_painel--cabecalho
+{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.caixa_con_util
+{
+  display: flex;
+  align-items: center;
+}

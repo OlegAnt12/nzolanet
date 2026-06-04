@@ -1,0 +1,182 @@
+<div class="contentor-analitico">
+  <div class="topo-anali">
+    <div class="area-navegacao">
+      <button type="button" class="btn btn-voltar">
+        <fa-icon [icon]="voltarIcon"></fa-icon>
+      </button>
+      <h1 class="titulo-desc-area">Painel Analítico</h1>
+    </div>
+    <div class="area-funcional">
+      <button type="button" class="btn btn-exportar">
+        <fa-icon [icon]="exportarIcon" class="mr-1"></fa-icon>
+        <span>Exportar Relatório</span>
+      </button>
+    </div>
+  </div>
+  <div class="cartoes-metricos">
+    <div class="metrica-comercial">
+      <div class="cartao cartao-kpi">
+        <h3>Faturação</h3>
+        <strong>valorTotalVendas | number: '1.2-2' kz</strong>
+        <small>Média por venda: valorMedioVenda | number: '1.2-2' kz</small>
+        <span class="tendencia"> getVariacaoTexto(crescimentoFaturacao) vs período anterior </span>
+      </div>
+      <div class="cartao cartao-kpi">
+        <h3>Faturação</h3>
+        <strong>valorTotalVendas | number: '1.2-2' kz</strong>
+        <small>Média por venda: valorMedioVenda | number: '1.2-2' kz</small>
+        <span class="tendencia"> getVariacaoTexto(crescimentoFaturacao) vs período anterior </span>
+      </div>
+
+      <div class="cartao cartao-kpi">
+        <h3>Faturação</h3>
+        <strong>valorTotalVendas | number: '1.2-2' kz</strong>
+        <small>Média por venda: valorMedioVenda | number: '1.2-2' kz</small>
+        <span class="tendencia"> getVariacaoTexto(crescimentoFaturacao) vs período anterior </span>
+      </div>
+    </div>
+
+    <div class="metrica-laboral">
+      <div class="cartao cartao-kpi">
+        <h3>Faturação</h3>
+        <strong>valorTotalVendas | number: '1.2-2'kz</strong>
+        <small>Média por venda: valorMedioVenda | number: '1.2-2' kz</small>
+        <span class="tendencia"> período anterior </span>
+      </div>
+    </div>
+  </div>
+  <div class="area-pesquisa">
+    <p>Area por descrever</p>
+    <div class="componentes-pesquisa">
+      <div class="filtro-personalizado">
+        <input type="date" />
+        <input type="date" />
+      </div>
+      <select class="filtro-periodo">
+        <option>opcao.label</option>
+      </select>
+      <div class="caixa-pesquisa">
+        <input type="text" placeholder="Pesquisar..." aria-label="Pesquisar" class="txt" />
+        <button type="button" class="btn btn-pesquisa">
+          <fa-icon [icon]="pesquisaIcon" class="pesquisa-icon"></fa-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="tabela-dados">
+    <div class="area-desc-topo">
+      <h3>Utilizadores</h3>
+      <div class="area-desc-topo_acoes">
+        <div class="lista_acoes">
+          <button type="button" class="btn btn-lista_acoes">lista</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="vista-grade">
+      <div class="area-tabela">
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <img
+                  src="./billycm-children-2876359_1920.jpg"
+                  alt="Foto do utilizador"
+                  style="
+                    width: 42px;
+                    height: 42px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    border: 1px solid #d1d5db;
+                  "
+                />
+              </td>
+              <td>u.id</td>
+              <td>u.nome</td>
+              <td>getPerfilLabel(u.perfil)</td>
+              
+            </tr>
+            <tr>
+              <td>
+                <img
+                  src="./billycm-children-2876359_1920.jpg"
+                  alt="Foto do utilizador"
+                  style="
+                    width: 42px;
+                    height: 42px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    border: 1px solid #d1d5db;
+                  "
+                />
+              </td>
+              <td>u.id</td>
+              <td>u.nome</td>
+              <td>getPerfilLabel(u.perfil)</td>
+              
+            </tr>
+            <tr>
+              <td>
+                <img
+                  src="./billycm-children-2876359_1920.jpg"
+                  alt="Foto do utilizador"
+                  style="
+                    width: 42px;
+                    height: 42px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    border: 1px solid #d1d5db;
+                  "
+                />
+              </td>
+              <td>u.id</td>
+              <td>u.nome</td>
+              <td>getPerfilLabel(u.perfil)</td>
+              
+            </tr>
+            <tr>
+              <td>
+                <img
+                  src="./billycm-children-2876359_1920.jpg"
+                  alt="Foto do utilizador"
+                  style="
+                    width: 42px;
+                    height: 42px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    border: 1px solid #d1d5db;
+                  "
+                />
+              </td>
+              <td>u.id</td>
+              <td>u.nome</td>
+              <td>getPerfilLabel(u.perfil)</td>
+              
+            </tr>
+            <tr>
+              <td>
+                <img
+                  src="./billycm-children-2876359_1920.jpg"
+                  alt="Foto do utilizador"
+                  style="
+                    width: 42px;
+                    height: 42px;
+                    object-fit: cover;
+                    border-radius: 50%;
+                    border: 1px solid #d1d5db;
+                  "
+                />
+              </td>
+              <td>u.id</td>
+              <td>u.nome</td>
+              <td>getPerfilLabel(u.perfil)</td>
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="metrica-tabela"></div>
+    </div>
+  </div>
+</div>
