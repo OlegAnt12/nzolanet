@@ -1,10 +1,9 @@
 import { Routes } from '@angular/router';
-import { HOME_ROUTES } from './modules/home/home.routes';
 
 export const routes: Routes = [
-  /*{ path: '',   loadChildren: () => import('./modules/home/home.routes').then((m) => m.HOME_ROUTES) },
-  { path: 'home', loadChildren: () => import('./modules/home/home.routes').then((m) => m.HOME_ROUTES) }, 
-*/{
+  { path: '',   loadComponent: () => import('./modules/home/home').then((m) => m.Home) },
+  { path: 'home',   loadComponent: () => import('./modules/home/home').then((m) => m.Home) },
+  {
     path: 'feed',
     loadComponent: () =>
       import('./modules/feed/feed').then((m) => m.Feed),

@@ -2,79 +2,63 @@
   <div class="cabeca-feed">
     <div class="navegador">
       <div class="sup-dir">
-        <div class="logotipo">
-          logotipo
-        </div>
+        <div class="logotipo">logotipo</div>
         <div class="caixa-pesquisa">
           <form action="" class="pesquisa-form">
-            <input type="text" name="" id="" class="txt txt-pesquisa">
-            <button type="submit" class="btn btn-pesquisa">
-              Pesquisar
-            </button>
+            <input type="text" name="" id="" class="txt txt-pesquisa" />
+            <button type="submit" class="btn btn-pesquisa">Pesquisar</button>
           </form>
         </div>
       </div>
       <div class="sup-esq">
-        <button type="button" class="btn btn-home-feed">
-          Feed
-        </button>
-        <button type="button" class="btn btn-notificacao">
-          Notificacao
-        </button>
+        <button type="button" class="btn btn-home-feed">Feed</button>
+        <button type="button" class="btn btn-notificacao">Notificacao</button>
       </div>
     </div>
-
   </div>
   <div class="home-feed">
     <!-- Área de Utilizador -->
     <div class="seccao-utilizador prev-util">
-      <div class="utilizador-banner">
-        <div class="capa-utilizador">
-          <img src="./profile/Blackisbeautiful.jpg" alt="">
+      <div class="utilizador-area">
+        <div class="utilizador-banner">
+          <div class="capa-utilizador">
+            <img src="./profile/Blackisbeautiful.jpg" alt="" />
+          </div>
+          <div class="area-desc">
+            <div class="minifoto-perfil">
+              <img src="./profile/pexels-carlosfotografias-5669788.jpg" alt="" />
+            </div>
+            <div class="info-util">nome uitlizador, Primeiro e ultimo nome, funçao</div>
+          </div>
+          <div class="infor-perfil">
+            <div class="metricas">nº seguidores , nº publicações,</div>
+            <button type="button" class="btn btn-acessar-perfil">Aceder Perfil</button>
+          </div>
         </div>
-        <div class="area-desc">
-          <div class="minifoto-perfil">
-            <img src="./profile/pexels-carlosfotografias-5669788.jpg" alt="">
-          </div>
-          <div class="info-util">
-            nome uitlizador, Primeiro e ultimo nome, funçao
-          </div>
-        </div>
-        <div class="infor-perfil">
-          <div class="metricas">
-            nº seguidores ,
-            nº publicações,
-          </div>
-          <button type="button" class="btn btn-acessar-perfil">
-            Aceder Perfil
-          </button>
+
+        <div class="publicacao-form">
+          <form action="" class="publicacao-formlr" method="post">
+            <div class="componentes-publicacao">
+              <div class="area-texto">
+                <textarea
+                  name="texto"
+                  class="txt txt-box"
+                  id="textoId"
+                  placeholder="Partilha uma ideia"
+                ></textarea>
+                <div class="botao-enviar">
+                  <button type="submit" class="btn btn-publicar">Publicar</button>
+                </div>
+              </div>
+            </div>
+            <div class="conteudo-base"></div>
+          </form>
         </div>
       </div>
     </div>
 
     <!-- Área de Publicação -->
     <div class="seccao-publicacao prev-pub">
-      <div class="publicacao-form">
-        <form action="" class="publicacao-formlr" method="post">
-          <div class="componentes-publicacao">
-            <div class="minifoto-perfil">
-              <img src="./profile/pexels-carlosfotografias-5669788.jpg" alt="" srcset="" />
-            </div>
-            <div class="area-texto">
-              <textarea
-                name="texto"
-                class="txt txt-box"
-                id="textoId"
-                placeholder="Partilha uma ideia"
-              ></textarea>
-              <div class="botao-enviar">
-                <button type="submit" class="btn btn-publicar">Publicar</button>
-              </div>
-            </div>
-          </div>
-          <div class="conteudo-base"></div>
-        </form>
-      </div>
       <main class="area-feed">
         <div class="publicacao">
           <div class="cabeca-publicacao">
@@ -107,7 +91,10 @@
           <div class="base-publicacao">
             <ul class="lista-interacao">
               <li class="item-interacao">
-                <span>dar baze</span>
+                <div class="item-baze">
+                  <img src="./ico/icons8-fire-40.png" alt="dar baze" srcset="" />
+                </div>
+                <span>144</span>
               </li>
               <li class="item-interacao">
                 <span>comentar</span>
@@ -120,6 +107,22 @@
         </div>
       </main>
     </div>
-    <div class="seccao-notificacao prev-noti"></div>
+
+    <!-- Área de Notificacao -->
+    <div class="seccao-notificacao prev-noti">
+      <div class="notificacoes">
+        <div class="topo-notificacao">
+          <h3>Notificações</h3>
+        </div>
+        <div class="notificacao">
+          <div class="img"></div>
+          <div class="info-notificacao">
+            <div class="cabeca-notificacao">Tipo de Notificacao</div>
+            <div class="corpo-notificacao">Mensagem</div>
+            <div class="base-notificacao">DataCriacao</div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

@@ -9,6 +9,11 @@
   box-sizing: border-box;
 }
 
+html
+{
+  font-size: 92.7%;
+}
+
 .btn
 {
   cursor: pointer;

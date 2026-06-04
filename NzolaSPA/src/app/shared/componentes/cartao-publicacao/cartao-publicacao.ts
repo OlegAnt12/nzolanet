@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { PublicacaoDto } from '../../../dtos/publicacao/publicacao.dto';
 import { PublicacaoService } from '../../../services/publicacao/publicacao.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-cartao-publicacao',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './cartao-publicacao.html',
   styleUrl: './cartao-publicacao.css',
 })
