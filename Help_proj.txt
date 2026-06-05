@@ -59,7 +59,7 @@ export class ComentariosService {
 
 //Este é o ficheiro do serviço do meu colega de equipe. 
 
-Eis a Api.ts
+Eis a Api.t
 
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
