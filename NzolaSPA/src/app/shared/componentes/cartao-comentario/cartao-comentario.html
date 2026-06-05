@@ -1,1 +1,13 @@
-<p>cartao-comentario works!</p>
+<div class="cartao-comentario">
+    <p>{{ comentario.conteudoComentario }}</p>
+
+    <small>
+        Utilizador : {{ comentario.utilizadorId}}
+    </small>
+
+    <div class="acoes-comentario">
+    <button type="button" (click)="aoEditar()">Editar</button>
+    <button type="button" (click)="aoExcluir()">Excluir</button>
+  </div>
+
+</div>    

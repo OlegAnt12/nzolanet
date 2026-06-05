@@ -1,0 +1,8 @@
+<div class="lista-comentarios">
+  <app-cartao-comentario
+    *ngFor="let comentario of comentarios"
+    [comentario]="comentario"
+    (editar)="aoEditarComentario($event)"
+    (excluir)="aoExcluirComentario($event)">
+  </app-cartao-comentario>
+</div>
