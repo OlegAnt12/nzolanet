@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
+using NzolaWebAPI.Configurations;
+using NzolaWebAPI.Interfaces;
+using NzolaWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +13,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+
+
 // dotnet add package Microsoft.EntityFrameworkCore.InMemory
 // using Microsoft.EntityFrameworkCore;
 builder.Services.AddDbContext<ContextoBDNzola>(options =>
@@ -17,6 +22,15 @@ builder.Services.AddDbContext<ContextoBDNzola>(options =>
         options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"));
     });
+
+
+//Registra as configurações de e-mail a partir do appsettings.json
+builder.Services.Configure<NzolaWebAPI.Configurations.EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
+
+
+// Registra a implementação do serviço de e-mail
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 var app = builder.Build();
@@ -58,3 +72,5 @@ record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
 }
+
+
