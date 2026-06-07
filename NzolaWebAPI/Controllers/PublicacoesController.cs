@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Publicacao;
-using NzolaWebAPI.Models;
 using NzolaWebAPI.Mappers;
+using NzolaWebAPI.Models;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -26,22 +26,30 @@ namespace NzolaWebAPI.Controllers
         public async Task<IActionResult> ListarPublicacoes()
         {
             var publicacoes = await _contexto
-                .Publicacoes.Select(p => p.ToPublicacaoDto())
+                .Publicacoes.Include(p => p.Utilizador)
+                .Include(p => p.Conteudos)
+                .OrderByDescending(p => p.DataPublicacao)
                 .ToListAsync();
-            return Ok(publicacoes);
+
+            var publicacaoesDtos = publicacoes.Select(p => p.ToPublicacaoDto()).ToList();
+
+            return Ok(publicacaoesDtos);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> SelecionarPublicacao(int id)
         {
-            var publicacao = await _contexto.Publicacoes.FindAsync(id);
+            var publicacao = await _contexto
+                .Publicacoes.Include(p => p.Utilizador)
+                .Include(p => p.Conteudos)
+                .FirstOrDefaultAsync(p => p.Id == id);
 
             if (publicacao == null)
             {
                 return NotFound();
             }
 
-            return Ok(publicacao.ToPublicacaoDto());
+            return Ok(publicacao.ToPublicacaoFeedDto());
         }
 
         [HttpPost("{utilizadorId}")]
@@ -104,8 +112,6 @@ namespace NzolaWebAPI.Controllers
                 return NotFound();
             }
 
-            publicacao.QuantidadeBazes = putPublicacaoDto.QuantidadeBazes;
-            publicacao.QuantidadeComentarios = putPublicacaoDto.QuantidadeComentarios;
             publicacao.DataAtualizacaoPublicacao = DateTime.Now;
 
             await _contexto.SaveChangesAsync();

@@ -18,6 +18,6 @@ namespace NzolaWebAPI.Data
         public DbSet<Baze> Bazes { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
         public DbSet<Utilizador> Utilizadores { get; set; }
-        public DbSet<Seguidor> Seguidores { get; set;}
+        public DbSet<Seguidor> Seguidores { get; set; }
     }
 }

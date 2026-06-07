@@ -2,11 +2,13 @@
 
 Rede social para comunicação, partilha de informação e interação entre utilizadores; permite gestão de Utilizadores, publicações, bazes, comentários, feed e notificações
 
-# Visão Geral
+## Visão Geral
 
 - **Linguagens**: C# (.NET 8), Typescript (Angular)
 
-# Requisitos Técnicos
+--------------------
+
+## Requisitos Técnicos
 
 - FrontEnd
     * Angular
@@ -24,10 +26,17 @@ Rede social para comunicação, partilha de informação e interação entre uti
     * Models
     * Repositories
     * Services
+------------
 
-# Equipa Técnica
+## Equipa Técnica
 
 - Eduarda Malungo
 - Femiel Pedro
 - Holeg António
 - Paulo Afonso
+-----------------
+
+# Referências 
+
+[Tutorial Sobre Entity Framework](https://www.entityframeworktutorial.net/)
+[Tutorial Sobre Entity Framework - EF 6 Code-First](https://www.entityframeworktutorial.net/code-first/what-is-code-first.aspx)

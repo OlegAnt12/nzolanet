@@ -25,17 +25,16 @@ namespace NzolaWebAPI.Controllers
         public async Task<IActionResult> SelecionarConteudoPublicacoes([FromRoute] int publicacaoId)
         {
             var conteudoPublicacoes = await _contexto
-                .ConteudosPublicacao
-                .Where(c => c.PublicacaoId == publicacaoId)
+                .ConteudosPublicacao.Where(c => c.PublicacaoId == publicacaoId)
                 .Select(cp => cp.ToConteudoPublicacaoDto())
                 .ToListAsync();
             return Ok(conteudoPublicacoes);
         }
 
         [HttpGet("{id}")]
-        public IActionResult SelecionarConteudoPublicacao([FromRoute] int id)
+        public async Task<IActionResult> SelecionarConteudoPublicacao([FromRoute] int id)
         {
-            var conteudo = _contexto.ConteudosPublicacao.Find(id);
+            var conteudo = await _contexto.ConteudosPublicacao.FindAsync(id);
 
             if (conteudo == null)
             {
@@ -46,12 +45,12 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpPost("{publicacaoId}")]
-        public IActionResult AdicionarConteudo(
-            [FromBody] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto,
+        public async Task<IActionResult> AdicionarConteudo(
+            [FromForm] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto,
             int publicacaoId
         )
         {
-            bool publicacaoExiste = _contexto.Publicacoes.Any(p => p.Id == publicacaoId);
+            bool publicacaoExiste = await _contexto.Publicacoes.AnyAsync(p => p.Id == publicacaoId);
             if (!publicacaoExiste)
             {
                 return BadRequest("Esta publicacao Não existe");
@@ -59,24 +58,55 @@ namespace NzolaWebAPI.Controllers
 
             var conteudoPublicacao =
                 conteudoPublicacaoDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto(publicacaoId);
-            _contexto.ConteudosPublicacao.Add(conteudoPublicacao);
-            _contexto.SaveChanges();
+
+            if (
+                conteudoPublicacaoDto.TipoConteudo == "Imagem"
+                || conteudoPublicacaoDto.TipoConteudo == "Video"
+            )
+            {
+                if (
+                    conteudoPublicacaoDto.Conteudo == null
+                    || conteudoPublicacaoDto.Conteudo.Length == 0
+                )
+                {
+                    return BadRequest("Ficheiro Multimédia em falta.");
+                }
+
+                var nomeConteudo =
+                    Guid.NewGuid().ToString()
+                    + PathGetExtension(conteudoPublicacaoDto.Conteudo.FileName);
+                var caminho = Path.Combine("wwwroot/uploads", nomeConteudo);
+
+                using (var stream = new FileStream(caminho, FileMode.Create))
+                {
+                    await conteudoPublicacaoDto.Conteudo.CopyToAsync(stream);
+                }
+
+                conteudoPublicacao.Conteudo = $"/uploads/{nomeConteudo}";
+            }
+            else
+            {
+                conteudoPublicacao.Conteudo = conteudoPublicacaoDto.Conteudo;
+            }
+
+            await _contexto.ConteudosPublicacao.AddAsync(conteudoPublicacao);
+            await _contexto.SaveChangesAsync();
 
             return CreatedAtAction(
                 nameof(SelecionarConteudoPublicacao),
-                new{id = conteudoPublicacao.Id},
+                new { id = conteudoPublicacao.Id },
                 conteudoPublicacao.ToConteudoPublicacaoDto()
             );
         }
 
         [HttpPut]
         [Route("{Id}")]
-        public IActionResult ActualizarConteudoPublicacao(
+        public async Task<IActionResult> ActualizarConteudoPublicacao(
             [FromRoute] int Id,
             [FromBody] ActualizarConteudoPublicacaoRequestDto conteudoPublicacaoDto
         )
         {
-            var conteudoPublicacao = _contexto.ConteudosPublicacao.FirstOrDefault(cp =>
+            var conteudoPublicacao = await _contexto.ConteudosPublicacao.FirstOrDefaultAsync(cp =>
                 cp.Id == Id
             );
 
@@ -89,15 +119,15 @@ namespace NzolaWebAPI.Controllers
             conteudoPublicacao.TipoConteudo = conteudoPublicacaoDto.TipoConteudo;
             conteudoPublicacao.Ordem = conteudoPublicacaoDto.Ordem;
 
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
             return Ok(conteudoPublicacao.ToConteudoPublicacaoDto());
         }
 
         [HttpDelete]
         [Route("{Id}")]
-        public IActionResult EliminarConteudoPublicacao([FromRoute] int Id)
+        public async Task<IActionResult> EliminarConteudoPublicacao([FromRoute] int Id)
         {
-            var conteudoPublicacao = _contexto.ConteudosPublicacao.FirstOrDefault(cp =>
+            var conteudoPublicacao = await _contexto.ConteudosPublicacao.FirstOrDefault(cp =>
                 cp.Id == Id
             );
 
@@ -107,7 +137,7 @@ namespace NzolaWebAPI.Controllers
             }
 
             _contexto.ConteudosPublicacao.Remove(conteudoPublicacao);
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
 
             return NoContent();
         }

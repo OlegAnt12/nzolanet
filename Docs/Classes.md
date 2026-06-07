@@ -1,12 +1,16 @@
+# Classes e Modelos
+
 ## Utilizador
 
 - Id: int
 - NomeCompleto: string
 - NomeUtilizador: string
 - Email: string
+- Telefone: string
 - PalavraPasse: string
 - NivelAcesso: NivelAcesso
 - FotoPerfil: byte[]
+- ImagemCobertura: byte[]
 - Biografia: string
 - Privacidade: EstadoAcesso
 - EstadoConta: EstadoConta  
@@ -14,7 +18,6 @@
 - Seguidores: List<Seguidor>
 - Publicacoes: List<Publicacao>
 - Comentarios: List<Comentario>
-- Bazes: List<Baze>
 
  
 ## Seguidor
@@ -33,6 +36,7 @@
 - QuantidadeComentarios: int
 - DataPublicacao: DateTime
 - Conteudos: List<ConteudoPublicacao>
+- Comentarios : List<Comentario>
 
 
 ## ConteudoPublicacao
@@ -72,3 +76,7 @@
 - PublicacaoId: int
 - UtilizadorId: int
 - DataInteracao: DateTime
+
+___________________
+
+# DTOs

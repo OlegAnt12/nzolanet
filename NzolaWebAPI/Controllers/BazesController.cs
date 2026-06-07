@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Baze;
+using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
+using NzolaWebAPI.Repositories;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -15,10 +17,12 @@ namespace NzolaWebAPI.Controllers
     public class BazesController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
+        private readonly IBazesRepository _bazeRepo;
 
-        public BazesController(ContextoBDNzola contexto)
+        public BazesController(ContextoBDNzola contexto, IBazesRepository bazeRepo)
         {
             _contexto = contexto;
+            _bazeRepo = bazeRepo;
         }
 
         /*[HttpGet]
@@ -40,14 +44,14 @@ namespace NzolaWebAPI.Controllers
 
             return Ok(baze);
         }
-        */
+        
 
         [HttpGet("{id}")]
-        public IActionResult SelecionarBaze([FromRoute] int id)
+        public async Task<IActionResult> SelecionarBaze([FromRoute] int id)
         {
-            var baze =  _contexto.Bazes.Find(id);
-            
-            if(baze == null)
+            var baze = await _contexto.Bazes.FindAsync(id);
+
+            if (baze == null)
             {
                 return NotFound();
             }
@@ -55,7 +59,7 @@ namespace NzolaWebAPI.Controllers
             return Ok(baze);
         }
 
-        /*[HttpGet("utilizador/{id}")]
+        [HttpGet("utilizador/{id}")]
         public IActionResult SelecionarBazesPorUtilizador([FromRoute] int id)
         {
                 chamar função de retorno ou verificação de utilizadores
@@ -71,12 +75,9 @@ namespace NzolaWebAPI.Controllers
         }*/
 
         [HttpGet("publicacao/{id}")]
-        public IActionResult GetBazesPorPublicacao([FromRoute] int id)
+        public async Task<IActionResult> GetBazesPorPublicacao([FromRoute] int id)
         {
-            var bazesPublicacao = _contexto
-                .Bazes.ToList()
-                .Where(b => b.PublicacaoId == id)
-                .Select(b => b.ToBazeDto());
+            var bazesPublicacao = await _bazeRepo.GetBazesPorPublicacaoAsync();
 
             if (bazesPublicacao == null)
             {
@@ -87,27 +88,29 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpPost("{publicacaoId:int}/{utilizadorId:int}")]
-        public IActionResult DarBaze(
+        public async Task<IActionResult> DarBaze(
             [FromRoute] int publicacaoId,
             [FromRoute] int utilizadorId,
             [FromBody] DarBazeRequestDto bazeDto
         )
         {
-            bool utilizadorExiste = _contexto.Utilizadores.Any(u => u.Id == utilizadorId);
+            bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
+                u.Id == utilizadorId
+            );
 
             if (!utilizadorExiste)
             {
                 return BadRequest("Este Utilizador Não Existe");
             }
 
-            var publicacao = _contexto.Publicacoes.Find(publicacaoId);
+            var publicacao = await _contexto.Publicacoes.FindAsync(publicacaoId);
 
             if (publicacao == null)
             {
                 return BadRequest("Esta Publicação Não Existe");
             }
 
-            var bazeExistente = _contexto.Bazes.FirstOrDefault(b =>
+            var bazeExistente = await _contexto.Bazes.FirstOrDefaultAsync(b =>
                 b.PublicacaoId == publicacaoId && b.UtilizadorId == utilizadorId
             );
 
@@ -118,7 +121,7 @@ namespace NzolaWebAPI.Controllers
                 if (publicacao.QuantidadeBazes > 0)
                     publicacao.QuantidadeBazes--;
 
-                _contexto.SaveChanges();
+                await _contexto.SaveChangesAsync();
                 return Ok(
                     new
                     {
@@ -132,8 +135,8 @@ namespace NzolaWebAPI.Controllers
             baze.DataInteracao = DateTime.Now;
             publicacao.QuantidadeBazes++;
 
-            _contexto.Bazes.Add(baze);
-            _contexto.SaveChanges();
+            _contexto.Bazes.AddAsync(baze);
+            _contexto.SaveChangesAsync();
 
             return CreatedAtAction(nameof(SelecionarBaze), new { id = baze.Id }, baze.ToBazeDto());
         }
