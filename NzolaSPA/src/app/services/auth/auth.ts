@@ -8,7 +8,7 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-
+  
   login(dados: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/login`, dados);
   }
@@ -17,4 +17,3 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/utilizadores/criar`, dados);
   }
 }
-
