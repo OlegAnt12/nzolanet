@@ -9,8 +9,8 @@ namespace NzolaWebAPI.Models
 {
     public class Utilizador
     {
-
         public int Id { get; set; }
+        public string genero { get; set; }
         public string NomeCompleto { get; set; }
         public string Email { get; set; }
         public string PalavraPasse { get; set; }
@@ -20,11 +20,12 @@ namespace NzolaWebAPI.Models
         public EstadoAcesso Privacidade { get; set; }
         public EstadoConta EstadoConta { get; set; }
         public DateTime DataRegistro { get; set; }
-        public NivelLigacao nivelLigacao { get; set; }
+       // public NivelLigacao nivelLigacao { get; set; }
         public List<Seguidor> Seguidor { get; set; } = new List<Seguidor>();
         public List<Publicacao> Publicacoes { get; set; } = new List<Publicacao>();
         public List<Comentario> Comentarios { get; set; } = new List<Comentario>();
         public List<Baze> Bazes { get; set; } = new List<Baze>();
+        public DateTime DataNascimento { get; set; }
 
 
     }

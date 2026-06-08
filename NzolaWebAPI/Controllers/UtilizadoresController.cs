@@ -4,8 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Data;
-using NzolaWebAPI.DTOs.Utilizador;
-using NzolaWebAPI.Models;   
+using NzolaWebAPI.DTOs;
+using NzolaWebAPI.DTOs.Utilizador;  
+using NzolaWebAPI.Models;     
+using Microsoft.EntityFrameworkCore;
+using NzolaWebAPI.Mappers;  
+
+
 
 
 namespace NzolaWebAPI.Controllers{
@@ -21,14 +26,14 @@ public class UtilizadoresController : ControllerBase{
        [HttpGet]
          public async Task<IActionResult> ListarUtilizadores()
          {
-              var utilizadores = await _contexto.Utilizadores.ToListAsync()
-              .Select(u => u.ToUtilizadorDto());
+              var utilizadores = await _contexto.Utilizadores.Select(u => u.ToUtilizadorDto())
+              .ToListAsync();
               return Ok(utilizadores);
          }
 
         [HttpGet("{id}")]
 
-        public async Task<IActionResult> SelecionarUtilizador(int id)
+    public async Task<IActionResult> SelecionarUtilizador(int id)
         {
             var utilizador = await _contexto.Utilizadores.FindAsync(id);
 
@@ -39,27 +44,37 @@ public class UtilizadoresController : ControllerBase{
 
             return Ok(utilizador.ToUtilizadorDto());
         }
-
-        [HttpPost]
-
-        public async Task<IActionResult> CriarUtilizador([FromBody] CriarUtilizadorRequestDto utilizadorDto)
+        
+       [HttpPost]
+        public async Task<IActionResult> Criar([FromBody] CriarUtilizadorRequestDto criarUtilizadorDto)
         {
-            var utilizador = new Utilizador
-            {
-                NomeCompleto = utilizadorDto.NomeCompleto,
-                Email = utilizadorDto.Email,
-                Biografia = utilizadorDto.Biografia,
-                Privacidade = utilizadorDto.Privacidade,
-                EstadoConta = utilizadorDto.EstadoConta,
-                nivelLigacao = utilizadorDto.NivelLigacao.Seguindo
-            };
+            var utilizador = criarUtilizadorDto.ToUtilizadorFromCriarDto();
 
             _contexto.Utilizadores.Add(utilizador);
             await _contexto.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(SelecionarUtilizador), new { id = utilizador.Id }, utilizador.ToUtilizadorDto());
+            return CreatedAtAction(nameof(SelecionarUtilizador), new { id = utilizador.Id }, utilizador.ToUtilizadorDto());                                             
+}
+            [HttpDelete("{id}")]
+
+    public async Task<IActionResult> Apagar(int id)
+        {
+            var utilizador = await _contexto.Utilizadores.FindAsync(id);
+
+            if (utilizador == null)
+            {
+                return NotFound();
+            }
+
+            _contexto.Utilizadores.Remove(utilizador);
+            await _contexto.SaveChangesAsync();
+
+            return NoContent();
         }
 
+        
+
 }
 
 }
+
