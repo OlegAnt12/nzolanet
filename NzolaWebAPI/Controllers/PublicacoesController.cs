@@ -16,33 +16,26 @@ namespace NzolaWebAPI.Controllers
     public class PublicacoesController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
+        private readonly IPublicacaoRepository _pubRepo;
 
-        public PublicacoesController(ContextoBDNzola contexto)
+        public PublicacoesController(ContextoBDNzola contexto, IPublicacaoRepository _pubRepo)
         {
             _contexto = contexto;
+            _pubRepo = pubRepo;
         }
 
         [HttpGet]
         public async Task<IActionResult> ListarPublicacoes()
         {
-            var publicacoes = await _contexto
-                .Publicacoes.Include(p => p.Utilizador)
-                .Include(p => p.Conteudos)
-                .OrderByDescending(p => p.DataPublicacao)
-                .ToListAsync();
-
+            var publicacoes = await _pubRepo.ListarRecentesAsync();
             var publicacaoesDtos = publicacoes.Select(p => p.ToPublicacaoDto()).ToList();
-
             return Ok(publicacaoesDtos);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> SelecionarPublicacao(int id)
         {
-            var publicacao = await _contexto
-                .Publicacoes.Include(p => p.Utilizador)
-                .Include(p => p.Conteudos)
-                .FirstOrDefaultAsync(p => p.Id == id);
+            var publicacao = await _pubRepo.SelecionarAsync(id);
 
             if (publicacao == null)
             {
@@ -55,7 +48,7 @@ namespace NzolaWebAPI.Controllers
         [HttpPost("{utilizadorId}")]
         public async Task<IActionResult> PublicarConteudo(
             [FromRoute] int utilizadorId,
-            [FromBody] CriarPublicacaoRequestDto publicacaoDto
+            [FromForm] CriarPublicacaoRequestDto publicacaoDto
         )
         {
             bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
@@ -66,7 +59,49 @@ namespace NzolaWebAPI.Controllers
                 return BadRequest("Este Utilizador não existente");
             }
 
-            var strategy = _contexto.Database.CreateExecutionStrategy();
+            // 1. Validação de Fluxo: Garante que o utilizador que tenta publicar existe de facto
+            bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
+                u.Id == utilizadorId
+            );
+            if (!utilizadorExiste)
+            {
+                return BadRequest("Este Utilizador não existente no sistema.");
+            }
+
+            if (publicacaoDto == null || !publicacaoDto.Elementos.Any())
+            {
+                return BadRequest(
+                    "A publicação necessita de pelo menos um bloco de conteúdo (Texto, Imagem ou Vídeo)."
+                );
+            }
+
+            try
+            {
+                // 2. Delegação total à camada de Serviço
+                var resultadoDto = await _publicacaoService.CriarAsync(utilizadorId, publicacaoDto);
+
+                if (resultadoDto == null)
+                {
+                    return BadRequest("Não foi possível registar a publicação de momento.");
+                }
+
+                // 3. Resposta Padrão REST (201 Created com o DTO completo mapeado)
+                return CreatedAtAction(
+                    "SelecionarPublicacao", // Nome do método HTTP GET por ID
+                    new { id = resultadoDto.Id },
+                    resultadoDto
+                );
+            }
+            catch (Exception exc)
+            {
+                // Captura qualquer erro lançado pelo Rollback do Service e protege o servidor
+                return StatusCode(
+                    500,
+                    $"Erro Interno ao tentar processar e registar a publicação: {exc.Message}"
+                );
+            }
+
+            /*var strategy = _contexto.Database.CreateExecutionStrategy();
 
             return await strategy.ExecuteAsync(async () =>
             {
@@ -95,7 +130,7 @@ namespace NzolaWebAPI.Controllers
                         $"Erro Interno ao tentar registar a publicação: {exc.Message}"
                     );
                 }
-            });
+            });*/
         }
 
         [HttpPut]

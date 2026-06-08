@@ -20,7 +20,7 @@ namespace NzolaWebAPI.Repositories
 
         public Task<List<Baze>> GetBazesPorPublicacaoAsync()
         {
-            return await _contexto
+            return _contexto
                 .Bazes.Where(b => b.PublicacaoId == id)
                 .Select(b => b.ToBazeDto())
                 .ToListAsync();

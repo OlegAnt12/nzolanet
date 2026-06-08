@@ -25,13 +25,29 @@ namespace NzolaWebAPI.Mappers
         }
 
         public static ConteudoPublicacao ParaConteudoPublicacaoDeConteudoPublicacaoDto(
-            this AdicionarConteudoPublicacaoRequestDto conteudoDto, int publicacaoId
+            this AdicionarConteudoPublicacaoRequestDto conteudoDto,
+            int publicacaoId
         )
         {
             return new ConteudoPublicacao
             {
                 PublicacaoId = publicacaoId,
                 Conteudo = conteudoDto.Conteudo,
+                TipoConteudo = conteudoDto.TipoConteudo,
+                Ordem = conteudoDto.Ordem,
+            };
+        }
+
+        public static ConteudoPublicacao ParaConteudoPublicacaoDeItemConteudoRequestDto(
+            this ItemConteudoRequestDto conteudoDto,
+            int publicacaoId,
+            string conteudoResolvido
+        )
+        {
+            return new ConteudoPublicacao
+            {
+                PublicacaoId = publicacaoId,
+                Conteudo = conteudoResolvido,
                 TipoConteudo = conteudoDto.TipoConteudo,
                 Ordem = conteudoDto.Ordem,
             };
