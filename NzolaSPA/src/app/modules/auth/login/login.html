@@ -1,0 +1,27 @@
+<div class="auth-container">
+  <form class="auth-form" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <h2 class="auth-title">Login</h2>
+   
+    <div class="form-group">
+      <input class="form-input" formControlName="email" placeholder="Email" type="email">
+      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+        <small class="error-text">Introduza um email válido.</small>
+      }
+    </div>
+
+    <div class="form-group">
+      <input class="form-input" formControlName="password" placeholder="Senha" type="password">
+      @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+        <small class="error-text">A senha é obrigatória.</small>
+      }
+    </div>
+
+    <button class="btn-submit" type="submit" [disabled]="loginForm.invalid">Entrar</button>
+   
+    <div class="auth-links">
+      <p>Não tem conta? <a routerLink="/auth/register">Registe-se aqui</a></p>
+    </div>
+  </form>
+</div>
+
+ 
