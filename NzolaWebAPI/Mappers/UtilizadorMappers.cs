@@ -28,7 +28,7 @@ namespace NzolaWebAPI.Mappers
                 Email = utilizadorDto.Email,
                 FotoPerfil = utilizadorDto.FotoPerfil,
                 PalavraPasse = utilizadorDto.PalavraPasse,
-                genero = utilizadorDto.genero,
+                Genero = utilizadorDto.genero,
                 DataNascimento = utilizadorDto.DataNascimento
             };
         }

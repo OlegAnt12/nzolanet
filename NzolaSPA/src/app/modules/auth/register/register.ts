@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../../services/auth/auth.service';
+import { AuthService } from '../../../services/auth/auth';
 
 @Component({
   selector: 'app-register',
@@ -22,8 +22,8 @@ export class RegisterComponent {
   onRegister() {
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe({
-        next: (res) => console.log('Sucesso no registo:', res),
-        error: (err) => console.error('Erro ao registar:', err)
+        next: (res:any) => console.log('Sucesso no registo:', res),
+        error: (err:any) => console.error('Erro ao registar:', err)
       });
     }
   }
