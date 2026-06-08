@@ -13,8 +13,7 @@ namespace NzolaWebAPI.DTOs.Utilizador
         public String Email { get; set; }
         public byte [] FotoPerfil { get; set; }
         public String PalavraPasse { get; set; }
-        public String Genero { get; set; }
+        public String genero { get; set; }
         public DateTime DataNascimento { get; set; }
-        
     }
 }
