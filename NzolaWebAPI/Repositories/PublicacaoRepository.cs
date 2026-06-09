@@ -12,6 +12,7 @@ namespace NzolaWebAPI.Repositories
     public class PublicacaoRepository : IPublicacaoRepository
     {
         private readonly ContextoBDNzola _contexto;
+        private Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction _transacaoAtiva;
 
         public PublicacaoRepository(ContextoBDNzola contexto)
         {
@@ -33,8 +34,8 @@ namespace NzolaWebAPI.Repositories
             return (await _contexto.SaveChangesAsync()) > 0;
         }
 
-        public Task<List<Publicacao>> ListarRecentesAsync() {
-            return _contexto
+        public async Task<List<Publicacao>> ListarRecentesAsync() {
+            return await _contexto
                 .Publicacoes.Include(p => p.Utilizador)
                 .Include(p => p.Conteudos)
                 .OrderByDescending(p => p.DataPublicacao)
@@ -42,7 +43,7 @@ namespace NzolaWebAPI.Repositories
          }
 
         public async Task<Publicacao?> SelecionarAsync(int id) {
-            return _contexto
+            return await _contexto
                 .Publicacoes.Include(p => p.Utilizador)
                 .Include(p => p.Conteudos)
                 .FirstOrDefaultAsync(p => p.Id == id);

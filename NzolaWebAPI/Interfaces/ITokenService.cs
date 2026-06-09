@@ -6,8 +6,8 @@ using NzolaWebAPI.Models;
 
 namespace NzolaWebAPI.Interfaces
 {
-    public interface IBazesRepository
+    public interface ITokenService
     {
-        Task<List<Baze>> GetBazesPorPublicacaoAsync(int id);
+        string CriarToken(Utilizador utilizador);
     }
 }

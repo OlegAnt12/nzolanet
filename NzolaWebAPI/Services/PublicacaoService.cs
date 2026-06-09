@@ -2,6 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using NzolaWebAPI.Data;
+using NzolaWebAPI.DTOs.Publicacao;
+using NzolaWebAPI.Interfaces;
+using NzolaWebAPI.Mappers;
+using NzolaWebAPI.Models;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Services
 {
@@ -34,6 +41,8 @@ namespace NzolaWebAPI.Services
             if (!utilizadorExiste)
                 return null;
 
+            Publicacao? publicacao = null;
+
             await _publicacaoRepo.ExecutarEmEstrategiaAsync(async () =>
             {
                 // 2. Inicia a transação através da interface do repositório
@@ -60,7 +69,7 @@ namespace NzolaWebAPI.Services
                                 );
                             }
                             var conteudoPublicacao =
-                                conteudoPubDto.ParaConteudoPublicacaoDeItemConteudoRequestDto(
+                                item.ParaConteudoPublicacaoDeItemConteudoRequestDto(
                                     publicacao.Id,
                                     conteudoResolvido
                                 );
@@ -68,14 +77,14 @@ namespace NzolaWebAPI.Services
                         }
                     }
 
-                await _publicacaoRepo.AdicionarAsync(publicacao);
+                    await _publicacaoRepo.AdicionarAsync(publicacao);
                     await _publicacaoRepo.SalvarAsync();
 
                     // Confirma a transação se tudo correr bem
                     await _publicacaoRepo.ConfirmarTransacaoAsync();
 
                     // 5. Devolve o DTO final estruturado para o Feed (Usa o teu mapper de saída)
-                    return publicacao.ToPublicacaoFeedDto(); // Salva primeiro para gerar o PublicacaoId
+                    // Salva primeiro para gerar o PublicacaoId
                 }
                 catch (Exception)
                 {
@@ -85,7 +94,8 @@ namespace NzolaWebAPI.Services
                     throw;
                 }
             });
-        }
+            return publicacao != null ? publicacao.ToPublicacaoFeedDto() : null;
+        } 
 
         // Função auxiliar privada para isolar o upload físico
         private async Task<string> SalvarFicheiroNoServidorAsync(IFormFile? ficheiro)

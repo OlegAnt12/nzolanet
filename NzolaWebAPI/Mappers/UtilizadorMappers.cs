@@ -28,8 +28,18 @@ namespace NzolaWebAPI.Mappers
                 Email = utilizadorDto.Email,
                 FotoPerfil = utilizadorDto.FotoPerfil,
                 PalavraPasse = utilizadorDto.PalavraPasse,
-                genero = utilizadorDto.genero,
+                Genero = utilizadorDto.genero,
                 DataNascimento = utilizadorDto.DataNascimento
+            };
+        }
+
+        public static AutorPublicacaoDto ToAutorPublicacaoDto(this Utilizador modelUtilizador)
+        {
+            return new AutorPublicacaoDto
+            {
+                Id = modelUtilizador.Id,
+                NomeCompleto = modelUtilizador.NomeCompleto,
+                FotoPerfil = modelUtilizador.FotoPerfil
             };
         }
     }

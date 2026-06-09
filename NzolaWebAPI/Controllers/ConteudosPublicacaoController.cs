@@ -6,7 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.ConteudoPublicacao;
+using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
+using NzolaWebAPI.Repositories;
+using NzolaWebAPI.Services;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -15,10 +18,18 @@ namespace NzolaWebAPI.Controllers
     public class ConteudosPublicacaoController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
+        private readonly IPublicacaoRepository _pubRepo;
+        private readonly IConteudoPublicacaoService _service;
 
-        public ConteudosPublicacaoController(ContextoBDNzola contexto)
+        public ConteudosPublicacaoController(
+            ContextoBDNzola contexto,
+            IPublicacaoRepository pubRepo,
+            IConteudoPublicacaoService service
+        )
         {
             _contexto = contexto;
+            _pubRepo = pubRepo;
+            _service = service;
         }
 
         [HttpGet("publicacao/{publicacaoId}")]
@@ -44,59 +55,50 @@ namespace NzolaWebAPI.Controllers
             return Ok(conteudo.ToConteudoPublicacaoDto());
         }
 
-        [HttpPost("{publicacaoId}")]
+        [HttpPost("add-conteudo/{publicacaoId}")]
         public async Task<IActionResult> AdicionarConteudo(
-            [FromForm] AdicionarConteudoPublicacaoRequestDto conteudoPublicacaoDto,
-            int publicacaoId
+            [FromForm] List<ItemConteudoRequestDto> conteudosPublicacaoDto,
+            [FromRoute] int publicacaoId
         )
         {
-            bool publicacaoExiste = await _contexto.Publicacoes.AnyAsync(p => p.Id == publicacaoId);
+            // 1. Validação rápida de entrada
+            if (conteudosPublicacaoDto == null || !conteudosPublicacaoDto.Any())
+            {
+                return BadRequest("Forneça pelo menos um conteúdo para adicionar à publicação.");
+            }
+            // 2. Validação rápida de integridade
+            bool publicacaoExiste = await _pubRepo.ExisteAsync(publicacaoId); // Via Repositório
             if (!publicacaoExiste)
+                return BadRequest("Esta publicação não existe.");
+
+            try
             {
-                return BadRequest("Esta publicacao Não existe");
+                // 3. Executa o fluxo dinâmico através do Service
+                List<ConteudoPublicacaoDto> blocosGravadosDtos = await _service.AdicionarListaAsync(
+                    conteudosPublicacaoDto,
+                    publicacaoId
+                );
+
+                // Retorna 200 Ok com a lista de todos os blocos adicionados com sucesso
+                return Ok(
+                    new
+                    {
+                        Mensagem = $"{blocosGravadosDtos.Count} novo(s) bloco(s) adicionado(s) com sucesso!",
+                        NovosBlocos = blocosGravadosDtos,
+                    }
+                );
             }
-
-            var conteudoPublicacao =
-                conteudoPublicacaoDto.ParaConteudoPublicacaoDeConteudoPublicacaoDto(publicacaoId);
-
-            if (
-                conteudoPublicacaoDto.TipoConteudo == "Imagem"
-                || conteudoPublicacaoDto.TipoConteudo == "Video"
-            )
+            catch (ArgumentException ex)
             {
-                if (
-                    conteudoPublicacaoDto.Conteudo == null
-                    || conteudoPublicacaoDto.Conteudo.Length == 0
-                )
-                {
-                    return BadRequest("Ficheiro Multimédia em falta.");
-                }
-
-                var nomeConteudo =
-                    Guid.NewGuid().ToString()
-                    + PathGetExtension(conteudoPublicacaoDto.Conteudo.FileName);
-                var caminho = Path.Combine("wwwroot/uploads", nomeConteudo);
-
-                using (var stream = new FileStream(caminho, FileMode.Create))
-                {
-                    await conteudoPublicacaoDto.Conteudo.CopyToAsync(stream);
-                }
-
-                conteudoPublicacao.Conteudo = $"/uploads/{nomeConteudo}";
+                return BadRequest(ex.Message);
             }
-            else
+            catch (Exception ex)
             {
-                conteudoPublicacao.Conteudo = conteudoPublicacaoDto.Conteudo;
+                return StatusCode(
+                    500,
+                    $"Erro interno ao tentar salvar os novos blocos: {ex.Message}"
+                );
             }
-
-            await _contexto.ConteudosPublicacao.AddAsync(conteudoPublicacao);
-            await _contexto.SaveChangesAsync();
-
-            return CreatedAtAction(
-                nameof(SelecionarConteudoPublicacao),
-                new { id = conteudoPublicacao.Id },
-                conteudoPublicacao.ToConteudoPublicacaoDto()
-            );
         }
 
         [HttpPut]
@@ -127,7 +129,7 @@ namespace NzolaWebAPI.Controllers
         [Route("{Id}")]
         public async Task<IActionResult> EliminarConteudoPublicacao([FromRoute] int Id)
         {
-            var conteudoPublicacao = await _contexto.ConteudosPublicacao.FirstOrDefault(cp =>
+            var conteudoPublicacao = await _contexto.ConteudosPublicacao.FirstOrDefaultAsync(cp =>
                 cp.Id == Id
             );
 

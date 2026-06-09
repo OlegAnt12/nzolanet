@@ -8,6 +8,8 @@ namespace NzolaWebAPI.Interfaces
 {
     public interface IConteudoPublicacaoRepository
     {
-        Task AdicionarAsync(List<ConteudoPublicacao> conteudos);
+        Task AdicionarListaAsync(List<ConteudoPublicacao> conteudos);
+        Task<int> ObterUltimaOrdemPublicacaoAsync(int publicacaoId);
+        Task<bool> SalvarAsync();
     }
 }

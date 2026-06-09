@@ -24,5 +24,6 @@ namespace NzolaWebAPI.Models
         public DateTime DataAtualizacaoPublicacao { get; set; }
         public List<ConteudoPublicacao> Conteudos { get; set; } = new List<ConteudoPublicacao>();
         public List<Comentario> Comentarios { get; set; } = new List<Comentario>();
+        public List<Baze> Bazes { get; set; } = new List<Baze>();
     }
 }

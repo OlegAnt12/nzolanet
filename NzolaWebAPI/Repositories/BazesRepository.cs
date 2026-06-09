@@ -18,12 +18,9 @@ namespace NzolaWebAPI.Repositories
             _contexto = contexto;
         }
 
-        public Task<List<Baze>> GetBazesPorPublicacaoAsync()
+        public async Task<List<Baze>> GetBazesPorPublicacaoAsync(int id)
         {
-            return _contexto
-                .Bazes.Where(b => b.PublicacaoId == id)
-                .Select(b => b.ToBazeDto())
-                .ToListAsync();
+            return await _contexto.Bazes.Where(b => b.PublicacaoId == id).ToListAsync();
         }
     }
 }

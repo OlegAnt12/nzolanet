@@ -6,8 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Publicacao;
+using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
+using NzolaWebAPI.Repositories;
+using NzolaWebAPI.Services;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -17,11 +20,17 @@ namespace NzolaWebAPI.Controllers
     {
         private readonly ContextoBDNzola _contexto;
         private readonly IPublicacaoRepository _pubRepo;
+        private readonly IPublicacaoService _publicacaoService;
 
-        public PublicacoesController(ContextoBDNzola contexto, IPublicacaoRepository _pubRepo)
+        public PublicacoesController(
+            ContextoBDNzola contexto,
+            IPublicacaoRepository pubRepo,
+            IPublicacaoService publicacaoService
+        )
         {
             _contexto = contexto;
             _pubRepo = pubRepo;
+            _publicacaoService = publicacaoService;
         }
 
         [HttpGet]
@@ -59,16 +68,11 @@ namespace NzolaWebAPI.Controllers
                 return BadRequest("Este Utilizador não existente");
             }
 
-            // 1. Validação de Fluxo: Garante que o utilizador que tenta publicar existe de facto
-            bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
-                u.Id == utilizadorId
-            );
-            if (!utilizadorExiste)
-            {
-                return BadRequest("Este Utilizador não existente no sistema.");
-            }
-
-            if (publicacaoDto == null || !publicacaoDto.Elementos.Any())
+            if (
+                publicacaoDto == null
+                || publicacaoDto.Conteudos == null
+                || !publicacaoDto.Conteudos.Any()
+            )
             {
                 return BadRequest(
                     "A publicação necessita de pelo menos um bloco de conteúdo (Texto, Imagem ou Vídeo)."

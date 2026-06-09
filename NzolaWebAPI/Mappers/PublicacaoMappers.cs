@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using NzolaWebAPI.DTOs.Comentario;
+using NzolaWebAPI.DTOs.ConteudoPublicacao;
 using NzolaWebAPI.DTOs.Publicacao;
 using NzolaWebAPI.Models;
 
@@ -27,12 +29,12 @@ namespace NzolaWebAPI.Mappers
             };
         }
 
-        public static PublicacaoDto ToPublicacaoFeedDto(this Publicacao modelPublicacao)
+        public static PublicacaoFeedDto ToPublicacaoFeedDto(this Publicacao modelPublicacao)
         {
             if (modelPublicacao == null)
                 return null;
 
-            return new PublicacaoDto
+            return new PublicacaoFeedDto
             {
                 Id = modelPublicacao.Id,
 
@@ -40,10 +42,7 @@ namespace NzolaWebAPI.Mappers
                 QuantidadeComentarios = modelPublicacao.QuantidadeComentarios,
                 DataPublicacao = modelPublicacao.DataPublicacao,
 
-                AutorId =
-                    modelPublicacao.Utilizador != null
-                        ? AutorId = modelPublicacao.Utilizador.ToUtilizadorDto()
-                        : null,
+                Autor = modelPublicacao.Utilizador != null ? modelPublicacao.Utilizador.ToAutorPublicacaoDto() : null,
                 Conteudos =
                     modelPublicacao
                         .Conteudos?.OrderBy(ct => ct.Ordem)

@@ -9,6 +9,7 @@ using NzolaWebAPI.DTOs.Baze;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Repositories;
+using NzolaWebAPI.Services;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -44,20 +45,6 @@ namespace NzolaWebAPI.Controllers
 
             return Ok(baze);
         }
-        
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> SelecionarBaze([FromRoute] int id)
-        {
-            var baze = await _contexto.Bazes.FindAsync(id);
-
-            if (baze == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(baze);
-        }
 
         [HttpGet("utilizador/{id}")]
         public IActionResult SelecionarBazesPorUtilizador([FromRoute] int id)
@@ -74,17 +61,32 @@ namespace NzolaWebAPI.Controllers
             return Ok(bazesUtilizador);
         }*/
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> SelecionarBaze([FromRoute] int id)
+        {
+            var baze = await _contexto.Bazes.FindAsync(id);
+
+            if (baze == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(baze);
+        }
+
         [HttpGet("publicacao/{id}")]
         public async Task<IActionResult> GetBazesPorPublicacao([FromRoute] int id)
         {
-            var bazesPublicacao = await _bazeRepo.GetBazesPorPublicacaoAsync();
+            var bazesPublicacao = await _bazeRepo.GetBazesPorPublicacaoAsync(id);
 
             if (bazesPublicacao == null)
             {
                 return NotFound();
             }
 
-            return Ok(bazesPublicacao);
+            var bazeDto = bazesPublicacao.Select(b => b.ToBazeDto());
+
+            return Ok(bazeDto);
         }
 
         [HttpPost("{publicacaoId:int}/{utilizadorId:int}")]

@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using NzolaWebAPI.Data;
 using NzolaWebAPI.Configurations;
+using NzolaWebAPI.Data;
 using NzolaWebAPI.Interfaces;
+using NzolaWebAPI.Repositories;
 using NzolaWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,12 +22,17 @@ builder.Services.AddDbContext<ContextoBDNzola>(options =>
 
 //Registra as configurações de e-mail a partir do appsettings.json
 builder.Services.Configure<NzolaWebAPI.Configurations.EmailSettings>(
-    builder.Configuration.GetSection("EmailSettings"));
+    builder.Configuration.GetSection("EmailSettings")
+);
 
+builder.Services.AddScoped<IBazesRepository, BazesRepository>();
+builder.Services.AddScoped<IConteudoPublicacaoRepository, ConteudoPublicacaoRepository>();
+builder.Services.AddScoped<IPublicacaoRepository, PublicacaoRepository>();
 
 // Registra a implementação do serviço de e-mail
+builder.Services.AddScoped<IBazeService, BazeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.builder.Services.AddScoped<IBazesRepository, BazesRepository>();
+builder.Services.AddScoped<IConteudoPublicacaoService, ConteudoPublicacaoService>();
 
 var app = builder.Build();
 
