@@ -42,23 +42,45 @@ namespace NzolaWebAPI.Data
                 .HasForeignKey(b => b.PublicacaoId)
                 .OnDelete(DeleteBehavior.Restrict); // Desativa cascade da Publicação para a Baze
 
-            modelBuilder
-                .Entity<Publicacao>()
-                .HasOne(p => p.Utilizador) // Uma Publicação tem um Autor/Utilizador
-                .WithMany(u => u.Publicacoes) // Um Utilizador tem muitas Publicações
-                .HasForeignKey(p => p.AutorId) // A chave estrangeira na tabela Publicação é AutorId
-                .OnDelete(DeleteBehavior.Cascade); // Se o Utilizador morrer, os posts morrem com ele! (PERMITIDO)
+
+// 🔥 SOLUÇÃO: Quebrar o ciclo de cascade path entre Publicação e Utilizador
+    modelBuilder.Entity<Publicacao>()
+        .HasOne(p => p.Utilizador)          // Uma Publicação tem um Utilizador
+        .WithMany(u => u.Publicacoes)       // Um Utilizador tem muitas Publicações
+        .HasForeignKey(p => p.AutorId)      // A chave estrangeira é o AutorId
+        .OnDelete(DeleteBehavior.Restrict);
+
+    // Se o erro persistir noutras tabelas como Comentarios ou Bazes, 
+    // podes aplicar a mesma lógica nelas da seguinte forma:
+    modelBuilder.Entity<Baze>()
+        .HasOne(b => b.Utilizador)
+        .WithMany()
+        .HasForeignKey(b => b.UtilizadorId)
+        .OnDelete(DeleteBehavior.Restrict);
 
             // 3. Define a Chave Composta da Baze (Garante 1 baze por post por utilizador)
             modelBuilder.Entity<Baze>().HasKey(b => new { b.UtilizadorId, b.PublicacaoId });
 
-            // NOTA: Se a tabela 'Seguidor' também der erro de ciclo por relacionar Utilizador duas vezes
-            // (SeguidoId e SeguidorId), adiciona também:
-            // modelBuilder.Entity<Seguidor>()
-            //     .HasOne(s => s.SeguidorUtilizador)
-            //     .WithMany()
-         
-           //     .OnDelete(DeleteBehavior.Restrict);
+            // 🔗 Configuração da Tabela de Seguidores (Fluent API)
+            /*modelBuilder.Entity<Seguidor>(entity =>
+            {
+                // 1. Define a chave primária da tabela pivot
+                entity.HasKey(s => s.Id);
+
+                // 2. Mapeia a relação de quem está a SEGUIR (O Seguidor)
+                entity
+                    .HasOne(s => s.Utilizador)
+                    .WithMany(u => u.Seguindo) // Garante que tens 'public ICollection<Seguidor> Seguindo { get; set; }' no Utilizador.cs
+                    .HasForeignKey(s => s.SeguidorId)
+                    .OnDelete(DeleteBehavior.Restrict); // 🔥 OBRIGATÓRIO: Desativa a cascata para evitar ciclos no SQL Server
+
+                // 3. Mapeia a relação de quem está a SER SEGUIDO (O Alvo/Destino)
+                entity
+                    .HasOne(s => s.UtilizadorSeguido)
+                    .WithMany(u => u.Seguidores) // Garante que tens 'public ICollection<Seguidor> Seguidores { get; set; }' no Utilizador.cs
+                    .HasForeignKey(s => s.SeguidoId)
+                    .OnDelete(DeleteBehavior.Restrict); // 🔥 OBRIGATÓRIO: Desativa a cascata aqui também
+            });*/
         }
     }
 }

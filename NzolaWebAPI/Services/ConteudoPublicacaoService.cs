@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NzolaWebAPI.DTOs.ConteudoPublicacao;
-using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Interfaces;
+using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
 
 namespace NzolaWebAPI.Services
@@ -40,15 +40,17 @@ namespace NzolaWebAPI.Services
                     ultimaOrdem++; // Incrementa para o novo bloco (4, 5, 6...)
                     string conteudoResolvido = string.Empty;
 
-                    if (dto.TipoConteudo.ToString() == "Imagem" || dto.TipoConteudo.ToString() == "Video")
+                    if (
+                        dto.TipoConteudo.ToString() == "Imagem"
+                        || dto.TipoConteudo.ToString() == "Video"
+                    )
                     {
                         if (dto.Ficheiro == null || dto.Ficheiro.Length == 0)
-                        { 
+                        {
                             throw new ArgumentException(
                                 "Ficheiro multimédia em falta para o bloco solicitado."
                             );
                         }
-                            
 
                         // Processa o upload físico
                         conteudoResolvido = await SalvarFicheiroNoDiscoAsync(dto.Ficheiro);

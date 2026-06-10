@@ -7,6 +7,7 @@ namespace NzolaWebAPI.DTOs.Comentario
 {
     public class EditarComentarioRequestDto
     {
-        public string ConteudoComentario { get; set;}
+        public string ConteudoComentario { get; set; } = string.Empty;
+        public DateTime DataActualizacao { get; set; } = DateTime.Now;
     }
 }

@@ -24,11 +24,11 @@ namespace NzolaWebAPI.Migrations
 
             modelBuilder.Entity("NzolaWebAPI.Models.Baze", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("UtilizadorId")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<int>("PublicacaoId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("DataInteracao")
                         .HasColumnType("datetime2");
@@ -36,15 +36,15 @@ namespace NzolaWebAPI.Migrations
                     b.Property<int>("EstadoBaze")
                         .HasColumnType("int");
 
-                    b.Property<int>("PublicacaoId")
+                    b.Property<int>("Id")
                         .HasColumnType("int");
 
-                    b.Property<int>("UtilizadorId")
+                    b.Property<int?>("UtilizadorId1")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("UtilizadorId", "PublicacaoId");
 
-                    b.HasIndex("UtilizadorId");
+                    b.HasIndex("UtilizadorId1");
 
                     b.HasIndex("PublicacaoId", "UtilizadorId")
                         .IsUnique();
@@ -231,6 +231,10 @@ namespace NzolaWebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
 
+                    b.Property<string>("Genero")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("NivelAcesso")
                         .HasColumnType("int");
 
@@ -245,10 +249,6 @@ namespace NzolaWebAPI.Migrations
                     b.Property<int>("Privacidade")
                         .HasColumnType("int");
 
-                    b.Property<string>("genero")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("Utilizadores");
@@ -257,16 +257,20 @@ namespace NzolaWebAPI.Migrations
             modelBuilder.Entity("NzolaWebAPI.Models.Baze", b =>
                 {
                     b.HasOne("NzolaWebAPI.Models.Publicacao", "Publicacao")
-                        .WithMany()
+                        .WithMany("Bazes")
                         .HasForeignKey("PublicacaoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("NzolaWebAPI.Models.Utilizador", "Utilizador")
-                        .WithMany("Bazes")
+                        .WithMany()
                         .HasForeignKey("UtilizadorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("NzolaWebAPI.Models.Utilizador", null)
+                        .WithMany("Bazes")
+                        .HasForeignKey("UtilizadorId1");
 
                     b.Navigation("Publicacao");
 
@@ -278,7 +282,7 @@ namespace NzolaWebAPI.Migrations
                     b.HasOne("NzolaWebAPI.Models.Publicacao", "Publicacao")
                         .WithMany("Comentarios")
                         .HasForeignKey("PublicacaoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("NzolaWebAPI.Models.Utilizador", "Utilizador")
@@ -308,7 +312,7 @@ namespace NzolaWebAPI.Migrations
                     b.HasOne("NzolaWebAPI.Models.Utilizador", "Utilizador")
                         .WithMany("Publicacoes")
                         .HasForeignKey("AutorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Utilizador");
@@ -317,12 +321,14 @@ namespace NzolaWebAPI.Migrations
             modelBuilder.Entity("NzolaWebAPI.Models.Seguidor", b =>
                 {
                     b.HasOne("NzolaWebAPI.Models.Utilizador", null)
-                        .WithMany("Seguidor")
+                        .WithMany("Seguidores")
                         .HasForeignKey("UtilizadorId");
                 });
 
             modelBuilder.Entity("NzolaWebAPI.Models.Publicacao", b =>
                 {
+                    b.Navigation("Bazes");
+
                     b.Navigation("Comentarios");
 
                     b.Navigation("Conteudos");
@@ -336,7 +342,7 @@ namespace NzolaWebAPI.Migrations
 
                     b.Navigation("Publicacoes");
 
-                    b.Navigation("Seguidor");
+                    b.Navigation("Seguidores");
                 });
 #pragma warning restore 612, 618
         }

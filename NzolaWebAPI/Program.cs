@@ -25,7 +25,8 @@ builder.Services.Configure<NzolaWebAPI.Configurations.EmailSettings>(
     builder.Configuration.GetSection("EmailSettings")
 );
 
-builder.Services.AddScoped<IBazesRepository, BazesRepository>();
+builder.Services.AddScoped<IBazeRepository, BazeRepository>();
+builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
 builder.Services.AddScoped<IConteudoPublicacaoRepository, ConteudoPublicacaoRepository>();
 builder.Services.AddScoped<IPublicacaoRepository, PublicacaoRepository>();
 
@@ -33,6 +34,8 @@ builder.Services.AddScoped<IPublicacaoRepository, PublicacaoRepository>();
 builder.Services.AddScoped<IBazeService, BazeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IConteudoPublicacaoService, ConteudoPublicacaoService>();
+builder.Services.AddScoped<IComentarioService, ComentarioService>();
+builder.Services.AddScoped<IPublicacaoService, PublicacaoService>();
 
 var app = builder.Build();
 

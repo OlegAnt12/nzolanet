@@ -95,7 +95,7 @@ namespace NzolaWebAPI.Services
                 }
             });
             return publicacao != null ? publicacao.ToPublicacaoFeedDto() : null;
-        } 
+        }
 
         // Função auxiliar privada para isolar o upload físico
         private async Task<string> SalvarFicheiroNoServidorAsync(IFormFile? ficheiro)

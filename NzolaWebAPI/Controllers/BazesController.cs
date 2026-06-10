@@ -18,12 +18,18 @@ namespace NzolaWebAPI.Controllers
     public class BazesController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
-        private readonly IBazesRepository _bazeRepo;
+        private readonly IBazeRepository _bazeRepo;
+        private readonly IBazeService _bazeService;
 
-        public BazesController(ContextoBDNzola contexto, IBazesRepository bazeRepo)
+        public BazesController(
+            ContextoBDNzola contexto,
+            IBazeRepository bazeRepo,
+            IBazeService bazeService
+        )
         {
             _contexto = contexto;
             _bazeRepo = bazeRepo;
+            _bazeService = bazeService;
         }
 
         /*[HttpGet]
@@ -31,19 +37,6 @@ namespace NzolaWebAPI.Controllers
         {
             var bazes =  _contexto.Bazes.ToList();
             return Ok(bazes);
-        }
-        
-        [HttpGet("{id}")]
-        public IActionResult SelecionarBaze([FromRoute] int id)
-        {
-            var baze =  _contexto.Bazes.Find(id);
-            
-            if(baze == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(baze);
         }
 
         [HttpGet("utilizador/{id}")]
@@ -64,14 +57,14 @@ namespace NzolaWebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> SelecionarBaze([FromRoute] int id)
         {
-            var baze = await _contexto.Bazes.FindAsync(id);
+            var baze = await _bazeRepo.SelecionarBazeAsync(id);
 
             if (baze == null)
             {
                 return NotFound();
             }
 
-            return Ok(baze);
+            return Ok(baze.ToBazeDto());
         }
 
         [HttpGet("publicacao/{id}")]
@@ -96,7 +89,7 @@ namespace NzolaWebAPI.Controllers
             [FromBody] DarBazeRequestDto bazeDto
         )
         {
-            bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
+            /*bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
                 u.Id == utilizadorId
             );
 
@@ -140,7 +133,34 @@ namespace NzolaWebAPI.Controllers
             _contexto.Bazes.AddAsync(baze);
             _contexto.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(SelecionarBaze), new { id = baze.Id }, baze.ToBazeDto());
+            return CreatedAtAction(nameof(SelecionarBaze), new { id = baze.Id }, baze.ToBazeDto());*/
+            var resultado = await _bazeService.AlternarBazeAsync(
+                publicacaoId,
+                utilizadorId,
+                bazeDto
+            );
+
+            if (resultado.ErroMensagem != null)
+            {
+                return BadRequest(resultado.ErroMensagem);
+            }
+
+            if (resultado.FoiRemovido)
+            {
+                return Ok(
+                    new
+                    {
+                        mensagem = "Baze removido com sucesso!",
+                        quantidadeBazes = resultado.QuantidadeBazes,
+                    }
+                );
+            }
+
+            return CreatedAtAction(
+                nameof(SelecionarBaze),
+                new { id = resultado.BazeDto!.Id },
+                resultado.BazeDto
+            );
         }
     }
 }
