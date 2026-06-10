@@ -10,7 +10,7 @@ using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Models
 {
-    [Table("tb_ConteudoPublicacao")]
+    [Table("tb_ConteudosPublicacao")]
     public class ConteudoPublicacao
     {
         [Key]

@@ -3,8 +3,8 @@ using NzolaWebAPI.Configurations;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Repositories;
-using NzolaWebAPI.Services;
 using NzolaWebAPI.Repositories;
+using NzolaWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,42 +17,29 @@ builder.Services.AddSwaggerGen();
 // dotnet add package Microsoft.EntityFrameworkCore.InMemory
 // using Microsoft.EntityFrameworkCore;
 builder.Services.AddDbContext<ContextoBDNzola>(options =>
-<<<<<<< HEAD
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-=======
-    {
-        options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"));
-    });
->>>>>>> 14abf6e2ae7a2cc315135f841bcd20587c12b16c
 
 //Registra as configurações de e-mail a partir do appsettings.json
 builder.Services.Configure<NzolaWebAPI.Configurations.EmailSettings>(
     builder.Configuration.GetSection("EmailSettings")
 );
 
-<<<<<<< HEAD
 builder.Services.AddScoped<IBazeRepository, BazeRepository>();
 builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
 builder.Services.AddScoped<IConteudoPublicacaoRepository, ConteudoPublicacaoRepository>();
 builder.Services.AddScoped<IPublicacaoRepository, PublicacaoRepository>();
 
-=======
->>>>>>> 14abf6e2ae7a2cc315135f841bcd20587c12b16c
 // Registra a implementação do serviço de e-mail
 builder.Services.AddScoped<IBazeService, BazeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-<<<<<<< HEAD
 builder.Services.AddScoped<IConteudoPublicacaoService, ConteudoPublicacaoService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<IPublicacaoService, PublicacaoService>();
-=======
-builder.Services.AddScoped<ITokenService, TokenService>();                
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUtilizadorRepository, UtilizadorRepository>();
-builder.Services.AddScoped<IUtilizadorService, UtilizadorService>(); 
->>>>>>> 14abf6e2ae7a2cc315135f841bcd20587c12b16c
+builder.Services.AddScoped<IUtilizadorService, UtilizadorService>();
 
 var app = builder.Build();
 
@@ -104,8 +91,4 @@ app.Run();
 record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
 {
     public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 14abf6e2ae7a2cc315135f841bcd20587c12b16c

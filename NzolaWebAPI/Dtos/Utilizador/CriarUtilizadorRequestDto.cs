@@ -9,11 +9,11 @@ namespace NzolaWebAPI.DTOs.Utilizador
     {
         //nome e email
 
-        public String NomeCompleto { get ; set; }
-        public String Email { get; set; }
-        public byte [] FotoPerfil { get; set; }
-        public String PalavraPasse { get; set; }
-        public String genero { get; set; }
+        public string NomeCompleto { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public byte?[] FotoPerfil { get; set; }
+        public string PalavraPasse { get; set; } = string.Empty;
+        public string genero { get; set; } = string.Empty;
         public DateTime DataNascimento { get; set; }
     }
 }

@@ -7,20 +7,19 @@ using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs;
 using NzolaWebAPI.DTOs.Utilizador;
-using NzolaWebAPI.Interfaces; 
+using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AutenticacaoController : ControllerBase
+    public class AutenticacoesController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
-        private readonly ITokenService _tokenService; 
+        private readonly ITokenService _tokenService;
 
-       
-        public AutenticacaoController(ContextoBDNzola contexto, ITokenService tokenService)
+        public AutenticacoesController(ContextoBDNzola contexto, ITokenService tokenService)
         {
             _contexto = contexto;
             _tokenService = tokenService;
@@ -29,8 +28,9 @@ namespace NzolaWebAPI.Controllers
         [HttpPost("registar")]
         public async Task<IActionResult> Registar([FromBody] CriarUtilizadorRequestDto registoDto)
         {
-            var emailExiste = await _contexto.Utilizadores
-                .AnyAsync(u => u.Email.ToLower() == registoDto.Email.ToLower());
+            var emailExiste = await _contexto.Utilizadores.AnyAsync(u =>
+                u.Email.ToLower() == registoDto.Email.ToLower()
+            );
 
             if (emailExiste)
             {
@@ -49,23 +49,25 @@ namespace NzolaWebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var utilizador = await _contexto.Utilizadores
-                .FirstOrDefaultAsync(u => u.Email.ToLower() == loginDto.Email.ToLower());
+            var utilizador = await _contexto.Utilizadores.FirstOrDefaultAsync(u =>
+                u.Email.ToLower() == loginDto.Email.ToLower()
+            );
 
             if (utilizador == null || utilizador.PalavraPasse != loginDto.PalavraPasse)
             {
                 return Unauthorized("E-mail ou palavra-passe incorretos");
             }
 
-
             var tokenGerado = _tokenService.CriarToken(utilizador);
 
-           
-            return Ok(new {
-                mensagem = "Login efetuado com sucesso!",
-                token = tokenGerado,
-                utilizador = utilizador.ToUtilizadorDto()
-            });
+            return Ok(
+                new
+                {
+                    mensagem = "Login efetuado com sucesso!",
+                    token = tokenGerado,
+                    utilizador = utilizador.ToUtilizadorDto(),
+                }
+            );
         }
     }
 }

@@ -1,6 +1,5 @@
-using NzolaWebAPI.Models;
 using NzolaWebAPI.DTOs.Utilizador;
-
+using NzolaWebAPI.Models;
 
 namespace NzolaWebAPI.Mappers
 {
@@ -15,21 +14,22 @@ namespace NzolaWebAPI.Mappers
                 Email = utilizador.Email,
                 Biografia = utilizador.Biografia,
                 Privacidade = utilizador.Privacidade,
-                EstadoConta = utilizador.EstadoConta
+                EstadoConta = utilizador.EstadoConta,
             };
-
         }
 
-        public static Utilizador ToUtilizadorFromCriarDto(this CriarUtilizadorRequestDto utilizadorDto)
+        public static Utilizador ToUtilizadorFromCriarDto(
+            this CriarUtilizadorRequestDto utilizadorDto
+        )
         {
             return new Utilizador
             {
                 NomeCompleto = utilizadorDto.NomeCompleto,
                 Email = utilizadorDto.Email,
-                FotoPerfil = utilizadorDto.FotoPerfil,
+                FotoPerfil = utilizadorDto.FotoPerfil != null ? utilizadorDto.FotoPerfil : null,
                 PalavraPasse = utilizadorDto.PalavraPasse,
                 Genero = utilizadorDto.genero,
-                DataNascimento = utilizadorDto.DataNascimento
+                DataNascimento = utilizadorDto.DataNascimento,
             };
         }
 
@@ -39,7 +39,7 @@ namespace NzolaWebAPI.Mappers
             {
                 Id = modelUtilizador.Id,
                 NomeCompleto = modelUtilizador.NomeCompleto,
-                FotoPerfil = modelUtilizador.FotoPerfil
+                FotoPerfil = modelUtilizador.FotoPerfil,
             };
         }
     }

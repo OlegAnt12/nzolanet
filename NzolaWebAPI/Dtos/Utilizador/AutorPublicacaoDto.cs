@@ -8,7 +8,7 @@ namespace NzolaWebAPI.DTOs.Utilizador
     public class AutorPublicacaoDto
     {
         public int Id { get; set; }
-        public string NomeCompleto { get; set; }
-        public byte[] FotoPerfil { get; set; }
+        public string NomeCompleto { get; set; } = string.Empty;
+        public byte?[] FotoPerfil { get; set; }
     }
 }

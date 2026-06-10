@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace NzolaWebAPI.Models
 {
-    [Table("tb_Publicacao")]
+    [Table("tb_Publicacoes")]
     public class Publicacao
     {
         [Key]

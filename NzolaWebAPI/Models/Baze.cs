@@ -10,7 +10,7 @@ using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Models
 {
-    [Table("tb_Baze")]
+    [Table("tb_Bazes")]
     [Index(nameof(PublicacaoId), nameof(UtilizadorId), IsUnique = true)]
     public class Baze
     {
