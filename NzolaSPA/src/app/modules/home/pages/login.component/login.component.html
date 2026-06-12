@@ -2,16 +2,16 @@
   <form action="" class="formulario-login" [formGroup]="loginForm" (ngSubmit)="onLogin()">
     <div class="campo-dados">
       <label for="emailId">E-mail:</label>
-      <input type="text" name="email" id="emailId" class="txt txt-email" formControlName="email" />
-      <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid" class="alert-error">
-        <small *ngIf="loginForm.get('email')?.hasError('required')">O e-mail é obrigatório.</small>
-        <small *ngIf="loginForm.get('email')?.hasError('email')">Introduz um e-mail com formato válido.</small>
+      <input type="text" name="email" id="emailId" class="txt txt-email" formControlName="identificador" />
+      <div *ngIf="loginForm.get('identificador')?.touched && loginForm.get('identificador')?.invalid" class="alert-error">
+        <small *ngIf="loginForm.get('identificador')?.hasError('required')">O e-mail é obrigatório.</small>
+        <small *ngIf="loginForm.get('identificador')?.hasError('identificador')">Introduz um e-mail com formato válido.</small>
       </div>
     </div>
     <div class="campo-dados">
       <label for="palavraPasseId">Palavra-passe:</label>
       <input type="password" name="palavra_passe" id="palavraPasseId" class="txt txt-palavra-passe" formControlName="palavraPasse"  />
-      <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid" class="alert-error">
+      <div *ngIf="loginForm.get('palavraPasse')?.touched && loginForm.get('palavraPasse')?.invalid" class="alert-error">
         <small>A palavra-passe é obrigatória.</small>
       </div>
     </div>

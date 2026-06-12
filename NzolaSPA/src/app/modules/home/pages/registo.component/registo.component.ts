@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RegistoRequestDto } from '../../../../dtos/utilizador/auth/registo/registo-request.dto';
 import { AuthService } from '../../../../services/auth/auth';
 import { Router } from '@angular/router';
@@ -7,7 +7,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-registo.component',
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './registo.component.html',
   styleUrl: './registo.component.css',
 })

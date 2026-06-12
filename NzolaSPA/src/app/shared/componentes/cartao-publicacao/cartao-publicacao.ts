@@ -27,7 +27,7 @@ export class CartaoPublicacao implements OnInit {
   carregarPublicacoesRecentes(): void
   {
     this.carregar = true;
-    this.publicacaoService.obterRecentes().subscribe(
+    /*this.publicacaoService.obterRecentes().subscribe(
       {
         next: (dados) => {
           this.listaPublicacoes = dados;
@@ -39,7 +39,7 @@ export class CartaoPublicacao implements OnInit {
           this.carregar = false;
         }
       }
-    )
+    )*/
   }
 
 }

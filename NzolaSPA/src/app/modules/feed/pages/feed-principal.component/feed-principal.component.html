@@ -1,1 +1,198 @@
-<p>feed-principal.component works!</p>
+<div class="contentor">
+  
+  <div class="cabeca-feed">
+    <div class="navegador">
+      <div class="sup-dir">
+        <div class="logotipo" routerLink="/feed" style="cursor: pointer;">NzolaNet</div>
+        <div class="caixa-pesquisa">
+          <form class="pesquisa-form">
+            <input type="text" placeholder="Pesquisar na rede..." class="txt txt-pesquisa" />
+            <button type="submit" class="btn btn-pesquisa">Pesquisar</button>
+          </form>
+        </div>
+      </div>
+      <div class="sup-esq">
+        <button type="button" class="btn btn-home-feed" routerLink="/feed">Feed</button>
+        <button type="button" class="btn btn-notificacao">Notificação</button>
+        <button type="button" class="btn btn-logout" (click)="$event.preventDefault(); executarLogout()" style="background-color: #dc3545; color: white;">Sair</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-feed">
+    
+    <div class="seccao-utilizador prev-util" *ngIf="utilizadorLogado">
+      <div class="utilizador-area">
+        <div class="utilizador-banner">
+          <div class="capa-utilizador">
+            <img src="./profile/Blackisbeautiful.jpg" alt="Capa" />
+          </div>
+          <div class="area-desc">
+            <div class="minifoto-perfil">
+              <img src="./profile/pexels-carlosfotografias-5669788.jpg" alt="Avatar" />
+            </div>
+            <div class="info-util">
+              <strong>{{ utilizadorLogado.nome }}</strong>
+              <p style="color: gray; font-size: 12px; margin: 2px 0;">{{ utilizadorLogado.username }}</p>
+              <p>{{ utilizadorLogado.funcao }}</p>
+            </div>
+          </div>
+          <div class="infor-perfil">
+            <div class="metricas">
+              <span>{{ utilizadorLogado.seguidores }} seguidores</span> • 
+              <span>{{ utilizadorLogado.publicacoes }} posts</span>
+            </div>
+            <button type="button" class="btn btn-acessar-perfil">Aceder Perfil</button>
+          </div>
+        </div>
+
+        <div class="publicacao-form">
+          <form [formGroup]="publicacaoForm" (ngSubmit)="fazerPublicacao()" class="publicacao-formlr">
+            <div class="componentes-publicacao">
+              <div class="area-texto">
+                <textarea
+                  formControlName="texto"
+                  class="txt txt-box"
+                  placeholder="O que estás a pensar, dar um baze post? 🚀"
+                  [disabled]="enviandoPost"
+                ></textarea>
+                <div class="botao-enviar">
+                  <button type="submit" class="btn btn-publicar" [disabled]="publicacaoForm.invalid || enviandoPost">
+                    {{ enviandoPost ? 'A publicar...' : 'Publicar' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="seccao-publicacao prev-pub">
+      <main class="area-feed">
+        
+        <div *ngIf="carregandoFeed" class="loading-state" style="text-align: center; padding: 20px;">
+          <p>A carregar o feed da NzolaNet... ⏳</p>
+        </div>
+
+        <div class="publicacao" *ngFor="let pub of feedPublicacoes">
+          
+          <div class="cabeca-publicacao">
+            <div class="autor-publicacao">
+              <div class="minifoto-perfil">
+                <img src="./profile/pexels-carlosfotografias-5669788.jpg" alt="Autor" />
+              </div>
+              <div class="identidade-autor">
+                <strong>{{ pub.autor?.nomeCompleto || 'Membro da Rede' }}</strong>
+                <small style="display: block; color: gray;">{{ pub.dataPublicacao | date:'dd/MM/yyyy HH:mm' }}</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="corpo-publicacao">
+            <div class="texto-publicacao">
+              <p>{{ pub.texto }}</p>
+            </div>
+            
+            <div class="media-publicacao" *ngIf="pub.ficheiros && pub.ficheiros.length > 0">
+              <div class="conteudo-media" *ngFor="let file of pub.ficheiros" style="margin-bottom: 10px;">
+                
+                <img 
+                  *ngIf="file.tipoMime.startsWith('image/')" 
+                  [src]="file.urlCompleta" 
+                  alt="Imagem da publicação" 
+                  style="max-width: 100%; border-radius: 8px; display: block;"
+                />
+          
+                <video 
+                  *ngIf="file.tipoMime.startsWith('video/')" 
+                  [src]="file.urlCompleta" 
+                  controls
+                  style="max-width: 100%; border-radius: 8px; display: block;"
+                >
+                  O teu navegador não suporta a reprodução deste vídeo.
+                </video>
+          
+              </div>
+            </div>
+          </div>
+
+          <div class="base-publicacao">
+            <ul class="lista-interacao">
+              <li class="item-interacao" (click)="darBaze(pub.id)" style="cursor: pointer;">
+                <div class="item-baze" [style.filter]="pub.jaDeuBaze ? 'none' : 'grayscale(100%)'">
+                  <img src="./ico/icons8-fire-40.png" alt="dar baze" />
+                </div>
+                <span [style.color]="pub.jaDeuBaze ? '#ff4500' : 'inherit'" style="font-weight: 500;">
+                  {{ pub.quantidadeBazes }} Bazes
+                </span>
+              </li>
+              
+              <li class="item-interacao" (click)="selecionarParaComentar(pub.id)" style="cursor: pointer;">
+                <span>💬 {{ pub.quantidadeComentarios }} Comentários</span>
+              </li>
+              
+              <li class="item-interacao">
+                <span>🔄 Partilhar</span>
+              </li>
+            </ul>
+          </div>
+
+          <div class="seccao-comentarios-caixa" *ngIf="publicacaoEmFocoId === pub.id" style="padding: 15px; background: #f9f9f9; border-top: 1px solid #eee;">
+            
+            <form [formGroup]="comentarioForm" (ngSubmit)="enviarComentario(pub.id)">
+              <div style="display: flex; gap: 10px;">
+                <input 
+                  type="text" 
+                  formControlName="textoComentario" 
+                  placeholder="Escreve um comentário..." 
+                  class="txt" 
+                  style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+                />
+                <button type="submit" class="btn" [disabled]="comentarioForm.invalid" style="background: #007bff; color: white; padding: 0 15px; border-radius: 4px;">Enviar</button>
+              </div>
+            </form>
+
+            <div *ngIf="pub.carregandoComentarios" style="margin-top: 12px; color: gray; font-size: 13px; text-align: center;">
+              A carregar comentários... ⏳
+            </div>
+
+            <div class="lista-comentarios-rend" *ngIf="!pub.carregandoComentarios && pub.comentarios && pub.comentarios.length > 0" style="margin-top: 12px;">
+              <div *ngFor="let c of pub.comentarios" style="margin-bottom: 8px; background: white; padding: 10px; border-radius: 4px; border-left: 3px solid #007bff; box-shadow: 0 1px 2px rgba(0,0,0,0.05);">
+                <strong style="color: #333;">{{ c.autorNome || 'Utilizador #' + c.utilizadorId }}: </strong>
+                <span style="color: #555;">{{ c.conteudoComentario }}</span>
+              </div>
+            </div>
+
+            <div *ngIf="!pub.carregandoComentarios && (!pub.comentarios || pub.comentarios.length === 0)" style="margin-top: 12px; color: gray; font-size: 13px; text-align: center;">
+              Ninguém comentou ainda. Deixa a tua marca! 💬
+            </div>
+          </div>
+
+        </div>
+
+        <div *ngIf="!carregandoFeed && feedPublicacoes.length === 0" style="text-align: center; padding: 40px; color: gray;">
+          <p>Ainda não há nenhuma publicação por aqui. Dá o primeiro baze! 🔥</p>
+        </div>
+
+      </main>
+    </div>
+
+    <div class="seccao-notificacao prev-noti">
+      <div class="notificacoes">
+        <div class="topo-notificacao">
+          <h3>Notificações</h3>
+        </div>
+        <div class="notificacao">
+          <div class="img"></div>
+          <div class="info-notificacao">
+            <div class="cabeca-notificacao">Sistema NzolaNet</div>
+            <div class="corpo-notificacao">Bem-vindo ao teu novo feed dinâmico integrado ao C#!</div>
+            <div class="base-notificacao">Agora</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

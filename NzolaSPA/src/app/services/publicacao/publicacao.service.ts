@@ -23,7 +23,19 @@ export class PublicacaoService {
 
   publicar(novaPublicacao: RequisicaoCriarPublicacaoDto): Observable<PublicacaoDto>
   {
-    return this.api.post<PublicacaoDto>(this.endpoint, novaPublicacao);
+    const formData = new FormData();
+    
+    // Anexa o texto da publicação
+    formData.append('Texto', novaPublicacao.texto);
+    
+    // Anexa cada ficheiro do array para dentro do lote de envio
+    if (novaPublicacao.ficheiros && novaPublicacao.ficheiros.length > 0) {
+      novaPublicacao.ficheiros.forEach((ficheiro) => {
+        // O nome 'Ficheiros' deve bater exatamente com o nome do parâmetro no teu IFormFile/IFormFileCollection do C#
+        formData.append('Ficheiros', ficheiro, ficheiro.name);
+      });
+    }
+    return this.api.post<PublicacaoDto>(this.endpoint, formData);
   }
 
 }

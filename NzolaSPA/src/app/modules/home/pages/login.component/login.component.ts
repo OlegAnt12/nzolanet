@@ -22,7 +22,7 @@ export class LoginComponent {
     private route: Router,
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      identificador: ['', [Validators.required, Validators.email]],
       palavraPasse: ['', Validators.required],
     });
   }
@@ -34,7 +34,8 @@ export class LoginComponent {
         next: (res) => {
           console.log('Login realizado com sucesso:', res);
           localStorage.setItem('token', res.token);
-          localStorage.setItem('utilizadorId', res.id.toString());
+          localStorage.setItem('utilizadorId', res.id);
+          localStorage.setItem('utilizadorLogado', JSON.stringify(res.utilizador));
           this.carregar=false;
           this.route.navigate(['/feed']);
         },

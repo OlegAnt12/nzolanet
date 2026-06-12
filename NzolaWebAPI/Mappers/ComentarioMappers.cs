@@ -27,7 +27,7 @@ namespace NzolaWebAPI.Mappers
             return new Comentario
             {
                 PublicacaoId = publicacaoId,
-                ComentadorId = utilizadorId,
+                UtilizadorId = utilizadorId,
                 ConteudoComentario = comentarioDto.ConteudoComentario
             };
         }

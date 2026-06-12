@@ -18,28 +18,8 @@ export class BazeService {
     );
   }
 
-  darBaze(
-    publicacaoId : number, 
-    utilizadorId : number
-  ) : Observable<BazeDto>{
-    return this.api.post<BazeDto>(
-      `${this.endpoint}/${publicacaoId}/${utilizadorId}`,
-      {}
-    );
-  }
-
-  removerBaze(bazeId: number): Observable<void>
-  {
-    return this.api.delete<void>(this.endpoint, bazeId);
-  }
-
-  verificarBaze(
-    publicacaoId: number, 
-    utilizadorId: number
-  ): Observable<boolean>
-  {
-    return this.api.get<boolean>(
-      `${this.endpoint}/verificar/${publicacaoId}/${utilizadorId}`
-    );
+  alternarBaze(publicacaoId: number, utilizadorId: number, bazeDto: any = {}): Observable<any> {
+    // Monta o link exatamente como o [HttpPost("{publicacaoId:int}/{utilizadorId:int}")] do C# pede
+    return this.api.post<any>(`${this.endpoint}/${publicacaoId}/${utilizadorId}`, bazeDto);
   }
 }

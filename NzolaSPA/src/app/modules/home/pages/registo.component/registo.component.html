@@ -53,7 +53,7 @@
       />
       <label for="termoId">Concordo com os termos da Nzolanet</label>
     </div>
-    <button type="submit" class="btn btn-registar" [disabled]="registoForm.invalid || carregando" routerLink="/feed">
+    <button type="submit" class="btn btn-registar" [disabled]="registoForm.invalid || carregar" routerLink="/feed">
       <span *ngIf="!carregar">Registar Conta</span>
         <span *ngIf="carregar">A criar conta...</span>
     </button>

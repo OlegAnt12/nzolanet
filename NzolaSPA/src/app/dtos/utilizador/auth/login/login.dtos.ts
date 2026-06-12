@@ -5,7 +5,8 @@ export class LoginDtos {
 
 export class LoginResponseDto {
   token: string='';
-  id: number=0;
+  id: string='';
   email: string='';
   nomeUtilizador: string='';
+  utilizador: any=null;
 }
