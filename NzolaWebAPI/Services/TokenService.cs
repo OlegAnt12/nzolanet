@@ -18,8 +18,7 @@ namespace NzolaWebAPI.Services
         public TokenService(IConfiguration config)
         {
             _config = config;
-            
-            
+        
             _chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!));
         }
 
@@ -28,8 +27,9 @@ namespace NzolaWebAPI.Services
            
             var claims = new List<Claim>
             {
+                new Claim("utilizadorId", utilizador.Id.ToString()),
                 new Claim("email", utilizador.Email),
-                new Claim("name", utilizador.NomeCompleto)
+                new Claim("name", utilizador.NomeUtilizador)
             };
 
             var credenciais = new SigningCredentials(_chave, SecurityAlgorithms.HmacSha512Signature);

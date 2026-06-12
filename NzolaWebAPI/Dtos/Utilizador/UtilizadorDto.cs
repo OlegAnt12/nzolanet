@@ -10,13 +10,14 @@ namespace NzolaWebAPI.DTOs.Utilizador
     {
         public int Id { get; set; }
         public String NomeCompleto { get; set; }
+        public String NomeUtilizador { get; set; }
         public String Email { get; set; }
         public String Biografia { get; set; }
         public EstadoAcesso Privacidade { get; set; }
         public EstadoConta EstadoConta { get; set; }
         public byte[] FotoPerfil { get; set; }
 
-        public String Genero { get; set; }
+        public NzolaWebAPI.Models.Enums.Genero Genero { get; set; }
         public DateTime DataNascimento { get; set; }
         
     }

@@ -1,19 +1,22 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { LoginDtos, LoginResponseDto } from '../../dtos/utilizador/auth/login/login.dtos';
+import { RegistoRequestDto } from '../../dtos/utilizador/auth/registo/registo-request.dto';
+import { Api } from '../api/api';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'https://localhost:7001/api'; 
+  private endpoint = 'autenticacoes'; 
 
-  constructor(private http: HttpClient) {}
+  constructor(private api: Api) {}
 
   
-  login(dados: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, dados);
+  login(dados: LoginDtos): Observable<LoginResponseDto> {
+    return this.api.post<LoginResponseDto>(`${this.endpoint}/login`, dados);
   }
 
-  register(dados: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/utilizadores/criar`, dados);
+  registar(dados: RegistoRequestDto): Observable<any> {
+    return this.api.post(`${this.endpoint}/registo`, dados);
   }
 }

@@ -1,18 +1,54 @@
+using System.Reflection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http.Features;
 using NzolaWebAPI.Configurations;
 using NzolaWebAPI.Data;
+using NzolaWebAPI.Helpers;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Repositories;
-using NzolaWebAPI.Repositories;
 using NzolaWebAPI.Services;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Permite uploads maiores do que o limite padrão do ASP.NET Core.
+// Vídeos ultrapassam facilmente o default do multipart/form-data.
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.Limits.MaxRequestBodySize = 209_715_200; // 200 MB
+});
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 209_715_200; // 200 MB
+    options.ValueLengthLimit = int.MaxValue;
+    options.MultipartHeadersLengthLimit = int.MaxValue;
+});
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Nzola Network API", Version = "v1" });
+    options.OperationFilter<FormFileOperationFilter>();
+    options.SchemaFilter<FormFileSchemaFilter>();
+    options.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
+});
+
+// CORS: Política permissiva para permitir todas as origens, métodos e cabeçalhos
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 // dotnet add package Microsoft.EntityFrameworkCore.InMemory
 // using Microsoft.EntityFrameworkCore;
@@ -28,13 +64,11 @@ builder.Services.Configure<NzolaWebAPI.Configurations.EmailSettings>(
 
 builder.Services.AddScoped<IBazeRepository, BazeRepository>();
 builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
-builder.Services.AddScoped<IConteudoPublicacaoRepository, ConteudoPublicacaoRepository>();
 builder.Services.AddScoped<IPublicacaoRepository, PublicacaoRepository>();
 
 // Registra a implementação do serviço de e-mail
 builder.Services.AddScoped<IBazeService, BazeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IConteudoPublicacaoService, ConteudoPublicacaoService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<IPublicacaoService, PublicacaoService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -47,10 +81,19 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Nzola Network API v1");
+    });
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
+// Habilita CORS globalmente com a política permissiva
+app.UseCors("AllowAll");
 
 var summaries = new[]
 {

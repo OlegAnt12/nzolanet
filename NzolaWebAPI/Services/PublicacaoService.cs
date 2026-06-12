@@ -8,33 +8,30 @@ using NzolaWebAPI.DTOs.Publicacao;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
-using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Services
 {
     public class PublicacaoService : IPublicacaoService
     {
         private readonly IPublicacaoRepository _publicacaoRepo;
-        private readonly IConteudoPublicacaoRepository _conteudoRepo;
         private readonly ContextoBDNzola _contexto; // Usado apenas se precisares controlar a transação aqui
 
         public PublicacaoService(
             IPublicacaoRepository publicacaoRepo,
-            IConteudoPublicacaoRepository conteudoRepo,
             ContextoBDNzola contexto
         )
         {
             _publicacaoRepo = publicacaoRepo;
-            _conteudoRepo = conteudoRepo;
             _contexto = contexto;
         }
 
         public async Task<PublicacaoFeedDto?> CriarAsync(
             int utilizadorId,
-            CriarPublicacaoRequestDto publicacaoDto
+            CriarPublicacaoRequestDto publicacaoDto,
+            string? textoFallback = null,
+            Microsoft.AspNetCore.Http.IFormFile? file = null
         )
         {
-            // 1. Validação de Fluxo: Verifica se o utilizador existe de facto
             bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
                 u.Id == utilizadorId
             );
@@ -45,55 +42,67 @@ namespace NzolaWebAPI.Services
 
             await _publicacaoRepo.ExecutarEmEstrategiaAsync(async () =>
             {
-                // 2. Inicia a transação através da interface do repositório
                 await _publicacaoRepo.IniciarTransacaoAsync();
                 try
                 {
-                    // 2. Cria a entidade principal (Coração da Publicação)
-                    var publicacao = publicacaoDto.ParaPublicacaoDePublicacaoDto(utilizadorId);
-                    if (publicacaoDto.Conteudos != null)
+                    // Normalização e validações agora ocorrem nesta camada (Service)
+                    if (publicacaoDto == null)
                     {
-                        foreach (var item in publicacaoDto.Conteudos)
-                        {
-                            string conteudoResolvido = string.Empty;
+                        publicacaoDto = new CriarPublicacaoRequestDto();
+                    }
 
-                            if (item.TipoConteudo == TipoConteudo.Texto)
+                    // Preenche Texto a partir do fallback enviado pelo controller, se necessário
+                    if (string.IsNullOrWhiteSpace(publicacaoDto.Texto) && !string.IsNullOrWhiteSpace(textoFallback))
+                    {
+                        publicacaoDto.Texto = textoFallback;
+                    }
+
+                    // Se a lista de ficheiros vier vazia e foi passado um ficheiro isolado, injeta-o
+                    if ((publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any()) && file != null)
+                    {
+                        publicacaoDto.Ficheiros = new List<Microsoft.AspNetCore.Http.IFormFile> { file };
+                    }
+
+                    if (string.IsNullOrWhiteSpace(publicacaoDto.Texto) && (publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any()))
+                    {
+                        throw new ArgumentException("A publicação necessita de um conteúdo válido (texto ou pelo menos um ficheiro).");
+                    }
+
+                    publicacao = publicacaoDto.ParaPublicacaoDePublicacaoDto(utilizadorId);
+
+                    var ficheirosResolvidos = new List<FicheiroConteudo>();
+
+                    if (publicacaoDto.Ficheiros != null && publicacaoDto.Ficheiros.Any())
+                    {
+                        foreach (var ficheiro in publicacaoDto.Ficheiros)
+                        {
+                            if (ficheiro == null || ficheiro.Length == 0)
+                                continue;
+
+                            var caminhoSalvo = await SalvarFicheiroNoServidorAsync(ficheiro);
+                            ficheirosResolvidos.Add(new FicheiroConteudo
                             {
-                                conteudoResolvido = item.Texto ?? string.Empty;
-                            }
-                            else
-                            {
-                                // Faz o upload real e injeta a string do caminho
-                                conteudoResolvido = await SalvarFicheiroNoServidorAsync(
-                                    item.Ficheiro
-                                );
-                            }
-                            var conteudoPublicacao =
-                                item.ParaConteudoPublicacaoDeItemConteudoRequestDto(
-                                    publicacao.Id,
-                                    conteudoResolvido
-                                );
-                            publicacao.Conteudos.Add(conteudoPublicacao);
+                                Publicacao = publicacao,
+                                CaminhoFicheiro = caminhoSalvo,
+                                TipoMime = ficheiro.ContentType,
+                                TamanhoBytes = ficheiro.Length
+                            });
                         }
                     }
 
+                    publicacao.Ficheiros = ficheirosResolvidos;
+
                     await _publicacaoRepo.AdicionarAsync(publicacao);
                     await _publicacaoRepo.SalvarAsync();
-
-                    // Confirma a transação se tudo correr bem
                     await _publicacaoRepo.ConfirmarTransacaoAsync();
-
-                    // 5. Devolve o DTO final estruturado para o Feed (Usa o teu mapper de saída)
-                    // Salva primeiro para gerar o PublicacaoId
                 }
                 catch (Exception)
                 {
-                    // Se algo falhar (ex: erro de disco ou BD), desfaz tudo e descarta os registos a meio
-                    // Se houver erro, cancela e limpa a transação pelo repositório
                     await _publicacaoRepo.CancelarTransacaoAsync();
                     throw;
                 }
             });
+
             return publicacao != null ? publicacao.ToPublicacaoFeedDto() : null;
         }
 

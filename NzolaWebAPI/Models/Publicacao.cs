@@ -18,11 +18,17 @@ namespace NzolaWebAPI.Models
 
         [ForeignKey("AutorId")]
         public Utilizador Utilizador { get; set; }
+        
+        [Required]
+        public string Texto { get; set; } = string.Empty;
+
+        // Uma publicação pode conter múltiplas mídias (imagens/vídeos)
+        public List<FicheiroConteudo> Ficheiros { get; set; } = new List<FicheiroConteudo>();
+        
         public int QuantidadeBazes { get; set; }
         public int QuantidadeComentarios { get; set; }
         public DateTime DataPublicacao { get; set; } = DateTime.Now;
         public DateTime DataAtualizacaoPublicacao { get; set; }
-        public List<ConteudoPublicacao> Conteudos { get; set; } = new List<ConteudoPublicacao>();
         public List<Comentario> Comentarios { get; set; } = new List<Comentario>();
         public List<Baze> Bazes { get; set; } = new List<Baze>();
     }

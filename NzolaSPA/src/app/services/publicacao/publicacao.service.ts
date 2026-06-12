@@ -9,16 +9,16 @@ import { RequisicaoCriarPublicacaoDto } from '../../dtos/publicacao/requisicao-c
 })
 export class PublicacaoService {
   
-  private readonly endpoint = 'publicacoes';
+  private readonly endpoint = 'Publicacoes';
 
   constructor(private api: Api)
   {
 
   }
 
-  obterRecentes(): Observable<PublicacaoDto[]>
+  listarRecentes(): Observable<PublicacaoDto[]>
   {
-    return this.api.get<PublicacaoDto[]>(`${this.endpoint}/recentes`);
+    return this.api.get<PublicacaoDto[]>(`${this.endpoint}/`);
   }
 
   publicar(novaPublicacao: RequisicaoCriarPublicacaoDto): Observable<PublicacaoDto>

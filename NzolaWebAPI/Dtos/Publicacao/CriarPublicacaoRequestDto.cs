@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using NzolaWebAPI.DTOs.ConteudoPublicacao;
-using NzolaWebAPI.DTOs.Comentario;
+using Microsoft.AspNetCore.Http;
 
 namespace NzolaWebAPI.DTOs.Publicacao
 {
     public class CriarPublicacaoRequestDto
     {
-        public int AutorId { get; set; }
-        public List<ItemConteudoRequestDto> Conteudos { get; set; } = new List<ItemConteudoRequestDto>();
+        public string Texto { get; set; } = string.Empty;
+
+        public List<IFormFile>? Ficheiros { get; set; }
     }
 }

@@ -25,7 +25,7 @@ namespace NzolaWebAPI.Controllers
             _tokenService = tokenService;
         }
 
-        [HttpPost("registar")]
+        [HttpPost("registo")]
         public async Task<IActionResult> Registar([FromBody] CriarUtilizadorRequestDto registoDto)
         {
             var emailExiste = await _contexto.Utilizadores.AnyAsync(u =>
@@ -50,7 +50,7 @@ namespace NzolaWebAPI.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
             var utilizador = await _contexto.Utilizadores.FirstOrDefaultAsync(u =>
-                u.Email.ToLower() == loginDto.Email.ToLower()
+                u.Email.ToLower() == loginDto.Identificador.ToLower()
             );
 
             if (utilizador == null || utilizador.PalavraPasse != loginDto.PalavraPasse)

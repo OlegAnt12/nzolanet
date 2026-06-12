@@ -11,10 +11,12 @@ namespace NzolaWebAPI.Mappers
             {
                 Id = utilizador.Id,
                 NomeCompleto = utilizador.NomeCompleto,
+                NomeUtilizador = utilizador.NomeUtilizador,
                 Email = utilizador.Email,
                 Biografia = utilizador.Biografia,
                 Privacidade = utilizador.Privacidade,
                 EstadoConta = utilizador.EstadoConta,
+                Genero = utilizador.Genero,
             };
         }
 
@@ -29,6 +31,7 @@ namespace NzolaWebAPI.Mappers
                 FotoPerfil = utilizadorDto.FotoPerfil != null ? utilizadorDto.FotoPerfil : null,
                 PalavraPasse = utilizadorDto.PalavraPasse,
                 Genero = utilizadorDto.genero,
+                NomeUtilizador = utilizadorDto.NomeUtilizador,
                 DataNascimento = utilizadorDto.DataNascimento,
             };
         }

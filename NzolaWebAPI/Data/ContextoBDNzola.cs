@@ -13,7 +13,7 @@ namespace NzolaWebAPI.Data
             : base(options) { }
 
         public DbSet<Publicacao> Publicacoes { get; set; }
-        public DbSet<ConteudoPublicacao> ConteudosPublicacao { get; set; }
+        public DbSet<FicheiroConteudo> FicheirosConteudo { get; set; }
         public DbSet<Comentario> Comentarios { get; set; }
         public DbSet<Baze> Bazes { get; set; }
         public DbSet<Notificacao> Notificacoes { get; set; }
@@ -62,6 +62,14 @@ namespace NzolaWebAPI.Data
             // 3. Define a Chave Composta da Baze (Garante 1 baze por post por utilizador)
             modelBuilder.Entity<Baze>().HasKey(b => new { b.UtilizadorId, b.PublicacaoId });
 
+            // 🔗 Relacionamento 1:N entre Publicacao e FicheiroConteudo
+            modelBuilder
+                .Entity<Publicacao>()
+                .HasMany(p => p.Ficheiros)
+                .WithOne(f => f.Publicacao)
+                .HasForeignKey(f => f.PublicacaoId)
+                .OnDelete(DeleteBehavior.Cascade); // Se apagar publicação, apaga os ficheiros
+
             // 🔗 Configuração da Tabela de Seguidores (Fluent API)
             modelBuilder.Entity<Seguidor>(entity =>
             {
@@ -81,6 +89,30 @@ namespace NzolaWebAPI.Data
                     .WithMany(u => u.Seguidores) // Garante que tens 'public ICollection<Seguidor> Seguidores { get; set; }' no Utilizador.cs
                     .HasForeignKey(s => s.SeguidoId)
                     .OnDelete(DeleteBehavior.Restrict); // 🔥 OBRIGATÓRIO: Desativa a cascata aqui também
+            });
+
+            // Fluent API: Assegura que o Email é único (redundante com o atributo Index, mas explícito aqui)
+            modelBuilder.Entity<Utilizador>(entity =>
+            {
+                entity.HasIndex(u => u.Email).IsUnique();
+
+
+                // Armazena o enum Genero como string e define o tipo de coluna
+                entity.Property(u => u.Genero)
+                    .HasConversion<string>()
+                    .HasColumnType("nvarchar(10)");
+
+                entity.HasIndex(u => u.NomeUtilizador).IsUnique();
+
+                entity.Property(u => u.NomeUtilizador)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                // Adiciona constraint para aceitar apenas Masculino e Feminino
+                entity.HasCheckConstraint(
+                    "CK_Utilizadores_Genero",
+                    "Genero IN ('Masculino','Feminino')"
+                );
             });
         }
     }

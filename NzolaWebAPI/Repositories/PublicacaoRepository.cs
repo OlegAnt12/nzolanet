@@ -37,7 +37,7 @@ namespace NzolaWebAPI.Repositories
         public async Task<List<Publicacao>> ListarRecentesAsync() {
             return await _contexto
                 .Publicacoes.Include(p => p.Utilizador)
-                .Include(p => p.Conteudos)
+                .Include(p => p.Ficheiros)
                 .OrderByDescending(p => p.DataPublicacao)
                 .ToListAsync();
          }
@@ -45,7 +45,7 @@ namespace NzolaWebAPI.Repositories
         public async Task<Publicacao?> SelecionarAsync(int id) {
             return await _contexto
                 .Publicacoes.Include(p => p.Utilizador)
-                .Include(p => p.Conteudos)
+                .Include(p => p.Ficheiros)
                 .FirstOrDefaultAsync(p => p.Id == id);
          }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NzolaWebAPI.DTOs.Comentario;
-using NzolaWebAPI.DTOs.ConteudoPublicacao;
 using NzolaWebAPI.DTOs.Publicacao;
 using NzolaWebAPI.Models;
 
@@ -20,9 +19,19 @@ namespace NzolaWebAPI.Mappers
                 QuantidadeBazes = modelPublicacao.QuantidadeBazes,
                 QuantidadeComentarios = modelPublicacao.QuantidadeComentarios,
                 DataPublicacao = modelPublicacao.DataPublicacao,
-                Conteudos =
-                    modelPublicacao.Conteudos.Select(ct => ct.ToConteudoPublicacaoDto()).ToList()
-                    ?? new List<ConteudoPublicacaoDto>(),
+                Texto = modelPublicacao.Texto,
+                Ficheiros = modelPublicacao.Ficheiros != null
+                    ? modelPublicacao
+                        .Ficheiros.Select(f => new FicheiroPublicacaoDto
+                        {
+                            Id = f.Id,
+                            CaminhoFicheiro = f.CaminhoFicheiro,
+                            TipoMime = f.TipoMime,
+                            TamanhoBytes = f.TamanhoBytes,
+                            DataUpload = f.DataUpload,
+                        })
+                        .ToList()
+                    : new List<FicheiroPublicacaoDto>(),
                 Comentarios =
                     modelPublicacao.Comentarios.Select(cm => cm.ToComentarioDto()).ToList()
                     ?? new List<ComentarioDto>(),
@@ -43,12 +52,19 @@ namespace NzolaWebAPI.Mappers
                 DataPublicacao = modelPublicacao.DataPublicacao,
 
                 Autor = modelPublicacao.Utilizador != null ? modelPublicacao.Utilizador.ToAutorPublicacaoDto() : null,
-                Conteudos =
-                    modelPublicacao
-                        .Conteudos?.OrderBy(ct => ct.Ordem)
-                        .Select(ct => ct.ToConteudoPublicacaoDto())
+                Texto = modelPublicacao.Texto,
+                Ficheiros = modelPublicacao.Ficheiros != null
+                    ? modelPublicacao
+                        .Ficheiros.Select(f => new FicheiroPublicacaoDto
+                        {
+                            Id = f.Id,
+                            CaminhoFicheiro = f.CaminhoFicheiro,
+                            TipoMime = f.TipoMime,
+                            TamanhoBytes = f.TamanhoBytes,
+                            DataUpload = f.DataUpload,
+                        })
                         .ToList()
-                    ?? new List<ConteudoPublicacaoDto>(),
+                    : new List<FicheiroPublicacaoDto>(),
                 Comentarios =
                     modelPublicacao
                         .Comentarios?.OrderBy(cm => cm.DataComentario)
@@ -69,7 +85,8 @@ namespace NzolaWebAPI.Mappers
                 QuantidadeBazes = 0,
                 QuantidadeComentarios = 0,
                 DataPublicacao = DateTime.Now,
-                Conteudos = new List<ConteudoPublicacao>(),
+                Texto = publicacaoDto.Texto,
+                Ficheiros = new List<FicheiroConteudo>(),
                 Comentarios = new List<Comentario>(),
             };
         }

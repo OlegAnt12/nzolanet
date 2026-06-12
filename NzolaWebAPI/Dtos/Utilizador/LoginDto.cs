@@ -7,8 +7,7 @@ namespace NzolaWebAPI.DTOs.Utilizador
 {
     public class LoginDto
     {
-        public string Email { get; set; } = string.Empty;
+        public string Identificador { get; set; } = string.Empty;
         public string PalavraPasse { get; set; } = string.Empty;
-        
     }
 }

@@ -12,16 +12,28 @@ namespace NzolaWebAPI.Models
 {
     [Table("tb_Utilizadores")]
     [Index(nameof(Email), IsUnique = true)]
+    [Index(nameof(NomeUtilizador), IsUnique = true)]
     public class Utilizador
     {
         [Key]
         public int Id { get; set; }
-        public string Genero { get; set; } = string.Empty;
+
+        [Required]
+        [EnumDataType(typeof(Genero))]
+        [Column(TypeName = "nvarchar(10)")]
+        public Genero Genero { get; set; }
+
+        [Required]
+        [MaxLength(50)]
+        public string NomeUtilizador { get; set; } = string.Empty;
 
         //[RegularExpression(@"^\[A-Z]{2}\[A-Z]{2}$", ErrorMessage = "NomeCompleto inválido")] // Expressão regular para o Nome completo
         public string NomeCompleto { get; set; } = string.Empty;
 
         //[RegularExpression(@"^\d{9}[A-Z]{2}\d{3}$", ErrorMessage = "E-mail inválido")] // Expressão regular para o E-mail
+        [Required]
+        [EmailAddress]
+        [MaxLength(256)]
         public string Email { get; set; } = string.Empty;
 
         [MaxLength(255)]
@@ -29,7 +41,7 @@ namespace NzolaWebAPI.Models
         public string PalavraPasse { get; set; } = string.Empty; // Expressão regular para o Nome completo
 
         [Column(TypeName = "nvarchar(8)")]
-        [DefaultValue("Activa")]
+        [DefaultValue("Normal")]
         public NivelAcesso NivelAcesso { get; set; }
         public byte?[] FotoPerfil { get; set; }
         public string? Biografia { get; set; }

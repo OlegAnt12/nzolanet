@@ -2,15 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Publicacao;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
-using NzolaWebAPI.Models;
-using NzolaWebAPI.Repositories;
-using NzolaWebAPI.Services;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -37,7 +35,7 @@ namespace NzolaWebAPI.Controllers
         public async Task<IActionResult> ListarPublicacoes()
         {
             var publicacoes = await _pubRepo.ListarRecentesAsync();
-            var publicacaoesDtos = publicacoes.Select(p => p.ToPublicacaoDto()).ToList();
+            var publicacaoesDtos = publicacoes.Select(p => p.ToPublicacaoFeedDto()).ToList();
             return Ok(publicacaoesDtos);
         }
 
@@ -55,6 +53,9 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpPost("{utilizadorId}")]
+        [Consumes("multipart/form-data")]
+        [RequestSizeLimit(209715200)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
         public async Task<IActionResult> PublicarConteudo(
             [FromRoute] int utilizadorId,
             [FromForm] CriarPublicacaoRequestDto publicacaoDto
@@ -70,12 +71,12 @@ namespace NzolaWebAPI.Controllers
 
             if (
                 publicacaoDto == null
-                || publicacaoDto.Conteudos == null
-                || !publicacaoDto.Conteudos.Any()
+                || (string.IsNullOrWhiteSpace(publicacaoDto.Texto)
+                    && (publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any()))
             )
             {
                 return BadRequest(
-                    "A publicação necessita de pelo menos um bloco de conteúdo (Texto, Imagem ou Vídeo)."
+                    "A publicação necessita de um conteúdo válido (Texto ou pelo menos um ficheiro)."
                 );
             }
 

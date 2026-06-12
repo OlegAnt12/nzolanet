@@ -28,6 +28,12 @@ Rede social para comunicação, partilha de informação e interação entre uti
     * Services
 ------------
 
+## Documentação Técnica
+
+- [Garantias Técnicas e Mecanismos do Backend](Docs/GarantiasTecnicas.md) — Detalhes sobre restrições de base de dados, Fluent API, anotações de dados, migrations, JWT, email e upload de ficheiros.
+- [Requisitos Funcionais](Docs/RequisitosFuncionais.md) — Descrição das funcionalidades do sistema, atores, regras de negócio e fluxos principais.
+- [Documentação da API](Docs/API.md) — Lista de endpoints, DTOs e exemplos.
+
 ## Equipa Técnica
 
 - Eduarda Malungo
