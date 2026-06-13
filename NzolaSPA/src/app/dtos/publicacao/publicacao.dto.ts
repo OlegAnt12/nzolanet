@@ -13,6 +13,7 @@ export class PublicacaoDto {
   bazeId: number | null = null;
   ficheiros: PublicacaoFicheiroDto[]=[]; // <-- ADICIONA ESTA LINHA EXATAMENTE AQUI
   comentarios: any[]=[];
+  jaSegues?: boolean; // <-- Adiciona esta linha para controlo visual
 }
 
 
@@ -24,6 +25,8 @@ export interface PublicacaoFicheiroDto {
   dataUpload: string;
   urlCompleta?: string; // Propriedade auxiliar que crias no Angular
 }
+
+
 /*
 export interface PublicacaoDto {
   id: number;

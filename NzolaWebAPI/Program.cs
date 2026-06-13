@@ -65,12 +65,14 @@ builder.Services.Configure<NzolaWebAPI.Configurations.EmailSettings>(
 builder.Services.AddScoped<IBazeRepository, BazeRepository>();
 builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
 builder.Services.AddScoped<IPublicacaoRepository, PublicacaoRepository>();
+builder.Services.AddScoped<ISeguidorRepository, SeguidorRepository>();
 
 // Registra a implementação do serviço de e-mail
 builder.Services.AddScoped<IBazeService, BazeService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<IPublicacaoService, PublicacaoService>();
+builder.Services.AddScoped<ISeguidorService, SeguidorService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUtilizadorRepository, UtilizadorRepository>();
 builder.Services.AddScoped<IUtilizadorService, UtilizadorService>();

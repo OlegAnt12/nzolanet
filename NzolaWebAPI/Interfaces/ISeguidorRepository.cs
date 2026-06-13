@@ -11,9 +11,9 @@ namespace NzolaWebAPI.Interfaces
         Task<List<Seguidor>> ListarSeguidoresPorUtilizadorAsync(int id);
 
         Task<Seguidor?> ObterPorRelacaoAsync(int seguidorId, int seguidoId);
-        Task<Seguidor?> SelecionarRelacaoIdAsync(int Id);
+        Task<Seguidor> SelecionarRelacaoIdAsync(int Id);
         Task AdicionarAsync(Seguidor seguidor);
-
+        void Remover(Seguidor seguidor);
         Task<bool> SalvarAsync();
     }
 }

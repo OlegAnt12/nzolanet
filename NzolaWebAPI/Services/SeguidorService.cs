@@ -2,6 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using NzolaWebAPI.Data;
+using NzolaWebAPI.DTOs.Seguidor;
+using NzolaWebAPI.Interfaces;
+using NzolaWebAPI.Mappers;
+using NzolaWebAPI.Models;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Services
 {
@@ -10,7 +17,14 @@ namespace NzolaWebAPI.Services
         private readonly ISeguidorRepository _seguidorRepo;
         private readonly IUtilizadorRepository _utilizadorRepository;
 
-        public SeguidorService() { }
+        public SeguidorService(
+            ISeguidorRepository seguidorRepo,
+            IUtilizadorRepository utilizadorRepository
+        )
+        {
+            _seguidorRepo = seguidorRepo;
+            _utilizadorRepository = utilizadorRepository;
+        }
 
         public async Task<SeguirResultadoDto> AlternarSeguirAsync(int seguidorId, int seguidoId)
         {
@@ -45,8 +59,10 @@ namespace NzolaWebAPI.Services
             seguidor.SeguidorId = seguidorId;
             seguidor.SeguidoId = seguidoId;
 
-            await _seguidorRepo.AdicionarAsync(baze);
+            await _seguidorRepo.AdicionarAsync(seguidor);
             await _seguidorRepo.SalvarAsync();
+
+            resultado.SeguidorDto = seguidor.ToSeguidorDto();
 
             return resultado;
         }

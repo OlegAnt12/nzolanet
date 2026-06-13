@@ -7,6 +7,7 @@ import { ComentariosService } from '../../../../services/comentario/comentarios.
 import { RequisicaoCriarPublicacaoDto } from '../../../../dtos/publicacao/requisicao-criar-publicacao.dto';
 import { CriarComentarioDto } from '../../../../dtos/comentario/comentario-dto';
 import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
+import { SeguidorService } from '../../../../services/seguidor/seguidor.service';
 
 @Component({
   selector: 'app-feed-principal.component',
@@ -54,6 +55,7 @@ export class FeedPrincipalComponent implements OnInit {
     @Inject(PLATFORM_ID) private platformId: Object,
     private publicacaoService: PublicacaoService,
     private bazeService: BazeService,
+    private seguidorService : SeguidorService,
     private comentarioService: ComentariosService,
     private authService: AuthService,
   ) {}
@@ -202,6 +204,48 @@ export class FeedPrincipalComponent implements OnInit {
         }
       },
     });
+  }
+
+  alternarSeguir(autor: any): void {
+
+    // Validações de segurança
+    if (!autor || !autor.id) return;
+
+  if (!this.utilizadorLogado || isNaN(Number(this.utilizadorLogado.id))) {
+    console.error('Erro: Utilizador não autenticado no sistema.');
+    alert('Precisa estar autenticado para seguir este membro da NzolaNet!');
+    return;
+  }
+
+  const seguidorId = Number(this.utilizadorLogado.id);
+  const seguidoId = Number(autor.id);
+
+  if (seguidorId === seguidoId) return;
+
+  this.seguidorService.alternarSeguir(seguidorId, seguidoId).subscribe({
+    next: (resposta) => {
+      console.log('Ação processada:', resposta);
+      
+      // Atualização visual instantânea
+      setTimeout(() => {
+        // 1. Inverte o estado booleano do autor deste post específico
+        autor.jaSegues = !autor.jaSegues;
+
+        // 2. Varre todo o feed para atualizar os posts do MESMO autor, 
+        // garantindo que todos os botões dele mudam ao mesmo tempo no ecrã
+        this.feedPublicacoes.forEach(pub => {
+          if (pub.autor && pub.autor.id === seguidoId) {
+            pub.autor.jaSegues = autor.jaSegues;
+          }
+        });
+
+      }, 0);
+    },
+    error: (erro) => {
+      console.error('Erro ao alternar o estado de amizade:', erro);
+      alert('Não foi possível atualizar o estado no servidor de momento.');
+    }
+  });
   }
 
   /**

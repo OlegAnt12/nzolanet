@@ -151,8 +151,13 @@
               </ul>
             </div>
             <div *ngIf="utilizadorLogado?.id != pub.autor?.id" class="opcao-seguir">
-              <button class="btn" (click)="confirmarEliminarPublicacao(pub.id)" style="background: #ff375f; color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px;">
-                Seguir
+              <button 
+                class="btn" 
+                (click)="alternarSeguir(pub.autor)" 
+                [style.background]="pub.autor?.jaSegues ? '#6c757d' : '#ff375f'"
+                style="color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: background 0.2s;"
+              >
+                {{ pub.autor?.jaSegues ? 'Deixar de seguir' : 'Seguir' }}
               </button>
             </div>
           </div>
