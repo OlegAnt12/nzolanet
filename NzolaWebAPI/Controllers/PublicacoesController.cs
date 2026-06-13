@@ -71,8 +71,10 @@ namespace NzolaWebAPI.Controllers
 
             if (
                 publicacaoDto == null
-                || (string.IsNullOrWhiteSpace(publicacaoDto.Texto)
-                    && (publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any()))
+                || (
+                    string.IsNullOrWhiteSpace(publicacaoDto.Texto)
+                    && (publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any())
+                )
             )
             {
                 return BadRequest(
@@ -105,37 +107,6 @@ namespace NzolaWebAPI.Controllers
                     $"Erro Interno ao tentar processar e registar a publicação: {exc.Message}"
                 );
             }
-
-            /*var strategy = _contexto.Database.CreateExecutionStrategy();
-
-            return await strategy.ExecuteAsync(async () =>
-            {
-                await using var transaction = await _contexto.Database.BeginTransactionAsync();
-
-                try
-                {
-                    var publicacao = publicacaoDto.ParaPublicacaoDePublicacaoDto(utilizadorId);
-                    publicacao.DataPublicacao = DateTime.Now;
-
-                    await _contexto.Publicacoes.AddAsync(publicacao);
-                    await _contexto.SaveChangesAsync();
-
-                    await transaction.CommitAsync();
-                    return CreatedAtAction(
-                        nameof(SelecionarPublicacao),
-                        new { id = publicacao.Id },
-                        publicacao.ToPublicacaoDto()
-                    );
-                }
-                catch (Exception exc)
-                {
-                    await transaction.RollbackAsync();
-                    return StatusCode(
-                        500,
-                        $"Erro Interno ao tentar registar a publicação: {exc.Message}"
-                    );
-                }
-            });*/
         }
 
         [HttpPut]
@@ -145,16 +116,14 @@ namespace NzolaWebAPI.Controllers
             [FromBody] ActualizarPublicacaoRequestDto putPublicacaoDto
         )
         {
-            var publicacao = await _contexto.Publicacoes.FirstOrDefaultAsync(p => p.Id == Id);
+            var publicacao = await _publicacaoService.ActualizarAsync(Id, putPublicacaoDto);
 
             if (publicacao == null)
             {
                 return NotFound();
             }
 
-            publicacao.DataAtualizacaoPublicacao = DateTime.Now;
-
-            await _contexto.SaveChangesAsync();
+            await _pubRepo.SalvarAsync();
 
             return Ok(publicacao.ToPublicacaoDto());
         }
@@ -163,15 +132,14 @@ namespace NzolaWebAPI.Controllers
         [Route("{Id}")]
         public async Task<IActionResult> EliminarPublicacao([FromRoute] int Id)
         {
-            var publicacao = await _contexto.Publicacoes.FirstOrDefaultAsync(p => p.Id == Id);
+            var publicacao = await _publicacaoService.EliminarAsync(Id);
 
             if (publicacao == null)
             {
                 return NotFound();
             }
 
-            _contexto.Publicacoes.Remove(publicacao);
-            await _contexto.SaveChangesAsync();
+            await _pubRepo.SalvarAsync();
 
             return NoContent();
         }

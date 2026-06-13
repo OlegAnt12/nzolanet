@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Models;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Repositories
 {
@@ -34,22 +35,27 @@ namespace NzolaWebAPI.Repositories
             return (await _contexto.SaveChangesAsync()) > 0;
         }
 
-        public async Task<List<Publicacao>> ListarRecentesAsync() {
+        public async Task<List<Publicacao>> ListarRecentesAsync()
+        {
             return await _contexto
-                .Publicacoes.Include(p => p.Utilizador)
+                .Publicacoes.Where(p => p.Existencia != (EstadoExistenciaLogica)0)
+                .Include(p => p.Utilizador)
                 .Include(p => p.Ficheiros)
+                .Include(p => p.Comentarios)
                 .OrderByDescending(p => p.DataPublicacao)
                 .ToListAsync();
-         }
+        }
 
-        public async Task<Publicacao?> SelecionarAsync(int id) {
+        public async Task<Publicacao?> SelecionarAsync(int id)
+        {
             return await _contexto
-                .Publicacoes.Include(p => p.Utilizador)
+                .Publicacoes.Where(p => p.Existencia != (EstadoExistenciaLogica)0)
+                .Include(p => p.Utilizador)
                 .Include(p => p.Ficheiros)
                 .FirstOrDefaultAsync(p => p.Id == id);
-         }
+        }
 
-         // Executa a ação dentro da ExecutionStrategy para lidar com quedas de conexão
+        // Executa a ação dentro da ExecutionStrategy para lidar com quedas de conexão
         public async Task ExecutarEmEstrategiaAsync(Func<Task> acao)
         {
             var strategy = _contexto.Database.CreateExecutionStrategy();

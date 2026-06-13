@@ -8,10 +8,6 @@ namespace NzolaWebAPI.Interfaces
 {
     public interface IBazeService
     {
-        Task<BazeResultadoDto> AlternarBazeAsync(
-            int publicacaoId,
-            int utilizadorId,
-            DarBazeRequestDto bazeDto
-        );
+        Task<BazeResultadoDto> AlternarBazeAsync(int publicacaoId, int utilizadorId);
     }
 }

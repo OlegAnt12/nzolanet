@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NzolaWebAPI.DTOs.Baze;
 using NzolaWebAPI.Models;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Mappers
 {
@@ -31,8 +32,8 @@ namespace NzolaWebAPI.Mappers
             {
                 PublicacaoId = publicacaoId,
                 UtilizadorId = utilizadorId,
-                EstadoBaze = bazeDto.EstadoBaze,
-                DataInteracao = bazeDto.DataInteracao,
+                EstadoBaze = (EstadoBaze)1,
+                DataInteracao = DateTime.Now,
             };
         }
     }

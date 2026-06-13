@@ -12,6 +12,12 @@ export class Api {
 
   // GET
   get<T>(endpoint: string): Observable<T> {
+    endpoint = endpoint.replace(/^\/+|\/+$/g, '');
+    
+    const headers = new HttpHeaders({
+      'accept': '*/*'
+    });
+    
     return this.http.get<T>(`${this.baseUrl}/${endpoint}`);
   }
 

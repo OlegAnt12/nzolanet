@@ -8,6 +8,7 @@ using NzolaWebAPI.DTOs.Baze;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Services
 {
@@ -32,11 +33,7 @@ namespace NzolaWebAPI.Services
             _contexto = contexto;
         }
 
-        public async Task<BazeResultadoDto> AlternarBazeAsync(
-            int publicacaoId,
-            int utilizadorId,
-            DarBazeRequestDto bazeDto
-        )
+        public async Task<BazeResultadoDto> AlternarBazeAsync(int publicacaoId, int utilizadorId)
         {
             var resultado = new BazeResultadoDto();
 
@@ -80,7 +77,10 @@ namespace NzolaWebAPI.Services
             }
 
             // Criar novo Baze
-            var baze = bazeDto.ParaBazeDeBazeDto(publicacaoId, utilizadorId);
+            Baze baze = new();
+            baze.PublicacaoId = publicacaoId;
+            baze.UtilizadorId = utilizadorId;
+            baze.EstadoBaze = (EstadoBaze)1;
             baze.DataInteracao = DateTime.Now;
             publicacao.QuantidadeBazes++;
 

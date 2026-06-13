@@ -85,8 +85,7 @@ namespace NzolaWebAPI.Controllers
         [HttpPost("{publicacaoId:int}/{utilizadorId:int}")]
         public async Task<IActionResult> DarBaze(
             [FromRoute] int publicacaoId,
-            [FromRoute] int utilizadorId,
-            [FromBody] DarBazeRequestDto bazeDto
+            [FromRoute] int utilizadorId
         )
         {
             /*bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
@@ -134,11 +133,7 @@ namespace NzolaWebAPI.Controllers
             _contexto.SaveChangesAsync();
 
             return CreatedAtAction(nameof(SelecionarBaze), new { id = baze.Id }, baze.ToBazeDto());*/
-            var resultado = await _bazeService.AlternarBazeAsync(
-                publicacaoId,
-                utilizadorId,
-                bazeDto
-            );
+            var resultado = await _bazeService.AlternarBazeAsync(publicacaoId, utilizadorId);
 
             if (resultado.ErroMensagem != null)
             {

@@ -125,6 +125,12 @@ width: 232px;
   margin-bottom: 8px;
 }
 
+.base-formPost
+{
+  display: flex;
+  justify-content: space-between;
+}
+
 .area-texto
 {
   position: relative;
@@ -147,10 +153,6 @@ width: 232px;
 
 .btn-publicar
 {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translate(-15%, -50%);
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -280,7 +282,7 @@ width: 232px;
 {
   content: '';
   position: absolute;
-  top: 28px;
+  top: 16px;
   left: 100%;
   width: 24px;
   height: 24px;
@@ -292,10 +294,11 @@ width: 232px;
 {
   display: flex;
   align-items: end;
+  font-size: 14px;
 }
 .item-baze
 {
-  width: 24px;
+  width: 22px;
   display: inline;
   transition: all .45s;
   /*opacity: .33;*/

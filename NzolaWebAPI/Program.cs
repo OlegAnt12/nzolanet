@@ -127,6 +127,10 @@ app.MapGet(
     .WithName("GetWeatherForecast")
     .WithOpenApi();
 
+// 1. Ativa o mapeamento padrão da pasta 'wwwroot'
+// Com isto, qualquer ficheiro em 'wwwroot/uploads/foto.png' fica acessível via http://localhost:5043/uploads/foto.png
+app.UseStaticFiles();
+
 app.MapControllers();
 
 app.Run();

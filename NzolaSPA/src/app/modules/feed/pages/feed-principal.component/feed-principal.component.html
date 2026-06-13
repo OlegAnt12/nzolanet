@@ -64,17 +64,51 @@
                 <textarea
                   formControlName="texto"
                   class="txt txt-box"
-                  placeholder="O que estás a pensar, dar um baze post? 🚀"
-                  [disabled]="enviandoPost"
+                  placeholder="O que estás a pensar, dar um baze post?"
                 ></textarea>
-                <div class="botao-enviar">
-                  <button
-                    type="submit"
-                    class="btn btn-publicar"
-                    [disabled]="publicacaoForm.invalid || enviandoPost"
+                <div class="base-formPost">
+                  <div
+                    class="area-botoes-auxiliares"
+                    style="display: flex; gap: 10px; margin-top: 8px"
                   >
-                    {{ enviandoPost ? 'A publicar...' : 'Publicar' }}
-                  </button>
+                    <label
+                      for="upload-feed"
+                      style="
+                        cursor: pointer;
+                        background: #eee;
+                        padding: 6px 12px;
+                        border-radius: 4px;
+                        font-size: 13px;
+                      "
+                    >
+                      📁 Anexar Imagens/Vídeos
+                    </label>
+
+                    <input
+                      id="upload-feed"
+                      type="file"
+                      multiple
+                      accept="image/*,video/*"
+                      (change)="aoAdicionarImagensDoFeed($event)"
+                      style="display: none"
+                    />
+
+                    <span
+                      *ngIf="ficheirosSelecionados.length > 0"
+                      style="font-size: 12px; color: green; align-self: center"
+                    >
+                      {{ ficheirosSelecionados.length }} ficheiro(s) prontos!
+                    </span>
+                  </div>
+                  <div class="botao-enviar">
+                    <button
+                      type="submit"
+                      class="btn btn-publicar"
+                      [disabled]="publicacaoForm.invalid || enviarPost"
+                    >
+                      {{ enviarPost ? 'A publicar...' : 'Publicar' }}
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -102,9 +136,53 @@
                 }}</small>
               </div>
             </div>
+            <div *ngIf="utilizadorLogado?.id == pub.autor?.id" class="opcoes-auxiliares">
+              <ul class="menu-opcoes">
+                <li class="item-opcoes">
+                  <div  style="margin-top: 10px; text-align: right;">
+                    <button class="btn" (click)="iniciarEdicao(pub)" style="background: #ffc107; color: black; font-size: 12px; padding: 4px 10px;">Editar</button>
+                  </div>
+                </li>
+                <li class="item-opcoes">
+                  <button class="btn" (click)="confirmarEliminarPublicacao(pub.id)" style="background: #dc3545; color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px;">
+                    🗑️ Eliminar
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
 
           <div class="corpo-publicacao">
+            <div
+              *ngIf="publicacaoAEditarId === pub.id"
+              style="padding: 10px; background: #fff3cd; border-radius: 6px"
+            >
+              <textarea
+                [formControl]="textoEdicaoControl"
+                class="txt txt-box"
+                style="width: 100%; min-height: 80px"
+              ></textarea>
+
+              <div style="margin-top: 8px; display: flex; justify-content: flex-end; gap: 5px">
+                <button
+                  class="btn"
+                  (click)="cancelarEdicao()"
+                  [disabled]="estadoEditarPublicacao"
+                  style="background: #6c757d; color: white; padding: 4px 10px; font-size: 12px"
+                >
+                  Cancelar
+                </button>
+                <button
+                  class="btn"
+                  (click)="salvarEdicao(pub.id)"
+                  [disabled]="textoEdicaoControl.invalid || estadoEditarPublicacao"
+                  style="background: #28a745; color: white; padding: 4px 10px; font-size: 12px"
+                >
+                  {{ estadoEditarPublicacao ? 'A guardar...' : 'Confirmar' }}
+                </button>
+              </div>
+            </div>
+
             <div class="texto-publicacao">
               <p>{{ pub.texto }}</p>
             </div>
@@ -156,9 +234,7 @@
                 <span>💬 {{ pub.quantidadeComentarios }} Comentários</span>
               </li>
 
-              <li class="item-interacao">
-                <span>🔄 Partilhar</span>
-              </li>
+              
             </ul>
           </div>
 
@@ -191,7 +267,7 @@
               *ngIf="pub.carregandoComentarios"
               style="margin-top: 12px; color: gray; font-size: 13px; text-align: center"
             >
-              A carregar comentários... ⏳
+              A carregar comentários...
             </div>
 
             <div

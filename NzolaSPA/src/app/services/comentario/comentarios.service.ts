@@ -26,10 +26,10 @@ export class ComentariosService {
     return this.api.getById<ComentarioDto>(this.endpoint, comentarioId);
   }
 
-  adicionarComentario(comentario: CriarComentarioDto): Observable<ComentarioDto>
+  adicionarComentario(publicacaoId: number, utilizadorId: number, comentario: CriarComentarioDto): Observable<ComentarioDto>
   {
     return this.api.post<ComentarioDto>(
-      `${this.endpoint}`,
+      `${this.endpoint}/${publicacaoId}/${utilizadorId}`,
       comentario
     );
 

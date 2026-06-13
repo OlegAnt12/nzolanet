@@ -20,18 +20,19 @@ namespace NzolaWebAPI.Mappers
                 QuantidadeComentarios = modelPublicacao.QuantidadeComentarios,
                 DataPublicacao = modelPublicacao.DataPublicacao,
                 Texto = modelPublicacao.Texto,
-                Ficheiros = modelPublicacao.Ficheiros != null
-                    ? modelPublicacao
-                        .Ficheiros.Select(f => new FicheiroPublicacaoDto
-                        {
-                            Id = f.Id,
-                            CaminhoFicheiro = f.CaminhoFicheiro,
-                            TipoMime = f.TipoMime,
-                            TamanhoBytes = f.TamanhoBytes,
-                            DataUpload = f.DataUpload,
-                        })
-                        .ToList()
-                    : new List<FicheiroPublicacaoDto>(),
+                Ficheiros =
+                    modelPublicacao.Ficheiros != null
+                        ? modelPublicacao
+                            .Ficheiros.Select(f => new FicheiroPublicacaoDto
+                            {
+                                Id = f.Id,
+                                CaminhoFicheiro = f.CaminhoFicheiro,
+                                TipoMime = f.TipoMime,
+                                TamanhoBytes = f.TamanhoBytes,
+                                DataUpload = f.DataUpload,
+                            })
+                            .ToList()
+                        : new List<FicheiroPublicacaoDto>(),
                 Comentarios =
                     modelPublicacao.Comentarios.Select(cm => cm.ToComentarioDto()).ToList()
                     ?? new List<ComentarioDto>(),
@@ -51,20 +52,24 @@ namespace NzolaWebAPI.Mappers
                 QuantidadeComentarios = modelPublicacao.QuantidadeComentarios,
                 DataPublicacao = modelPublicacao.DataPublicacao,
 
-                Autor = modelPublicacao.Utilizador != null ? modelPublicacao.Utilizador.ToAutorPublicacaoDto() : null,
+                Autor =
+                    modelPublicacao.Utilizador != null
+                        ? modelPublicacao.Utilizador.ToAutorPublicacaoDto()
+                        : null,
                 Texto = modelPublicacao.Texto,
-                Ficheiros = modelPublicacao.Ficheiros != null
-                    ? modelPublicacao
-                        .Ficheiros.Select(f => new FicheiroPublicacaoDto
-                        {
-                            Id = f.Id,
-                            CaminhoFicheiro = f.CaminhoFicheiro,
-                            TipoMime = f.TipoMime,
-                            TamanhoBytes = f.TamanhoBytes,
-                            DataUpload = f.DataUpload,
-                        })
-                        .ToList()
-                    : new List<FicheiroPublicacaoDto>(),
+                Ficheiros =
+                    modelPublicacao.Ficheiros != null
+                        ? modelPublicacao
+                            .Ficheiros.Select(f => new FicheiroPublicacaoDto
+                            {
+                                Id = f.Id,
+                                CaminhoFicheiro = f.CaminhoFicheiro,
+                                TipoMime = f.TipoMime,
+                                TamanhoBytes = f.TamanhoBytes,
+                                DataUpload = f.DataUpload,
+                            })
+                            .ToList()
+                        : new List<FicheiroPublicacaoDto>(),
                 Comentarios =
                     modelPublicacao
                         .Comentarios?.OrderBy(cm => cm.DataComentario)

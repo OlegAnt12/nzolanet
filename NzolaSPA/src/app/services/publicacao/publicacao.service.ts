@@ -21,7 +21,7 @@ export class PublicacaoService {
     return this.api.get<PublicacaoDto[]>(`${this.endpoint}/`);
   }
 
-  publicar(novaPublicacao: RequisicaoCriarPublicacaoDto): Observable<PublicacaoDto>
+  publicar(novaPublicacao: RequisicaoCriarPublicacaoDto, utilizadorId: number): Observable<PublicacaoDto>
   {
     const formData = new FormData();
     
@@ -35,7 +35,21 @@ export class PublicacaoService {
         formData.append('Ficheiros', ficheiro, ficheiro.name);
       });
     }
-    return this.api.post<PublicacaoDto>(this.endpoint, formData);
+    return this.api.post<PublicacaoDto>(`${this.endpoint}/${utilizadorId}`, formData);
+  }
+
+  atualizarTextoPublicacao(publicacaoId: number, novoTexto: string): Observable<PublicacaoDto> {
+    const corpoRequisicao = {
+      texto: novoTexto
+    };
+  
+    // Envia como JSON puro para: http://localhost:5043/api/Publicacoes/{id}
+    return this.api.put<PublicacaoDto>(`${this.endpoint}`,`${publicacaoId}`, corpoRequisicao);
+  }
+
+  eliminarPublicacao(publicacaoId: number): Observable<PublicacaoDto> {
+    // Envia como JSON puro para: http://localhost:5043/api/Publicacoes/{id}
+    return this.api.delete<PublicacaoDto>(`${this.endpoint}`,`${publicacaoId}`);
   }
 
 }

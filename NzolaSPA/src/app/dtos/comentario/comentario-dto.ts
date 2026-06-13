@@ -9,8 +9,6 @@ export class ComentarioDto {
 }
 
 export class CriarComentarioDto {
-    publicacaoId: number=0;
-    utilizadorId: number=0;
     conteudoComentario: string='';
   }
   

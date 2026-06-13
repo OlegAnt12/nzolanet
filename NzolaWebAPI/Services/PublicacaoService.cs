@@ -8,6 +8,7 @@ using NzolaWebAPI.DTOs.Publicacao;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Services
 {
@@ -15,13 +16,16 @@ namespace NzolaWebAPI.Services
     {
         private readonly IPublicacaoRepository _publicacaoRepo;
         private readonly ContextoBDNzola _contexto; // Usado apenas se precisares controlar a transação aqui
+        private readonly IUtilizadorRepository _utilizadorRepo;
 
         public PublicacaoService(
             IPublicacaoRepository publicacaoRepo,
+            IUtilizadorRepository utilizadorRepo,
             ContextoBDNzola contexto
         )
         {
             _publicacaoRepo = publicacaoRepo;
+            _utilizadorRepo = utilizadorRepo;
             _contexto = contexto;
         }
 
@@ -32,10 +36,9 @@ namespace NzolaWebAPI.Services
             Microsoft.AspNetCore.Http.IFormFile? file = null
         )
         {
-            bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
-                u.Id == utilizadorId
-            );
-            if (!utilizadorExiste)
+            var utilizadorExistente = _utilizadorRepo.ObterPorIdAsync(utilizadorId);
+
+            if (utilizadorExistente == null)
                 return null;
 
             Publicacao? publicacao = null;
@@ -52,20 +55,34 @@ namespace NzolaWebAPI.Services
                     }
 
                     // Preenche Texto a partir do fallback enviado pelo controller, se necessário
-                    if (string.IsNullOrWhiteSpace(publicacaoDto.Texto) && !string.IsNullOrWhiteSpace(textoFallback))
+                    if (
+                        string.IsNullOrWhiteSpace(publicacaoDto.Texto)
+                        && !string.IsNullOrWhiteSpace(textoFallback)
+                    )
                     {
                         publicacaoDto.Texto = textoFallback;
                     }
 
                     // Se a lista de ficheiros vier vazia e foi passado um ficheiro isolado, injeta-o
-                    if ((publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any()) && file != null)
+                    if (
+                        (publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any())
+                        && file != null
+                    )
                     {
-                        publicacaoDto.Ficheiros = new List<Microsoft.AspNetCore.Http.IFormFile> { file };
+                        publicacaoDto.Ficheiros = new List<Microsoft.AspNetCore.Http.IFormFile>
+                        {
+                            file,
+                        };
                     }
 
-                    if (string.IsNullOrWhiteSpace(publicacaoDto.Texto) && (publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any()))
+                    if (
+                        string.IsNullOrWhiteSpace(publicacaoDto.Texto)
+                        && (publicacaoDto.Ficheiros == null || !publicacaoDto.Ficheiros.Any())
+                    )
                     {
-                        throw new ArgumentException("A publicação necessita de um conteúdo válido (texto ou pelo menos um ficheiro).");
+                        throw new ArgumentException(
+                            "A publicação necessita de um conteúdo válido (texto ou pelo menos um ficheiro)."
+                        );
                     }
 
                     publicacao = publicacaoDto.ParaPublicacaoDePublicacaoDto(utilizadorId);
@@ -80,13 +97,15 @@ namespace NzolaWebAPI.Services
                                 continue;
 
                             var caminhoSalvo = await SalvarFicheiroNoServidorAsync(ficheiro);
-                            ficheirosResolvidos.Add(new FicheiroConteudo
-                            {
-                                Publicacao = publicacao,
-                                CaminhoFicheiro = caminhoSalvo,
-                                TipoMime = ficheiro.ContentType,
-                                TamanhoBytes = ficheiro.Length
-                            });
+                            ficheirosResolvidos.Add(
+                                new FicheiroConteudo
+                                {
+                                    Publicacao = publicacao,
+                                    CaminhoFicheiro = caminhoSalvo,
+                                    TipoMime = ficheiro.ContentType,
+                                    TamanhoBytes = ficheiro.Length,
+                                }
+                            );
                         }
                     }
 
@@ -123,6 +142,41 @@ namespace NzolaWebAPI.Services
             }
 
             return $"/uploads/{nomeFicheiro}";
+        }
+
+        public async Task<Publicacao?> ActualizarAsync(
+            int publicacaoId,
+            ActualizarPublicacaoRequestDto putDto
+        )
+        {
+            var publicacaoExistente = await _publicacaoRepo.SelecionarAsync(publicacaoId);
+
+            if (publicacaoExistente == null)
+            {
+                return null;
+            }
+
+            publicacaoExistente.Texto = putDto.Texto;
+            publicacaoExistente.DataAtualizacaoPublicacao = DateTime.Now;
+
+            await _publicacaoRepo.SalvarAsync();
+            return publicacaoExistente;
+        }
+
+        public async Task<Publicacao?> EliminarAsync(int publicacaoId)
+        {
+            var publicacaoExistente = await _publicacaoRepo.SelecionarAsync(publicacaoId);
+
+            if (publicacaoExistente == null)
+            {
+                return null;
+            }
+
+            publicacaoExistente.Existencia = (EstadoExistenciaLogica)0;
+            publicacaoExistente.DataAtualizacaoPublicacao = DateTime.Now;
+
+            await _publicacaoRepo.SalvarAsync();
+            return publicacaoExistente;
         }
     }
 }
