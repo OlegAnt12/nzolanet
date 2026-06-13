@@ -88,51 +88,6 @@ namespace NzolaWebAPI.Controllers
             [FromRoute] int utilizadorId
         )
         {
-            /*bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
-                u.Id == utilizadorId
-            );
-
-            if (!utilizadorExiste)
-            {
-                return BadRequest("Este Utilizador Não Existe");
-            }
-
-            var publicacao = await _contexto.Publicacoes.FindAsync(publicacaoId);
-
-            if (publicacao == null)
-            {
-                return BadRequest("Esta Publicação Não Existe");
-            }
-
-            var bazeExistente = await _contexto.Bazes.FirstOrDefaultAsync(b =>
-                b.PublicacaoId == publicacaoId && b.UtilizadorId == utilizadorId
-            );
-
-            if (bazeExistente != null)
-            {
-                _contexto.Bazes.Remove(bazeExistente);
-
-                if (publicacao.QuantidadeBazes > 0)
-                    publicacao.QuantidadeBazes--;
-
-                await _contexto.SaveChangesAsync();
-                return Ok(
-                    new
-                    {
-                        mensagem = "Baze removido com sucesso!",
-                        quantidadeBazes = publicacao.QuantidadeBazes,
-                    }
-                );
-            }
-
-            var baze = bazeDto.ParaBazeDeBazeDto(publicacaoId, utilizadorId);
-            baze.DataInteracao = DateTime.Now;
-            publicacao.QuantidadeBazes++;
-
-            _contexto.Bazes.AddAsync(baze);
-            _contexto.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(SelecionarBaze), new { id = baze.Id }, baze.ToBazeDto());*/
             var resultado = await _bazeService.AlternarBazeAsync(publicacaoId, utilizadorId);
 
             if (resultado.ErroMensagem != null)

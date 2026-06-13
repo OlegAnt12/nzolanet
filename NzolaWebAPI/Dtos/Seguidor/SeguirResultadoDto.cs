@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 
 namespace NzolaWebAPI.DTOs.Seguidor
 {
-    public class CriarSeguidorDto
-    {   
+    public class SeguirResultadoDto
+    {
+        public bool FoiRemovido { get; set; }
+        public string ErroMensagem { get; set; }
     }
 }

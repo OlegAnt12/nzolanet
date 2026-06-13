@@ -144,11 +144,16 @@
                   </div>
                 </li>
                 <li class="item-opcoes">
-                  <button class="btn" (click)="confirmarEliminarPublicacao(pub.id)" style="background: #dc3545; color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px;">
+                  <button class="btn" (click)="confirmarEliminarPublicacao(pub.id)" style="background: #ff375f; color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px;">
                     🗑️ Eliminar
                   </button>
                 </li>
               </ul>
+            </div>
+            <div *ngIf="utilizadorLogado?.id != pub.autor?.id" class="opcao-seguir">
+              <button class="btn" (click)="confirmarEliminarPublicacao(pub.id)" style="background: #ff375f; color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px;">
+                Seguir
+              </button>
             </div>
           </div>
 

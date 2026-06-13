@@ -17,25 +17,27 @@ namespace NzolaWebAPI.Controllers
     public class SeguidorController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto; 
-        public SeguidorController(ContextoBDNzola contexto)
+        private readonly ISeguidorRepository _seguidorRepo;
+        private readonly ISeguidorService _seguidorService;
+
+        public SeguidorController(ContextoBDNzola contexto, ISeguidorRepository seguidorRepo, ISeguidorService seguidorService)
         {
             _contexto = contexto;
-            
+            _seguidorRepo = seguidorRepo;
+            _seguidorService = seguidorService;
         }
 
-        [HttpGet]
-        public IActionResult ListarSeguidores()
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ListarSeguidoresPorUtilizador([FromRoute] int id)
         {
-            var seguidores = _contexto.Seguidores.ToList()
-            .Select(s => s.ToSeguidorDto());
-
+            var seguidores = await _seguidorRepo.ListarSeguidoresPorUtilizadorAsync(id);
             return Ok(seguidores);
         }
 
         [HttpGet("{id}")]
         public IActionResult SelecionarSeguidor([FromRoute] int id)
         {
-            var seguidor = _contexto.Seguidores.Find(id);
+            var seguidor = _seguidorRepo.SelecionarRelacaoIdAsync(id);
 
             if (seguidor == null)
             {
@@ -45,34 +47,24 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpPost]
-        public IActionResult Criar ([FromBody] CriarSeguidorDto criarSeguidorDto)
+        public async Task<IActionResult> AlternarSeguir ([FromRoute] int seguidorId, [FromRoute] int seguidoId)
         {
-            var seguidor = criarSeguidorDto.ToSeguidorFromCriarDto();
-
-            _contexto.Seguidores.Add(seguidor);
-            _contexto.SaveChanges();
-
-            return CreatedAtAction(nameof(SelecionarSeguidor), new {id = seguidor.Id}, seguidor.ToSeguidorDto());
-            
-        }
-
-        [HttpDelete]
-        public IActionResult Apagar ([FromRoute] int id)
-        {
-            var seguidor = _contexto.Seguidores.Find(id);
-
-            if(seguidor == null)
+            var seguidor = await _seguidorService.AlternarSeguirAsync(int seguidorId, int seguidoId);
+            if (resultado.ErroMensagem != null)
             {
-                return NotFound();
+                return BadRequest(resultado.ErroMensagem);
             }
 
-            _contexto.Seguidores.Remove(seguidor);
-            _contexto.SaveChanges();
-
-            return NoContent();
-        }
-
-    
-        
+            if (resultado.FoiRemovido)
+            {
+                return Ok(
+                    new
+                    {
+                        mensagem = "Relação removida com sucesso!",
+                    }
+                );
+            }
+            return CreatedAtAction(nameof(SelecionarSeguidor), new {id = seguidor.Id}, seguidor.ToSeguidorDto());
+        }        
     }
 }

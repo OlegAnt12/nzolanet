@@ -17,8 +17,6 @@ namespace NzolaWebAPI.Mappers
                 SeguidorId = modelSeguidor.SeguidorId,
                 SeguidoId = modelSeguidor.SeguidoId,
                 DataInicio = modelSeguidor.DataInicio
-                
-                
             };
         }
 
