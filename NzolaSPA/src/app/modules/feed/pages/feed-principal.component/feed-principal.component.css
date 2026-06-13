@@ -297,7 +297,8 @@ width: 232px;
 {
   width: 24px;
   display: inline;
-  opacity: .33;
+  transition: all .45s;
+  /*opacity: .33;*/
 }
 .item-baze:hover,
 .item-baze:active
