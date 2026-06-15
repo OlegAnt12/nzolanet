@@ -51,5 +51,30 @@ namespace NzolaWebAPI.Repositories
         {
             return (await _contexto.SaveChangesAsync()) > 0;
         }
+
+        public async Task<int> ContarSeguidoresAsync(int utilizadorId)
+        {
+            // Quantos usuários seguem este utilizador
+            return await _contexto.Seguidores.Where(s => s.SeguidoId == utilizadorId).CountAsync();
+        }
+
+        public async Task<int> ContarSeguindoAsync(int utilizadorId)
+        {
+            // Quantos usuários este utilizador segue
+            return await _contexto.Seguidores.Where(s => s.SeguidorId == utilizadorId).CountAsync();
+        }
+
+        public Task<List<Seguidor>> ListarSeguidoresAsync(int utilizadorId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<List<Seguidor>> ListarSeguindoAsync(int utilizadorId)
+        {
+            // Retorna TODAS as relações onde utilizadorId é o SEGUIDOR
+            return await _contexto
+                .Seguidores.Where(s => s.SeguidorId == utilizadorId)
+                .ToListAsync();
+        }
     }
 }

@@ -15,10 +15,13 @@ namespace NzolaWebAPI.DTOs.Utilizador
         public String Biografia { get; set; }
         public EstadoAcesso Privacidade { get; set; }
         public EstadoConta EstadoConta { get; set; }
-        public byte[] FotoPerfil { get; set; }
+        public string? FotoPerfil { get; set; }
 
-        public NzolaWebAPI.Models.Enums.Genero Genero { get; set; }
+        public Genero Genero { get; set; }
         public DateTime DataNascimento { get; set; }
-        
+        public int Seguidores { get; set; } // Quantos seguem ele
+        public int Seguindo { get; set; } // Quantos ele segue (NOVO)
+        public int Publicacoes { get; set; }
+        public bool JaSegues { get; set; }
     }
 }

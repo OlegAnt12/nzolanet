@@ -35,7 +35,7 @@ namespace NzolaWebAPI.Repositories
             return await _context.Utilizadores.AnyAsync(u => u.Email == email);
         }
 
-        public async Task<bool> SalvarAlteracoesAsync()
+        public async Task<bool> SalvarAsync()
         {
             return await _context.SaveChangesAsync() > 0;
         }

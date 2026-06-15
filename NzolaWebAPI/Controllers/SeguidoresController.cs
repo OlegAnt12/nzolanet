@@ -54,27 +54,49 @@ namespace NzolaWebAPI.Controllers
             return Ok(seguidor.ToSeguidorDto());
         }
 
-        [HttpPost]
+        [HttpPost("{seguidorId}/{seguidoId}")]
         public async Task<IActionResult> AlternarSeguir(
             [FromRoute] int seguidorId,
             [FromRoute] int seguidoId
         )
         {
-            var seguidor = await _seguidorService.AlternarSeguirAsync(seguidorId, seguidoId);
-            if (seguidor.ErroMensagem != null)
+            try
             {
-                return BadRequest(seguidor.ErroMensagem);
-            }
+                var seguidor = await _seguidorService.AlternarSeguirAsync(seguidorId, seguidoId);
 
-            if (seguidor.FoiRemovido)
-            {
-                return Ok(new { mensagem = "Relação removida com sucesso!" });
+                if (!string.IsNullOrEmpty(seguidor.ErroMensagem))
+                {
+                    return BadRequest(seguidor.ErroMensagem);
+                }
+
+                if (seguidor.FoiRemovido)
+                {
+                    return Ok(
+                        new { mensagem = "Relação removida com sucesso!", estaSeguindo = false }
+                    );
+                }
+
+                return Ok(new { mensagem = "Relação criada com sucesso!", estaSeguindo = true });
             }
-            return CreatedAtAction(
-                nameof(SelecionarSeguidor),
-                new { id = seguidor.SeguidorDto!.Id },
-                seguidor.SeguidorDto
-            );
+            catch (Exception ex)
+            {
+                // LOG DO ERRO
+                Console.WriteLine($"Erro em AlternarSeguir: {ex.Message}");
+                Console.WriteLine($"Stack: {ex.StackTrace}");
+                return StatusCode(500, $"Erro interno: {ex.Message}");
+            }
+        }
+
+        [HttpGet("seguindo/{utilizadorId:int}")]
+        public async Task<IActionResult> ListarSeguindo(int utilizadorId)
+        {
+            // Buscar todas as relações onde este usuário é o SEGUIDOR
+            var seguindo = await _seguidorRepo.ListarSeguindoAsync(utilizadorId);
+
+            // Extrair apenas os IDs dos usuários que ele segue
+            var ids = seguindo.Select(s => s.SeguidoId).ToList();
+
+            return Ok(ids);
         }
     }
 }

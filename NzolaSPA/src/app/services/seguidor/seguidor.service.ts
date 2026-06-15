@@ -22,4 +22,9 @@ export class SeguidorService {
         // Monta o link exatamente como o [HttpPost("{publicacaoId:int}/{utilizadorId:int}")] do C# pede
         return this.api.post<any>(`${this.endpoint}/${seguidorId}/${seguidoId}`, {});
       }
+
+      // NOVO MÉTODO: Buscar todos que o usuário segue
+      listarSeguidos(utilizadorId: number): Observable<number[]> {
+        return this.api.get<number[]>(`${this.endpoint}/seguindo/${utilizadorId}`);
+      }
 }

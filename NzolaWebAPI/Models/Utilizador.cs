@@ -43,7 +43,9 @@ namespace NzolaWebAPI.Models
         [Column(TypeName = "nvarchar(8)")]
         [DefaultValue("Normal")]
         public NivelAcesso NivelAcesso { get; set; }
-        public byte?[] FotoPerfil { get; set; }
+
+        [Column(TypeName = "varbinary(max)")]
+        public byte[]? FotoPerfil { get; set; }
         public string? Biografia { get; set; }
 
         [Column(TypeName = "nvarchar(8)")]

@@ -9,6 +9,8 @@ namespace NzolaWebAPI.Interfaces
     public interface IPublicacaoRepository
     {
         Task<bool> ExisteAsync(int id);
+
+        Task<int> ContarPorUtilizadorAsync(int utilizadorId);
         Task AdicionarAsync(Publicacao publicacao);
         Task<bool> SalvarAsync();
         Task<List<Publicacao>> ListarRecentesAsync();

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs;
 using NzolaWebAPI.DTOs.Utilizador;
+using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
 using NzolaWebAPI.Models.Enums;
@@ -18,10 +19,22 @@ namespace NzolaWebAPI.Controllers
     public class UtilizadoresController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
+        private readonly IUtilizadorService _utilizadorService;
 
-        public UtilizadoresController(ContextoBDNzola contexto)
+        private readonly ISeguidorRepository _seguidorRepository;
+        private readonly IPublicacaoRepository _publicacaoRepository;
+
+        public UtilizadoresController(
+            ContextoBDNzola contexto,
+            IUtilizadorService utilizadorService,
+            ISeguidorRepository seguidorRepository,
+            IPublicacaoRepository publicacaoRepository
+        )
         {
             _contexto = contexto;
+            _utilizadorService = utilizadorService;
+            _seguidorRepository = seguidorRepository;
+            _publicacaoRepository = publicacaoRepository;
         }
 
         [HttpGet]
@@ -64,6 +77,27 @@ namespace NzolaWebAPI.Controllers
             );
         }
 
+        [HttpPut("perfil/{id}")]
+        [Consumes("multipart/form-data")]
+        [RequestSizeLimit(209715200)]
+        [RequestFormLimits(MultipartBodyLengthLimit = 209715200)]
+        public async Task<IActionResult> AtualizarPerfil(
+            int id,
+            [FromForm] ActualizarPerfilRequestDto dto
+        )
+        {
+            if (string.IsNullOrWhiteSpace(dto.NomeCompleto))
+            {
+                return BadRequest("O nome completo é obrigatório.");
+            }
+
+            var utilizadorAtualizado = await _utilizadorService.AtualizarPerfilAsync(id, dto);
+            if (utilizadorAtualizado == null)
+                return NotFound("Utilizador não encontrado.");
+
+            return Ok(utilizadorAtualizado);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> Apagar(int id)
         {
@@ -78,6 +112,20 @@ namespace NzolaWebAPI.Controllers
             await _contexto.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpGet("estatisticas/{id:int}")]
+        public async Task<IActionResult> ObterEstatisticas(int id)
+        {
+            var estatisticas = await _utilizadorService.ObterEstatisticasAsync(id);
+            return Ok(estatisticas);
+        }
+
+        private int? ObterUtilizadorLogadoId()
+        {
+            // Implemente conforme sua autenticação (JWT, Session, etc)
+            var userId = User.FindFirst("id")?.Value;
+            return userId != null ? int.Parse(userId) : null;
         }
     }
 }

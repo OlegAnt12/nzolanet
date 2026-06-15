@@ -1,0 +1,4 @@
+.txt-nome, .txt-sobrenome
+{
+    text-transform: capitalize;
+}

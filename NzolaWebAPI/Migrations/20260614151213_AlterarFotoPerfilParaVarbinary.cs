@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NzolaWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class fase1testes : Migration
+    public partial class AlterarFotoPerfilParaVarbinary : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,12 +35,13 @@ namespace NzolaWebAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Genero = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Genero = table.Column<string>(type: "nvarchar(10)", nullable: false),
+                    NomeUtilizador = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     NomeCompleto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     PalavraPasse = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     NivelAcesso = table.Column<string>(type: "nvarchar(8)", nullable: false),
-                    FotoPerfil = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FotoPerfil = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     Biografia = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Privacidade = table.Column<string>(type: "nvarchar(8)", nullable: false),
                     EstadoConta = table.Column<string>(type: "nvarchar(8)", nullable: false),
@@ -50,6 +51,7 @@ namespace NzolaWebAPI.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tb_Utilizadores", x => x.Id);
+                    table.CheckConstraint("CK_Utilizadores_Genero", "Genero IN ('Masculino','Feminino')");
                 });
 
             migrationBuilder.CreateTable(
@@ -59,6 +61,8 @@ namespace NzolaWebAPI.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AutorId = table.Column<int>(type: "int", nullable: false),
+                    Texto = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Existencia = table.Column<string>(type: "nvarchar(11)", nullable: false),
                     QuantidadeBazes = table.Column<int>(type: "int", nullable: false),
                     QuantidadeComentarios = table.Column<int>(type: "int", nullable: false),
                     DataPublicacao = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -165,21 +169,22 @@ namespace NzolaWebAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tb_ConteudosPublicacao",
+                name: "tb_FicheirosConteudo",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PublicacaoId = table.Column<int>(type: "int", nullable: false),
-                    Conteudo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TipoConteudo = table.Column<int>(type: "int", nullable: false),
-                    Ordem = table.Column<int>(type: "int", nullable: false)
+                    CaminhoFicheiro = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TipoMime = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TamanhoBytes = table.Column<long>(type: "bigint", nullable: false),
+                    DataUpload = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tb_ConteudosPublicacao", x => x.Id);
+                    table.PrimaryKey("PK_tb_FicheirosConteudo", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_tb_ConteudosPublicacao_tb_Publicacoes_PublicacaoId",
+                        name: "FK_tb_FicheirosConteudo_tb_Publicacoes_PublicacaoId",
                         column: x => x.PublicacaoId,
                         principalTable: "tb_Publicacoes",
                         principalColumn: "Id",
@@ -208,8 +213,8 @@ namespace NzolaWebAPI.Migrations
                 column: "PublicacaoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tb_ConteudosPublicacao_PublicacaoId",
-                table: "tb_ConteudosPublicacao",
+                name: "IX_tb_FicheirosConteudo_PublicacaoId",
+                table: "tb_FicheirosConteudo",
                 column: "PublicacaoId");
 
             migrationBuilder.CreateIndex(
@@ -232,6 +237,12 @@ namespace NzolaWebAPI.Migrations
                 table: "tb_Utilizadores",
                 column: "Email",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tb_Utilizadores_NomeUtilizador",
+                table: "tb_Utilizadores",
+                column: "NomeUtilizador",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -247,7 +258,7 @@ namespace NzolaWebAPI.Migrations
                 name: "tb_Comentarios");
 
             migrationBuilder.DropTable(
-                name: "tb_ConteudosPublicacao");
+                name: "tb_FicheirosConteudo");
 
             migrationBuilder.DropTable(
                 name: "tb_Seguidores");

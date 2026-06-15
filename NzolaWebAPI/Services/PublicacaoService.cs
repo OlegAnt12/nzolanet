@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Publicacao;
+using NzolaWebAPI.DTOs.Utilizador;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
@@ -17,15 +18,18 @@ namespace NzolaWebAPI.Services
         private readonly IPublicacaoRepository _publicacaoRepo;
         private readonly ContextoBDNzola _contexto; // Usado apenas se precisares controlar a transação aqui
         private readonly IUtilizadorRepository _utilizadorRepo;
+        private readonly ISeguidorRepository _seguidorRepo;
 
         public PublicacaoService(
             IPublicacaoRepository publicacaoRepo,
             IUtilizadorRepository utilizadorRepo,
+            ISeguidorRepository seguidorRepo,
             ContextoBDNzola contexto
         )
         {
             _publicacaoRepo = publicacaoRepo;
             _utilizadorRepo = utilizadorRepo;
+            _seguidorRepo = seguidorRepo;
             _contexto = contexto;
         }
 
@@ -177,6 +181,60 @@ namespace NzolaWebAPI.Services
 
             await _publicacaoRepo.SalvarAsync();
             return publicacaoExistente;
+        }
+
+        // PublicacaoService.cs
+        public async Task<List<PublicacaoFeedDto>> ListarFeedAsync(int? utilizadorLogadoId = null)
+        {
+            var publicacoes = await _publicacaoRepo.ListarRecentesAsync();
+
+            var result = new List<PublicacaoFeedDto>();
+
+            foreach (var pub in publicacoes)
+            {
+                // Verificar se o usuário logado segue o autor
+                bool jaSegues = false;
+                if (utilizadorLogadoId.HasValue && utilizadorLogadoId.Value != pub.AutorId)
+                {
+                    var relacao = await _seguidorRepo.ObterPorRelacaoAsync(
+                        utilizadorLogadoId.Value,
+                        pub.AutorId
+                    );
+                    jaSegues = relacao != null;
+                }
+
+                var dto = new PublicacaoFeedDto
+                {
+                    Id = pub.Id,
+                    Texto = pub.Texto,
+
+                    DataPublicacao = pub.DataPublicacao,
+                    QuantidadeBazes = pub.Bazes.Count,
+                    QuantidadeComentarios = pub.Comentarios.Count,
+
+                    Ficheiros = pub
+                        .Ficheiros.Select(f => new FicheiroPublicacaoDto
+                        {
+                            Id = f.Id,
+                            CaminhoFicheiro = f.CaminhoFicheiro,
+                            TipoMime = f.TipoMime,
+                            TamanhoBytes = f.TamanhoBytes,
+                            DataUpload = f.DataUpload,
+                        })
+                        .ToList(),
+                    Autor = new AutorPublicacaoDto
+                    {
+                        Id = pub.Utilizador.Id,
+                        NomeCompleto = pub.Utilizador.NomeCompleto,
+                        //FotoPerfil = pub.Utilizador.FotoPerfil,
+                        JaSegues = jaSegues, // ✅ Estado de seguir aqui
+                    },
+                };
+
+                result.Add(dto);
+            }
+
+            return result;
         }
     }
 }

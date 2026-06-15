@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+
 namespace NzolaWebAPI.DTOs.Utilizador
 {
     public class AtualizarUtilizadorDto
@@ -18,10 +19,6 @@ namespace NzolaWebAPI.DTOs.Utilizador
 
         public string EstadoConta { get; set; }
 
-        public byte[] FotoPerfil { get; set; }
-
-
-
-        
+        public byte[]? FotoPerfil { get; set; }
     }
 }

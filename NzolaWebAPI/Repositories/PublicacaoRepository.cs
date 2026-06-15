@@ -84,5 +84,10 @@ namespace NzolaWebAPI.Repositories
                 await _transacaoAtiva.DisposeAsync();
             }
         }
+
+        public async Task<int> ContarPorUtilizadorAsync(int utilizadorId)
+        {
+            return await _contexto.Publicacoes.Where(p => p.AutorId == utilizadorId).CountAsync();
+        }
     }
 }

@@ -1,8 +1,10 @@
 using System.Reflection;
-using Microsoft.AspNetCore.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Http.Features;
 using NzolaWebAPI.Configurations;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.Helpers;
@@ -29,7 +31,15 @@ builder.Services.Configure<FormOptions>(options =>
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddControllers();
+builder
+    .Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Para MVC, a propriedade se chama JsonSerializerOptions (não SerializerOptions)
+        // E NÃO precisa do conversor customizado!
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -42,12 +52,13 @@ builder.Services.AddSwaggerGen(options =>
 // CORS: Política permissiva para permitir todas as origens, métodos e cabeçalhos
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", policy =>
-    {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
+    options.AddPolicy(
+        "AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+        }
+    );
 });
 
 // dotnet add package Microsoft.EntityFrameworkCore.InMemory
@@ -66,6 +77,7 @@ builder.Services.AddScoped<IBazeRepository, BazeRepository>();
 builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
 builder.Services.AddScoped<IPublicacaoRepository, PublicacaoRepository>();
 builder.Services.AddScoped<ISeguidorRepository, SeguidorRepository>();
+builder.Services.AddScoped<IUtilizadorRepository, UtilizadorRepository>();
 
 // Registra a implementação do serviço de e-mail
 builder.Services.AddScoped<IBazeService, BazeService>();
@@ -74,7 +86,7 @@ builder.Services.AddScoped<IComentarioService, ComentarioService>();
 builder.Services.AddScoped<IPublicacaoService, PublicacaoService>();
 builder.Services.AddScoped<ISeguidorService, SeguidorService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IUtilizadorRepository, UtilizadorRepository>();
+builder.Services.AddScoped<IUtilizadorService, UtilizadorService>();
 builder.Services.AddScoped<IUtilizadorService, UtilizadorService>();
 
 var app = builder.Build();

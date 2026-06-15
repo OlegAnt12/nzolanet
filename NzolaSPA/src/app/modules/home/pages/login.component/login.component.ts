@@ -46,4 +46,9 @@ export class LoginComponent {
       });
     }
   }
+
+  paraRegisto()
+  {
+    this.route.navigate(['/home/registo']);
+  }
 }

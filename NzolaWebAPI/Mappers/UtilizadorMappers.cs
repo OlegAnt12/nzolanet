@@ -14,9 +14,13 @@ namespace NzolaWebAPI.Mappers
                 NomeUtilizador = utilizador.NomeUtilizador,
                 Email = utilizador.Email,
                 Biografia = utilizador.Biografia,
+                FotoPerfil =
+                    utilizador.FotoPerfil != null
+                        ? Convert.ToBase64String(utilizador.FotoPerfil)
+                        : null,
                 Privacidade = utilizador.Privacidade,
-                EstadoConta = utilizador.EstadoConta,
                 Genero = utilizador.Genero,
+                DataNascimento = utilizador.DataNascimento,
             };
         }
 
@@ -42,7 +46,10 @@ namespace NzolaWebAPI.Mappers
             {
                 Id = modelUtilizador.Id,
                 NomeCompleto = modelUtilizador.NomeCompleto,
-                FotoPerfil = modelUtilizador.FotoPerfil,
+                FotoPerfil =
+                    modelUtilizador.FotoPerfil != null
+                        ? Convert.ToBase64String(modelUtilizador.FotoPerfil)
+                        : null,
             };
         }
     }

@@ -1,3 +1,5 @@
+import { UtilizadorSimplificadoDto } from "../utilizador/utilizadorfeed/utilizador.dto";
+
 export class PublicacaoDto {
   id: number = 0;
   utilizadorId: number = 0;
@@ -13,7 +15,7 @@ export class PublicacaoDto {
   bazeId: number | null = null;
   ficheiros: PublicacaoFicheiroDto[]=[]; // <-- ADICIONA ESTA LINHA EXATAMENTE AQUI
   comentarios: any[]=[];
-  jaSegues?: boolean; // <-- Adiciona esta linha para controlo visual
+  autor?: UtilizadorSimplificadoDto;
 }
 
 
