@@ -20,6 +20,17 @@ namespace NzolaWebAPI.Mappers
             };
         }
 
+        public static SeguidorFeedDto ToSeguidorFeedDto(this Seguidor modelSeguidor)
+        {
+            return new SeguidorFeedDto
+            {
+                Id = modelSeguidor.Id,
+                Seguidor = modelSeguidor.UtilizadorSeguidor != null ? modelSeguidor.UtilizadorSeguidor.ToUtilizadorSimplificadoDto() : null,
+                Seguido = modelSeguidor.UtilizadorSeguido != null ? modelSeguidor.UtilizadorSeguidor.ToUtilizadorSimplificadoDto() : null,
+                DataInicio = modelSeguidor.DataInicio,
+            };
+        }
+
         public static Seguidor ToSeguidorFromCriarDto(
             this CriarSeguidorDto criarSeguidorDto,
             int seguidorId,

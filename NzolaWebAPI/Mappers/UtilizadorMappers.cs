@@ -46,6 +46,23 @@ namespace NzolaWebAPI.Mappers
             {
                 Id = modelUtilizador.Id,
                 NomeCompleto = modelUtilizador.NomeCompleto,
+                NomeUtilizador = modelUtilizador.NomeCompleto,
+                FotoPerfil =
+                    modelUtilizador.FotoPerfil != null
+                        ? Convert.ToBase64String(modelUtilizador.FotoPerfil)
+                        : null,
+                Seguidores = modelUtilizador.Seguidores.Select(s => s.ToSeguidorFeedDto()).ToList(),
+                Seguidos = modelUtilizador.Seguindo.Select(s => s.ToSeguidorFeedDto()).ToList()
+            };
+        }
+
+        public static UtilizadorSimplificadoDto ToUtilizadorSimplificadoDto(this Utilizador modelUtilizador)
+        {
+            return new UtilizadorSimplificadoDto
+            {
+                Id = modelUtilizador.Id,
+                NomeCompleto = modelUtilizador.NomeCompleto,
+                NomeUtilizador = modelUtilizador.NomeUtilizador,
                 FotoPerfil =
                     modelUtilizador.FotoPerfil != null
                         ? Convert.ToBase64String(modelUtilizador.FotoPerfil)

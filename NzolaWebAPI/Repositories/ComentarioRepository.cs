@@ -23,6 +23,13 @@ namespace NzolaWebAPI.Repositories
             return await _contexto.Comentarios.FindAsync(id);
         }
 
+        public async Task<List<Comentario>> ListarPorPublicacaoIdAsync(int id)
+        {
+            return await _contexto.Comentarios.Where(b => b.PublicacaoId == id)
+                .Include(c => c.Utilizador)
+                .Include(c => c.Publicacao).ToListAsync();
+        }
+
         public async Task AdicionarAsync(Comentario comentario)
         {
             await _contexto.Comentarios.AddAsync(comentario);

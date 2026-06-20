@@ -17,6 +17,7 @@ namespace NzolaWebAPI.Interfaces
             AdicionarComentarioRequestDto dto
         );
         Task<ComentarioResultadoDto> EditarAsync(int id, EditarComentarioRequestDto dto);
+        Task<List<ComentarioDto>> ListarAsync(int id);
         Task<ComentarioResultadoDto> ExcluirAsync(int id);
     }
 }

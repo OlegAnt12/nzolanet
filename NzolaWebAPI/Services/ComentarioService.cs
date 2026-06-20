@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Comentario;
+using NzolaWebAPI.DTOs.Utilizador;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
@@ -80,6 +81,7 @@ namespace NzolaWebAPI.Services
         {
             var resultado = new ComentarioResultadoDto();
             var comentario = await _comentarioRepo.ObterPorIdAsync(id);
+            
 
             if (comentario == null)
             {
@@ -123,6 +125,21 @@ namespace NzolaWebAPI.Services
             await _comentarioRepo.SalvarAsync();
 
             return resultado;
+        }
+
+        public async Task<List<ComentarioDto>> ListarAsync(int id)
+        {
+            var comentarios = await _comentarioRepo.ListarPorPublicacaoIdAsync(id);
+
+            var listaComentariosDto = new List<ComentarioDto>();
+
+            foreach(var com in comentarios)
+            {
+                var comentarioDto = com.ToComentarioDto();
+                listaComentariosDto.Add(comentarioDto);
+            }
+
+            return listaComentariosDto;
         }
     }
 }

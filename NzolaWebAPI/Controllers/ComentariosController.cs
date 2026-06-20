@@ -29,10 +29,7 @@ namespace NzolaWebAPI.Controllers
         [HttpGet("publicacao/{Id}")]
         public async Task<IActionResult> GetComentarios([FromRoute] int Id)
         {
-            var comentarios = await _contexto
-                .Comentarios.Where(b => b.PublicacaoId == Id)
-                .Select(c => c.ToComentarioDto())
-                .ToListAsync();
+            var comentarios = await _comentarioService.ListarAsync(Id);
 
             return Ok(comentarios);
         }

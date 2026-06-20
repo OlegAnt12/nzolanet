@@ -8,7 +8,8 @@ namespace NzolaWebAPI.DTOs.Utilizador
     public class UtilizadorSimplificadoDto
     {
         public int Id { get; set; }
-        public string Nome { get; set; } = string.Empty;
+        public string NomeCompleto { get; set; } = string.Empty;
+        public string NomeUtilizador { get; set; } = string.Empty;
         public string? FotoPerfil { get; set; }
         public bool JaSegues { get; set; } // Estado de seguir AQUI
     }

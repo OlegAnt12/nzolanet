@@ -51,7 +51,7 @@
               <span>{{ utilizadorLogado.seguidores || 0 }} seguidores</span> •
               <span>{{ utilizadorLogado.seguindo || 0 }} seguindo</span> •
 
-              <span>{{ feedPublicacoes ? feedPublicacoes.length : 0 }} posts</span>
+              <span>{{ utilizadorLogado.publicacoes ? utilizadorLogado.publicacoes.length : 0 }} posts</span>
             </div>
             <button type="button" class="btn btn-acessar-perfil" (click)="abrirEdicaoPerfil()">
               ⚙️ Editar Perfil
@@ -375,7 +375,7 @@
               </div>
             </div>
 
-            <div class="texto-publicacao">
+            <div class="texto-publicacao" [style.margin]="pub.ficheiros.length > 0 ? '0' : '0 0 3rem'">
               <p>{{ pub.texto }}</p>
             </div>
 
@@ -462,11 +462,11 @@
 
             <div
               class="lista-comentarios-rend"
-              *ngIf="!pub.carregandoComentarios && pub.comentarios && pub.comentarios.length > 0"
+              *ngIf="!pub.carregandoComentarios && comentariosPublicacao && comentariosPublicacao.length > 0"
               style="margin-top: 12px"
             >
               <div
-                *ngFor="let c of pub.comentarios"
+                *ngFor="let c of comentariosPublicacao"
                 style="
                   margin-bottom: 8px;
                   background: white;
@@ -477,7 +477,7 @@
                 "
               >
                 <strong style="color: #333"
-                  >{{ c.autorNome || 'Utilizador #' + c.utilizadorId }}:
+                  >{{ c.comentador.nomeUtilizador || 'Utilizador #' + c.comentador.nomeCompleto }}:
                 </strong>
                 <span style="color: #555">{{ c.conteudoComentario }}</span>
               </div>

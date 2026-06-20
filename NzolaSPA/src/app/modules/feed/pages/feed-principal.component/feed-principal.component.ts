@@ -26,6 +26,7 @@ import { UtilizadorSimplificadoDto } from '../../../../dtos/utilizador/utilizado
 export class FeedPrincipalComponent implements OnInit {
   // Lista de publicações que alimenta o Feed
   feedPublicacoes: any[] = [];
+  comentariosPublicacao: any[]=[];
 
   // Informações do utilizador logado (para a barra lateral esquerda)
   utilizadorLogado: any = null;
@@ -545,7 +546,11 @@ export class FeedPrincipalComponent implements OnInit {
       this.comentarioService.listarPorPublicacao(publicacaoId).subscribe({
         next: (comentariosVindosDaApi) => {
           post.comentarios = comentariosVindosDaApi;
+          this.comentariosPublicacao=comentariosVindosDaApi;
           post.carregandoComentarios = false;
+
+          console.log(post.comentarios);
+          console.log(post.comentarios.Comentador.NomeUtilizador);
         },
         error: (erro) => {
           console.error('Erro ao listar comentários da publicação ' + publicacaoId, erro);
