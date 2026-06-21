@@ -48,10 +48,10 @@
           </div>
           <div class="infor-perfil">
             <div class="metricas">
-              <span>{{ utilizadorLogado.seguidores || 0 }} seguidores</span> •
-              <span>{{ utilizadorLogado.seguindo || 0 }} seguindo</span> •
+              <span>{{ estatisticaUtilizador.seguidores || 0 }} seguidores</span> •
+              <span>{{ estatisticaUtilizador.seguindo || 0 }} seguindo</span> •
 
-              <span>{{ utilizadorLogado.publicacoes ? utilizadorLogado.publicacoes.length : 0 }} posts</span>
+              <span>{{ estatisticaUtilizador.publicacoes }} posts</span>
             </div>
             <button type="button" class="btn btn-acessar-perfil" (click)="abrirEdicaoPerfil()">
               ⚙️ Editar Perfil
@@ -88,10 +88,7 @@
                 border-radius: 6px;
               "
             >
-              <div
-                class="minifoto-perfil"
-                style="position: static; margin: 0; width: 60px; hild: 60px"
-              >
+              <div class="minifoto-perfil" style="position: static; margin: 0; width: 60px">
                 <img
                   [src]="
                     previewFotoUrl ? previewFotoUrl : (utilizadorLogado.fotoPerfil | base64Image)
@@ -327,7 +324,8 @@
               <button
                 class="btn"
                 (click)="alternarSeguir(pub.autor)"
-                [style.background]="pub.autor?.jaSegues ? '#6c757d' : '#ff375f'"
+                [class.seguindo]="pub.autor?.jaSegues"
+                [class.nao-seguindo]="!pub.autor?.jaSegues"
                 style="
                   color: white;
                   font-size: 12px;
@@ -336,10 +334,11 @@
                   border: none;
                   cursor: pointer;
                   font-weight: bold;
-                  transition: background 0.2s;
+                  transition: all 0.2s;
                 "
+                [style.background]="pub.autor?.jaSegues ? '#6c757d' : '#ff375f'"
               >
-                {{ pub.autor?.jaSegues ? 'Deixar de seguir' : 'Seguir' }}
+                {{ pub.autor?.jaSegues ? '✓ Seguindo' : '+ Seguir' }}
               </button>
             </div>
           </div>
@@ -375,7 +374,10 @@
               </div>
             </div>
 
-            <div class="texto-publicacao" [style.margin]="pub.ficheiros.length > 0 ? '0' : '0 0 3rem'">
+            <div
+              class="texto-publicacao"
+              [style.margin]="pub.ficheiros.length > 0 ? '0' : '0 0 3rem'"
+            >
               <p>{{ pub.texto }}</p>
             </div>
 
@@ -462,7 +464,11 @@
 
             <div
               class="lista-comentarios-rend"
-              *ngIf="!pub.carregandoComentarios && comentariosPublicacao && comentariosPublicacao.length > 0"
+              *ngIf="
+                !pub.carregandoComentarios &&
+                comentariosPublicacao &&
+                comentariosPublicacao.length > 0
+              "
               style="margin-top: 12px"
             >
               <div
@@ -476,6 +482,65 @@
                   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
                 "
               >
+              <div *ngIf="utilizadorLogado?.id == c.comentador.id" class="opcoes-auxiliares">
+                <ul class="menu-opcoes">
+                  <li class="item-opcoes">
+                    <div style="margin-top: 10px; text-align: right">
+                      <button
+                        class="btn"
+                        (click)="iniciarEdicaoComentario(c)"
+                        style="background: #ffc107; color: black; font-size: 12px; padding: 4px 10px"
+                      >
+                        Editar
+                      </button>
+                    </div>
+                  </li>
+                  <li class="item-opcoes">
+                    <button
+                      class="btn"
+                      (click)="confirmarEliminarComentario(c.id)"
+                      style="
+                        background: #ff375f;
+                        color: white;
+                        font-size: 12px;
+                        padding: 4px 10px;
+                        border-radius: 4px;
+                      "
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </li>
+                </ul>
+              </div>
+              <div
+              *ngIf="comentarioAEditarId === c.id"
+              style="padding: 10px; background: #fff3cd; border-radius: 6px"
+            >
+              <textarea
+                [formControl]="comentarioEdicaoControl"
+                class="txt txt-box"
+                style="width: 100%; min-height: 80px"
+              ></textarea>
+
+              <div style="margin-top: 8px; display: flex; justify-content: flex-end; gap: 5px">
+                <button
+                  class="btn"
+                  (click)="cancelarEdicaoComentario()"
+                  [disabled]="estadoEditarComentario"
+                  style="background: #6c757d; color: white; padding: 4px 10px; font-size: 12px"
+                >
+                  Cancelar
+                </button>
+                <button
+                  class="btn"
+                  (click)="salvarEdicaoComentario(c.id)"
+                  [disabled]="comentarioEdicaoControl.invalid || estadoEditarComentario"
+                  style="background: #28a745; color: white; padding: 4px 10px; font-size: 12px"
+                >
+                  {{ estadoEditarComentario ? 'A guardar...' : 'Confirmar' }}
+                </button>
+              </div>
+            </div>
                 <strong style="color: #333"
                   >{{ c.comentador.nomeUtilizador || 'Utilizador #' + c.comentador.nomeCompleto }}:
                 </strong>

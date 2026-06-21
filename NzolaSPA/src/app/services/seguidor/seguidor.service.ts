@@ -24,7 +24,22 @@ export class SeguidorService {
       }
 
       // NOVO MÉTODO: Buscar todos que o usuário segue
-      listarSeguidos(utilizadorId: number): Observable<number[]> {
-        return this.api.get<number[]>(`${this.endpoint}/seguindo/${utilizadorId}`);
+      listarSeguidos(utilizadorId: number): Observable<any[]> {
+        return this.api.get<any[]>(`${this.endpoint}/seguindo/${utilizadorId}`);
       }
+
+      // Verifica se um utilizador segue outro DO:
+  verificarSegue(seguidorId: number, seguidoId: number): Observable<boolean> {
+    return this.api.get<boolean>(`${this.endpoint}/verificar/${seguidorId}/${seguidoId}`);
+  }
+
+  // Obtém todos os seguidores de um utilizador
+  obterSeguidores(utilizadorId: number): Observable<any[]> {
+    return this.api.get<any[]>(`${this.endpoint}/utilizador/${utilizadorId}`);
+  }
+
+  // Obtém todos os utilizadores que um utilizador segue
+  obterSeguindo(utilizadorId: number): Observable<any[]> {
+    return this.api.get<any[]>(`${this.endpoint}/seguindo/${utilizadorId}`);
+  }
 }

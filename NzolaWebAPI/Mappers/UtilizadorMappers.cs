@@ -67,6 +67,7 @@ namespace NzolaWebAPI.Mappers
                     modelUtilizador.FotoPerfil != null
                         ? Convert.ToBase64String(modelUtilizador.FotoPerfil)
                         : null,
+                
             };
         }
     }

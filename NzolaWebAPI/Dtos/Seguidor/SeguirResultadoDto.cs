@@ -9,6 +9,7 @@ namespace NzolaWebAPI.DTOs.Seguidor
     {
         public bool FoiRemovido { get; set; }
         public SeguidorDto? SeguidorDto { get; set; }
-        public string ErroMensagem { get; set; }
+        public string? ErroMensagem { get; set; }
+        
     }
 }

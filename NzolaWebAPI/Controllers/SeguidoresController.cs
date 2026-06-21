@@ -38,7 +38,14 @@ namespace NzolaWebAPI.Controllers
         )
         {
             var seguidores = await _seguidorRepo.ListarSeguidoresPorUtilizadorAsync(utillizadorId);
-            return Ok(seguidores);
+            return Ok(seguidores.Select(s => s.ToSeguidorFeedDto()));
+        }
+
+        [HttpGet("verificar/{seguidorId}/{seguidoId}")]
+        public async Task<IActionResult> verificarRelacaoSeguidor([FromRoute] int seguidorId, [FromRoute] int seguidoId)
+        {
+            var relacao = _seguidorRepo.ObterPorRelacaoAsync(seguidorId,seguidoId);
+            return Ok(relacao);
         }
 
         [HttpGet("{relacaoId}")]
@@ -51,7 +58,7 @@ namespace NzolaWebAPI.Controllers
                 return NotFound();
             }
 
-            return Ok(seguidor.ToSeguidorDto());
+            return Ok(seguidor.ToSeguidorFeedDto());
         }
 
         [HttpPost("{seguidorId}/{seguidoId}")]
@@ -94,7 +101,7 @@ namespace NzolaWebAPI.Controllers
             var seguindo = await _seguidorRepo.ListarSeguindoAsync(utilizadorId);
 
             // Extrair apenas os IDs dos usuários que ele segue
-            var ids = seguindo.Select(s => s.SeguidoId).ToList();
+            var ids = seguindo.Select(s => s.ToSeguidorFeedDto());
 
             return Ok(ids);
         }

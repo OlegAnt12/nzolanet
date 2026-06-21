@@ -226,8 +226,7 @@ namespace NzolaWebAPI.Services
                     {
                         Id = pub.Utilizador.Id,
                         NomeCompleto = pub.Utilizador.NomeCompleto,
-                        //FotoPerfil = pub.Utilizador.FotoPerfil,
-                        JaSegues = jaSegues, // ✅ Estado de seguir aqui
+                        //FotoPerfil = pub.Utilizador.FotoPerfil
                     },
                 };
 

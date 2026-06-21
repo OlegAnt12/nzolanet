@@ -226,6 +226,37 @@ width: 232px;
   object-fit: cover;
 }
 
+.btn-seguir {
+  color: white;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.btn-seguir:active {
+  transform: scale(0.95);
+}
+
+.btn-seguir.nao-seguindo {
+  background: #ff375f; /* Cor para "Seguir" */
+}
+
+.btn-seguir.nao-seguindo:hover {
+  background: #e62e52;
+}
+
+.btn-seguir.seguindo {
+  background: #6c757d; /* Cor para "Deixar de seguir" */
+}
+
+.btn-seguir.seguindo:hover {
+  background: #dc3545; /* Vermelho ao passar o mouse */
+}
+
 .texto-publicacao
 {
   padding: 24px 8px 16px;

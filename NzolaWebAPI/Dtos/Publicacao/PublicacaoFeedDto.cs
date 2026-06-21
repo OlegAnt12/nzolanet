@@ -16,6 +16,7 @@ namespace NzolaWebAPI.DTOs.Publicacao
 
         public AutorPublicacaoDto Autor { get; set; } = null;
         public string Texto { get; set; } = string.Empty;
+
         public List<FicheiroPublicacaoDto> Ficheiros { get; set; } =
             new List<FicheiroPublicacaoDto>();
         public List<ComentarioDto> Comentarios { get; set; } = new List<ComentarioDto>();

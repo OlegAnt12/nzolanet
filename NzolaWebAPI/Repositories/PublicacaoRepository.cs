@@ -49,7 +49,7 @@ namespace NzolaWebAPI.Repositories
         public async Task<Publicacao?> SelecionarAsync(int id)
         {
             return await _contexto
-                .Publicacoes.Where(p => p.Existencia != (EstadoExistenciaLogica)0)
+                .Publicacoes.Where(p => p.Existencia != 0)
                 .Include(p => p.Utilizador)
                 .Include(p => p.Ficheiros)
                 .FirstOrDefaultAsync(p => p.Id == id);
@@ -87,7 +87,7 @@ namespace NzolaWebAPI.Repositories
 
         public async Task<int> ContarPorUtilizadorAsync(int utilizadorId)
         {
-            return await _contexto.Publicacoes.Where(p => p.AutorId == utilizadorId).CountAsync();
+            return await _contexto.Publicacoes.Where(p => p.AutorId == utilizadorId && p.Existencia != 0).CountAsync();
         }
     }
 }

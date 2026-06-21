@@ -55,9 +55,11 @@ namespace NzolaWebAPI.Services
                 return resultado;
             }
 
-            Seguidor seguidor = new();
-            seguidor.SeguidorId = seguidorId;
-            seguidor.SeguidoId = seguidoId;
+            Seguidor seguidor = new()
+            {
+                SeguidorId = seguidorId,
+                SeguidoId = seguidoId
+            };
 
             await _seguidorRepo.AdicionarAsync(seguidor);
             await _seguidorRepo.SalvarAsync();

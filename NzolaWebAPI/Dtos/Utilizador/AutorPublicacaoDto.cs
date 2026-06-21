@@ -13,7 +13,6 @@ namespace NzolaWebAPI.DTOs.Utilizador
 
         public string NomeUtilizador { get; set; } = string.Empty;
         public string? FotoPerfil { get; set; }
-        public bool JaSegues { get; set; } // Estado de seguir AQUI
         public List<SeguidorFeedDto> Seguidores { get; set; } = new List<SeguidorFeedDto>();
         public List<SeguidorFeedDto> Seguidos { get; set; } = new List<SeguidorFeedDto>();
 

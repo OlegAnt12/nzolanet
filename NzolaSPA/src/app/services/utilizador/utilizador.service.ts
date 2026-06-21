@@ -11,7 +11,7 @@ export class UtilizadorService {
   constructor(private api: Api) {}
 
   obterEstatisticas(utilizadorId: number): Observable<EstatisticasUtilizadorDto> {
-    return this.api.get<EstatisticasUtilizadorDto>(`utilizadores/${utilizadorId}/estatisticas`);
+    return this.api.getById<EstatisticasUtilizadorDto>(`${this.endpoint}/estatisticas`,utilizadorId);
   }
 
   atualizarPerfil(utilizadorId: number, nomeCompleto: string, biografia: string, fotoFile?: File): Observable<any> {

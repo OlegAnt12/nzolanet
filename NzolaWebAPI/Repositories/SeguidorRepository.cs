@@ -22,19 +22,22 @@ namespace NzolaWebAPI.Repositories
 
         public async Task<List<Seguidor>> ListarSeguidoresPorUtilizadorAsync(int id)
         {
-            return await _contexto.Seguidores.Where(s => s.SeguidoId == id).ToListAsync();
+            return await _contexto.Seguidores.Include(s => s.UtilizadorSeguidor)  // ✅ Incluir as navegações
+        .Where(s => s.SeguidoId == id).ToListAsync();
         }
 
         public async Task<Seguidor?> ObterPorRelacaoAsync(int seguidorId, int seguidoId)
         {
-            return await _contexto.Seguidores.FirstOrDefaultAsync(b =>
-                b.SeguidorId == seguidorId && b.SeguidoId == seguidoId
+            return await _contexto.Seguidores.Include(s => s.UtilizadorSeguidor)  // ✅ Incluir as navegações
+        .Include(s => s.UtilizadorSeguido).FirstOrDefaultAsync(b =>
+                 b.SeguidorId == seguidorId && b.SeguidoId == seguidoId
             );
         }
 
         public async Task<Seguidor> SelecionarRelacaoIdAsync(int id)
         {
-            return await _contexto.Seguidores.FirstOrDefaultAsync(s => s.Id == id);
+            return await _contexto.Seguidores.Include(s => s.UtilizadorSeguidor)  // ✅ Incluir as navegações
+        .Include(s => s.UtilizadorSeguido).FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public void Remover(Seguidor seguidor)
@@ -64,9 +67,11 @@ namespace NzolaWebAPI.Repositories
             return await _contexto.Seguidores.Where(s => s.SeguidorId == utilizadorId).CountAsync();
         }
 
-        public Task<List<Seguidor>> ListarSeguidoresAsync(int utilizadorId)
+        public async Task<List<Seguidor>> ListarSeguidoresAsync(int utilizadorId)
         {
-            throw new NotImplementedException();
+            return await _contexto
+                .Seguidores.Where(s => s.SeguidoId == utilizadorId)
+                .ToListAsync();
         }
 
         public async Task<List<Seguidor>> ListarSeguindoAsync(int utilizadorId)

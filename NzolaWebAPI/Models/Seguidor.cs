@@ -19,12 +19,12 @@ namespace NzolaWebAPI.Models
         public int SeguidorId { get; set; }
 
         [ForeignKey("SeguidorId")]
-        public Utilizador UtilizadorSeguidor { get; set; }
+        public Utilizador? UtilizadorSeguidor { get; set; }
 
         public int SeguidoId { get; set; }
 
         [ForeignKey("SeguidoId")]
-        public Utilizador UtilizadorSeguido { get; set; }
+        public Utilizador? UtilizadorSeguido { get; set; }
 
         public DateTime DataInicio { get; set; } = DateTime.Now;
     }
