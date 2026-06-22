@@ -5,7 +5,7 @@
       <input type="text" name="email" id="emailId" class="txt txt-email" formControlName="identificador" />
       <div *ngIf="loginForm.get('identificador')?.touched && loginForm.get('identificador')?.invalid" class="alert-error">
         <small *ngIf="loginForm.get('identificador')?.hasError('required')">O e-mail é obrigatório.</small>
-        <small *ngIf="loginForm.get('identificador')?.hasError('identificador')">Introduz um e-mail com formato válido.</small>
+        <small *ngIf="loginForm.get('identificador')?.hasError('email')">Introduz um e-mail com formato válido.</small>
       </div>
     </div>
     <div class="campo-dados">
@@ -15,7 +15,7 @@
         <small>A palavra-passe é obrigatória.</small>
       </div>
     </div>
-    <button type="submit" class="btn btn-registar">Entrar</button>
+    <button type="submit" class="btn btn-registar" [disabled]="loginForm.invalid">Entrar</button>
     <hr />
     <p><span> Esqueceu a palavra-passe? </span></p>
     
