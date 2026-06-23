@@ -20,11 +20,12 @@ export const routes: Routes = [
     loadChildren: () =>
       import('./modules/admin/admin-module').then((m) => m.AdminModule)
   },
+/*
   {
     path: 'auth',
     loadChildren:() =>
       import('./modules/auth/auth.routes').then((m) => m.AUTH_ROUTES)
-  },
+  },*/
   
   {
     path: '**',

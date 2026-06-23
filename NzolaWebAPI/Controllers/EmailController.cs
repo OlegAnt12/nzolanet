@@ -7,7 +7,6 @@ using NzolaWebAPI.Interfaces;
 
 namespace NzolaWebAPI.Controllers
 {
-    
     [Route("api/[controller]")]
     [ApiController]
     public class EmailController : ControllerBase
@@ -24,7 +23,11 @@ namespace NzolaWebAPI.Controllers
         {
             try
             {
-                await _emailService.SendEmailAsync(toEmail, "Teste NzolaNet", "Olá! O serviço de e-mail está a funcionar.");
+                await _emailService.SendEmailAsync(
+                    toEmail,
+                    "Teste NzolaNet",
+                    "Olá! O serviço de e-mail está a funcionar."
+                );
                 return Ok("E-mail enviado com sucesso!");
             }
             catch (Exception ex)

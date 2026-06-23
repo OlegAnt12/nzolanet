@@ -1,6 +1,5 @@
-using NzolaWebAPI.Models;
 using NzolaWebAPI.DTOs.Utilizador;
-
+using NzolaWebAPI.Models;
 
 namespace NzolaWebAPI.Mappers
 {
@@ -12,24 +11,63 @@ namespace NzolaWebAPI.Mappers
             {
                 Id = utilizador.Id,
                 NomeCompleto = utilizador.NomeCompleto,
+                NomeUtilizador = utilizador.NomeUtilizador,
                 Email = utilizador.Email,
                 Biografia = utilizador.Biografia,
+                FotoPerfil =
+                    utilizador.FotoPerfil != null
+                        ? Convert.ToBase64String(utilizador.FotoPerfil)
+                        : null,
                 Privacidade = utilizador.Privacidade,
-                EstadoConta = utilizador.EstadoConta
+                Genero = utilizador.Genero,
+                DataNascimento = utilizador.DataNascimento,
             };
-
         }
 
-        public static Utilizador ToUtilizadorFromCriarDto(this CriarUtilizadorRequestDto utilizadorDto)
+        public static Utilizador ToUtilizadorFromCriarDto(
+            this CriarUtilizadorRequestDto utilizadorDto
+        )
         {
             return new Utilizador
             {
                 NomeCompleto = utilizadorDto.NomeCompleto,
                 Email = utilizadorDto.Email,
-                FotoPerfil = utilizadorDto.FotoPerfil,
+                FotoPerfil = utilizadorDto.FotoPerfil != null ? utilizadorDto.FotoPerfil : null,
                 PalavraPasse = utilizadorDto.PalavraPasse,
                 Genero = utilizadorDto.genero,
-                DataNascimento = utilizadorDto.DataNascimento
+                NomeUtilizador = utilizadorDto.NomeUtilizador,
+                DataNascimento = utilizadorDto.DataNascimento,
+            };
+        }
+
+        public static AutorPublicacaoDto ToAutorPublicacaoDto(this Utilizador modelUtilizador)
+        {
+            return new AutorPublicacaoDto
+            {
+                Id = modelUtilizador.Id,
+                NomeCompleto = modelUtilizador.NomeCompleto,
+                NomeUtilizador = modelUtilizador.NomeCompleto,
+                FotoPerfil =
+                    modelUtilizador.FotoPerfil != null
+                        ? Convert.ToBase64String(modelUtilizador.FotoPerfil)
+                        : null,
+                Seguidores = modelUtilizador.Seguidores.Select(s => s.ToSeguidorFeedDto()).ToList(),
+                Seguidos = modelUtilizador.Seguindo.Select(s => s.ToSeguidorFeedDto()).ToList()
+            };
+        }
+
+        public static UtilizadorSimplificadoDto ToUtilizadorSimplificadoDto(this Utilizador modelUtilizador)
+        {
+            return new UtilizadorSimplificadoDto
+            {
+                Id = modelUtilizador.Id,
+                NomeCompleto = modelUtilizador.NomeCompleto,
+                NomeUtilizador = modelUtilizador.NomeUtilizador,
+                FotoPerfil =
+                    modelUtilizador.FotoPerfil != null
+                        ? Convert.ToBase64String(modelUtilizador.FotoPerfil)
+                        : null,
+                
             };
         }
     }

@@ -9,21 +9,47 @@ import { RequisicaoCriarPublicacaoDto } from '../../dtos/publicacao/requisicao-c
 })
 export class PublicacaoService {
   
-  private readonly endpoint = 'publicacoes';
+  private readonly endpoint = 'Publicacoes';
 
   constructor(private api: Api)
   {
 
   }
 
-  obterRecentes(): Observable<PublicacaoDto[]>
+  listarRecentes(): Observable<PublicacaoDto[]>
   {
-    return this.api.get<PublicacaoDto[]>(`${this.endpoint}/recentes`);
+    return this.api.get<PublicacaoDto[]>(`${this.endpoint}/`);
   }
 
-  publicar(novaPublicacao: RequisicaoCriarPublicacaoDto): Observable<PublicacaoDto>
+  publicar(novaPublicacao: RequisicaoCriarPublicacaoDto, utilizadorId: number): Observable<PublicacaoDto>
   {
-    return this.api.post<PublicacaoDto>(this.endpoint, novaPublicacao);
+    const formData = new FormData();
+    
+    // Anexa o texto da publicação
+    formData.append('Texto', novaPublicacao.texto);
+    
+    // Anexa cada ficheiro do array para dentro do lote de envio
+    if (novaPublicacao.ficheiros && novaPublicacao.ficheiros.length > 0) {
+      novaPublicacao.ficheiros.forEach((ficheiro) => {
+        // O nome 'Ficheiros' deve bater exatamente com o nome do parâmetro no teu IFormFile/IFormFileCollection do C#
+        formData.append('Ficheiros', ficheiro, ficheiro.name);
+      });
+    }
+    return this.api.post<PublicacaoDto>(`${this.endpoint}/${utilizadorId}`, formData);
+  }
+
+  atualizarTextoPublicacao(publicacaoId: number, novoTexto: string): Observable<PublicacaoDto> {
+    const corpoRequisicao = {
+      texto: novoTexto
+    };
+  
+    // Envia como JSON puro para: http://localhost:5043/api/Publicacoes/{id}
+    return this.api.put<PublicacaoDto>(`${this.endpoint}`,`${publicacaoId}`, corpoRequisicao);
+  }
+
+  eliminarPublicacao(publicacaoId: number): Observable<PublicacaoDto> {
+    // Envia como JSON puro para: http://localhost:5043/api/Publicacoes/{id}
+    return this.api.delete<PublicacaoDto>(`${this.endpoint}`,`${publicacaoId}`);
   }
 
 }

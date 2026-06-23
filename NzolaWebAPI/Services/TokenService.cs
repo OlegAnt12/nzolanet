@@ -18,29 +18,31 @@ namespace NzolaWebAPI.Services
         public TokenService(IConfiguration config)
         {
             _config = config;
-            
-            
+
             _chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!));
         }
 
         public string CriarToken(Utilizador utilizador)
         {
-           
             var claims = new List<Claim>
             {
+                new Claim("utilizadorId", utilizador.Id.ToString()),
                 new Claim("email", utilizador.Email),
-                new Claim("name", utilizador.NomeCompleto)
+                new Claim("name", utilizador.NomeUtilizador),
             };
 
-            var credenciais = new SigningCredentials(_chave, SecurityAlgorithms.HmacSha512Signature);
+            var credenciais = new SigningCredentials(
+                _chave,
+                SecurityAlgorithms.HmacSha512Signature
+            );
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(7), 
+                Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = credenciais,
                 Issuer = _config["JWT:Issuer"],
-                Audience = _config["JWT:Audience"]
+                Audience = _config["JWT:Audience"],
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

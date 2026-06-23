@@ -7,8 +7,9 @@ namespace NzolaWebAPI.Interfaces
     {
         Task<Utilizador?> ObterPorEmailAsync(string email);
         Task<Utilizador?> ObterPorIdAsync(int id);
+
         Task AdicionarAsync(Utilizador utilizador);
         Task<bool> ExisteEmailAsync(string email);
-        Task<bool> SalvarAlteracoesAsync();
+        Task<bool> SalvarAsync();
     }
 }

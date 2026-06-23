@@ -6,10 +6,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Models
 {
-    [Table("tb_Publicacao")]
+    [Table("tb_Publicacoes")]
     public class Publicacao
     {
         [Key]
@@ -18,11 +19,22 @@ namespace NzolaWebAPI.Models
 
         [ForeignKey("AutorId")]
         public Utilizador Utilizador { get; set; }
+
+        [Required]
+        public string Texto { get; set; } = string.Empty;
+
+        // Uma publicação pode conter múltiplas mídias (imagens/vídeos)
+        public List<FicheiroConteudo> Ficheiros { get; set; } = new List<FicheiroConteudo>();
+
+        [Column(TypeName = "nvarchar(11)")]
+        [DefaultValue("Existente")]
+        public EstadoExistenciaLogica Existencia { get; set; } = EstadoExistenciaLogica.Existente;
+
         public int QuantidadeBazes { get; set; }
         public int QuantidadeComentarios { get; set; }
         public DateTime DataPublicacao { get; set; } = DateTime.Now;
         public DateTime DataAtualizacaoPublicacao { get; set; }
-        public List<ConteudoPublicacao> Conteudos { get; set; } = new List<ConteudoPublicacao>();
         public List<Comentario> Comentarios { get; set; } = new List<Comentario>();
+        public List<Baze> Bazes { get; set; } = new List<Baze>();
     }
 }

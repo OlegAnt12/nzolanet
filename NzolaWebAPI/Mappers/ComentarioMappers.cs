@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using NzolaWebAPI.DTOs.Comentario;
+using NzolaWebAPI.DTOs.Utilizador;
 using NzolaWebAPI.Models;
 
 namespace NzolaWebAPI.Mappers
@@ -15,7 +16,7 @@ namespace NzolaWebAPI.Mappers
             {
                 Id = comentario.Id,
                 PublicacaoId = comentario.PublicacaoId,
-                UtilizadorId = comentario.UtilizadorId,
+                Comentador = comentario.Utilizador != null ? comentario.Utilizador.ToUtilizadorSimplificadoDto() : null,
                 ConteudoComentario = comentario.ConteudoComentario,
                 DataComentario = comentario.DataComentario,
                 DataActualizacao = comentario.DataActualizacao,
@@ -27,7 +28,7 @@ namespace NzolaWebAPI.Mappers
             return new Comentario
             {
                 PublicacaoId = publicacaoId,
-                UtilizadorId = utilizadorId,
+                ComentadorId = utilizadorId,
                 ConteudoComentario = comentarioDto.ConteudoComentario
             };
         }

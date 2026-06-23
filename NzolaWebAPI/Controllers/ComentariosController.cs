@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Comentario;
+using NzolaWebAPI.Interfaces;
+using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
 using NzolaWebAPI.Models.Enums;
-using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -17,50 +18,52 @@ namespace NzolaWebAPI.Controllers
     public class ComentariosController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
+        private readonly IComentarioService _comentarioService;
 
-        public ComentariosController(ContextoBDNzola contexto)
+        public ComentariosController(ContextoBDNzola contexto, IComentarioService comentarioService)
         {
             _contexto = contexto;
+            _comentarioService = comentarioService;
         }
 
         [HttpGet("publicacao/{Id}")]
-        public IActionResult GetComentarios([FromRoute] int Id)
+        public async Task<IActionResult> GetComentarios([FromRoute] int Id)
         {
-            var comentarios = _contexto
-                .Comentarios.ToList()
-                .Where(b => b.PublicacaoId == Id)
-                .Select(c => c.ToComentarioDto());
+            var comentarios = await _comentarioService.ListarAsync(Id);
+
             return Ok(comentarios);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetComentario([FromRoute] int id)
+        public async Task<IActionResult> GetComentario([FromRoute] int id)
         {
-            var comentario =  _contexto.Comentarios.Find(id);
+            var comentario = await _contexto.Comentarios.FindAsync(id);
 
-            if(comentario == null)
+            if (comentario == null)
             {
                 return NotFound();
             }
-            
-            return Ok(comentario);
+
+            return Ok(comentario.ToComentarioDto());
         }
 
         [HttpPost("{publicacaoId:int}/{utilizadorId:int}")]
-        public IActionResult AdicionarComentario(
+        public async Task<IActionResult> AdicionarComentario(
             [FromBody] AdicionarComentarioRequestDto comentarioDto,
             [FromRoute] int publicacaoId,
             int utilizadorId
         )
         {
-            bool utilizadorExiste = _contexto.Utilizadores.Any(u => u.Id == utilizadorId);
+            /*bool utilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
+                u.Id == utilizadorId
+            );
 
             if (!utilizadorExiste)
             {
                 return BadRequest("Este Utilizador Não Existe");
             }
 
-            bool publicacaoExiste = _contexto.Publicacoes.Any(p => p.Id == publicacaoId);
+            bool publicacaoExiste = await _contexto.Publicacoes.AnyAsync(p => p.Id == publicacaoId);
 
             if (!publicacaoExiste)
             {
@@ -74,40 +77,61 @@ namespace NzolaWebAPI.Controllers
 
             comentario.DataComentario = DateTime.Now;
 
-            _contexto.Comentarios.Add(comentario);
-            _contexto.SaveChanges();
+            await _contexto.Comentarios.AddAsync(comentario);
+            await _contexto.SaveChangesAsync();
             return CreatedAtAction(
                 nameof(GetComentario),
                 new { id = comentario.Id },
                 comentario.ToComentarioDto()
+            );*/
+
+            var resultado = await _comentarioService.AdicionarAsync(
+                publicacaoId,
+                utilizadorId,
+                comentarioDto
+            );
+
+            if (!resultado.Sucesso)
+                return BadRequest(resultado.MensagemErro);
+
+            return CreatedAtAction(
+                nameof(GetComentario),
+                new { id = resultado.ComentarioDto!.Id },
+                resultado.ComentarioDto
             );
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult EditarComentario(
+        public async Task<IActionResult> EditarComentario(
             [FromRoute] int id,
             [FromBody] EditarComentarioRequestDto comentarioDto
         )
         {
-            var comentario = _contexto.Comentarios.Find(id);
+            /*var comentario = await _contexto.Comentarios.FindAsync(id);
 
             if (comentario == null)
             {
-                return NotFound ("Comentário não encontrado");
+                return NotFound("Comentário não encontrado");
             }
 
             comentario.ConteudoComentario = comentarioDto.ConteudoComentario;
             comentario.DataActualizacao = DateTime.Now;
 
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
 
-            return Ok (comentario.ToComentarioDto());
+            return Ok(comentario.ToComentarioDto());*/
+            var resultado = await _comentarioService.EditarAsync(id, comentarioDto);
+
+            if (resultado.NaoEncontrado)
+                return NotFound(resultado.MensagemErro);
+
+            return Ok(resultado.ComentarioDto);
         }
 
         [HttpDelete("{id:int}")]
-        public IActionResult ExcluirComentario([FromRoute] int id)
+        public async Task<IActionResult> ExcluirComentario([FromRoute] int id)
         {
-            var comentario = _contexto.Comentarios.Find(id);
+            /*var comentario = await _contexto.Comentarios.FindAsync(id);
 
             if (comentario == null)
             {
@@ -115,7 +139,14 @@ namespace NzolaWebAPI.Controllers
             }
 
             _contexto.Comentarios.Remove(comentario);
-            _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
+
+            return NoContent();*/
+
+            var resultado = await _comentarioService.ExcluirAsync(id);
+
+            if (resultado.NaoEncontrado)
+                return NotFound(resultado.MensagemErro);
 
             return NoContent();
         }

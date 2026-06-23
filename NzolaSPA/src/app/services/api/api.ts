@@ -6,12 +6,18 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class Api {
-  private baseUrl = 'https://localhost:5001/api';
+  private baseUrl = 'http://localhost:5043/api';
 
   constructor(private http: HttpClient) {}
 
   // GET
   get<T>(endpoint: string): Observable<T> {
+    endpoint = endpoint.replace(/^\/+|\/+$/g, '');
+    
+    const headers = new HttpHeaders({
+      'accept': '*/*'
+    });
+    
     return this.http.get<T>(`${this.baseUrl}/${endpoint}`);
   }
 

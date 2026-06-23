@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ComentarioDto } from '../../dtos/comentario/comentario-dto';
+import { ComentarioDto, CriarComentarioDto } from '../../dtos/comentario/comentario-dto';
 import { RequisicaoCriarComentarioDto } from '../../dtos/comentario/requisicao-criar-comentario-dto';
 import { Api } from '../api/api';
 import { RequisicaoEditarComentarioDto } from '../../dtos/comentario/requisicao-editar-comentario-dto';
@@ -26,15 +26,12 @@ export class ComentariosService {
     return this.api.getById<ComentarioDto>(this.endpoint, comentarioId);
   }
 
-  adicionarComentario(
-    publicacaoId : number,
-    utilizadorId : number,
-    novoComentario: RequisicaoCriarComentarioDto): Observable<ComentarioDto>
+  adicionarComentario(publicacaoId: number, utilizadorId: number, comentario: CriarComentarioDto): Observable<ComentarioDto>
   {
     return this.api.post<ComentarioDto>(
       `${this.endpoint}/${publicacaoId}/${utilizadorId}`,
-      novoComentario
-       );
+      comentario
+    );
 
   }
 

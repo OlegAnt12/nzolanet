@@ -6,9 +6,6 @@ using System.Threading.Tasks;
 namespace NzolaWebAPI.DTOs.Seguidor
 {
     public class CriarSeguidorDto
-    {
-        public int SeguidorId { get; set; }
-        public int SeguidoId { get; set; }
-        
+    {   
     }
 }
