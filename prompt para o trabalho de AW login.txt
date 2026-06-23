@@ -1,0 +1,9 @@
+prompt para o trabalho de AW: login  e registo de utilizadores
+
+
+Estrutura necessária;: readme e outro doc
+implementar login a consumo de serviços do backend c# dotnet webapi no angular. 
+
+Implementar auth e guards.
+
+fluxo para cada tipo de utilizador.
