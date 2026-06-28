@@ -4,3 +4,7 @@ bin/
 obj/
 .vs/
 .fake
+NzolaWebAPI/wwwroot/
+node_modules/
+.angular/
+.vscode/
