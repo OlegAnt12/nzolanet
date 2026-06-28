@@ -23,5 +23,6 @@ namespace NzolaWebAPI.DTOs.Utilizador
         public int Seguindo { get; set; } // Quantos ele segue (NOVO)
         public int Publicacoes { get; set; }
         public bool JaSegues { get; set; }
+        public bool ConcordaComTermos { get; set; }
     }
 }

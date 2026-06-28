@@ -85,6 +85,46 @@ namespace NzolaWebAPI.Migrations
                     b.ToTable("tb_Comentarios");
                 });
 
+            modelBuilder.Entity("NzolaWebAPI.Models.Denuncia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataDenuncia")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DenuncianteId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descricao")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("EstadoDenuncia")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("IdEntidade")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Motivo")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("TipoEntidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DenuncianteId");
+
+                    b.ToTable("tb_Denuncias");
+                });
+
             modelBuilder.Entity("NzolaWebAPI.Models.FicheiroConteudo", b =>
                 {
                     b.Property<int>("Id")
@@ -132,21 +172,60 @@ namespace NzolaWebAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Mensagem")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<int>("OrigemId")
                         .HasColumnType("int");
 
                     b.Property<string>("Tipo")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<int>("UtilizadorId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Notificacoes");
+                    b.HasIndex("OrigemId");
+
+                    b.HasIndex("UtilizadorId");
+
+                    b.ToTable("tb_Notificacoes", t =>
+                        {
+                            t.HasCheckConstraint("CK_Notificacoes_Tipo", "Tipo IN ('Baze','Comentario', 'Seguidor')");
+                        });
+                });
+
+            modelBuilder.Entity("NzolaWebAPI.Models.PedidoSeguir", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataPedido")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("SeguidoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeguidorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SeguidoId");
+
+                    b.HasIndex("SeguidorId");
+
+                    b.ToTable("tb_PedidosSeguir");
                 });
 
             modelBuilder.Entity("NzolaWebAPI.Models.Publicacao", b =>
@@ -223,6 +302,9 @@ namespace NzolaWebAPI.Migrations
 
                     b.Property<string>("Biografia")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("ConcordaComTermos")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("DataNascimento")
                         .HasColumnType("datetime2");
@@ -324,6 +406,17 @@ namespace NzolaWebAPI.Migrations
                     b.Navigation("Utilizador");
                 });
 
+            modelBuilder.Entity("NzolaWebAPI.Models.Denuncia", b =>
+                {
+                    b.HasOne("NzolaWebAPI.Models.Utilizador", "Denunciante")
+                        .WithMany()
+                        .HasForeignKey("DenuncianteId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Denunciante");
+                });
+
             modelBuilder.Entity("NzolaWebAPI.Models.FicheiroConteudo", b =>
                 {
                     b.HasOne("NzolaWebAPI.Models.Publicacao", "Publicacao")
@@ -333,6 +426,44 @@ namespace NzolaWebAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Publicacao");
+                });
+
+            modelBuilder.Entity("NzolaWebAPI.Models.Notificacao", b =>
+                {
+                    b.HasOne("NzolaWebAPI.Models.Utilizador", "UtilizadorResponsavel")
+                        .WithMany()
+                        .HasForeignKey("OrigemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NzolaWebAPI.Models.Utilizador", "UtilizadorNotificacao")
+                        .WithMany("Notificacoes")
+                        .HasForeignKey("UtilizadorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UtilizadorNotificacao");
+
+                    b.Navigation("UtilizadorResponsavel");
+                });
+
+            modelBuilder.Entity("NzolaWebAPI.Models.PedidoSeguir", b =>
+                {
+                    b.HasOne("NzolaWebAPI.Models.Utilizador", "UtilizadorSeguido")
+                        .WithMany()
+                        .HasForeignKey("SeguidoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("NzolaWebAPI.Models.Utilizador", "UtilizadorSeguidor")
+                        .WithMany()
+                        .HasForeignKey("SeguidorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("UtilizadorSeguido");
+
+                    b.Navigation("UtilizadorSeguidor");
                 });
 
             modelBuilder.Entity("NzolaWebAPI.Models.Publicacao", b =>
@@ -379,6 +510,8 @@ namespace NzolaWebAPI.Migrations
                     b.Navigation("Bazes");
 
                     b.Navigation("Comentarios");
+
+                    b.Navigation("Notificacoes");
 
                     b.Navigation("Publicacoes");
 

@@ -1,3 +1,373 @@
+.contentor
+{
+  height: 100vh;
+  background-color: #fff;
+}
+
+.conteudo
+{
+  width: 80vw;
+  height: 86vh;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px;
+  background-image: linear-gradient(#ff375f, #1c1c2e);
+  border-radius: 16px;
+  box-shadow: 0 1rem 2rem rgba(0,0,0,.3);
+  display: flex;
+}
+
+.conteudo-dir
+{
+  width: 50%;
+  background-color: #fff;
+  border-radius: 12px;
+  overflow: auto;
+}
+
+.conteudo-dir::-webkit-scrollbar
+{
+  width: 0;
+}
+
+.conteudo-esq
+{
+  flex: 1;
+}
+
+.componente-registo
+{
+  width: 340px;
+  margin: 2rem auto;
+  position: relative;
+  top: 45%;
+  transform: translateY(-50%);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn
+{
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.passos-indicador
+{
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+  padding: 0.5rem;
+}
+
+.passos-indicador span
+{
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  color: #bcbcbc;
+  position: relative;
+  white-space: nowrap;
+}
+
+.passos-indicador span::before
+{
+  content: attr(data-numero);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 50%;
+  border: 2px solid #bcbcbc;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #bcbcbc;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.passos-indicador span:not(:last-child)::after
+{
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: calc(100% + 0.5rem);
+  width: 1rem;
+  height: 2px;
+  background: #bcbcbc;
+  transform: translateY(-50%);
+  transition: background 0.3s ease;
+}
+
+.passos-indicador span.ativo
+{
+  color: #1c1c2e;
+  font-weight: 600;
+}
+
+.passos-indicador span.ativo::before
+{
+  border-color: #ff375f;
+  background: #ff375f;
+  color: #fff;
+  box-shadow: 0 0 0 4px rgba(255,55,95,0.15);
+  transform: scale(1.05);
+}
+
+.passos-indicador span.ativo:not(:last-child)::after
+{
+  background: #ff375f;
+}
+
+.formulario-registo
+{
+  animation: slideIn 0.35s ease;
+}
+
+@keyframes slideIn
+{
+  from { opacity: 0; transform: translateX(8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.campo-dados
+{
+  position: relative;
+  padding: 0.5rem 0.75rem 0.35rem;
+  border-radius: 8px;
+  border: solid 1.5px #d0d0d0;
+  background: #fafafa;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.campo-dados:focus-within
+{
+  border-color: #ff375f;
+  box-shadow: 0 0 0 3px rgba(255,55,95,0.1);
+  background: #fff;
+}
+
+.campo-dados label
+{
+  display: block;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin-bottom: 0.1rem;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.campo-dados:focus-within label,
+.campo-dados input:not(:placeholder-shown) ~ label
+{
+  opacity: 0;
+  visibility: hidden;
+}
+
+.campo-dados input[type="text"],
+.campo-dados input[type="email"],
+.campo-dados input[type="password"],
+.campo-dados input[type="tel"],
+.campo-dados input[type="date"]
+{
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #1c1c2e;
+  padding: 0.1rem 0;
+}
+
+.campo-dados input[type="text"]::placeholder,
+.campo-dados input[type="email"]::placeholder,
+.campo-dados input[type="password"]::placeholder,
+.campo-dados input[type="tel"]::placeholder
+{
+  color: #ccc;
+  font-size: 0.8rem;
+}
+
+.campo-dados input.ng-invalid.ng-touched
+{
+  color: #ff375f;
+}
+
+.campo-dados_nob
+{
+  padding: 0.35rem 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #1c1c2e;
+}
+
+.campo-dados_nob input[type="radio"],
+.campo-dados_nob input[type="checkbox"]
+{
+  accent-color: #ff375f;
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.campo-dados_nob label
+{
+  cursor: pointer;
+}
+
+.alert-error
+{
+  color: #ff375f;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.75rem;
+  animation: shakeX 0.3s ease;
+}
+
+@keyframes shakeX
+{
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.alert-error small
+{
+  display: block;
+  line-height: 1.4;
+}
+
+.botoes-passo
+{
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.btn
+{
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  flex: 1;
+  text-align: center;
+}
+
+.btn-proximo
+{
+  background-color: #ff375f;
+  color: #fff;
+}
+
+.btn-proximo:hover
+{
+  background-color: #e02e4f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255,55,95,0.3);
+}
+
+.btn-proximo:active
+{
+  transform: translateY(0);
+}
+
+.btn-anterior
+{
+  background-color: #e8e8e8;
+  color: #555;
+}
+
+.btn-anterior:hover
+{
+  background-color: #d5d5d5;
+}
+
+.btn-ignorar
+{
+  background-color: transparent;
+  color: #999;
+  border: 1.5px solid #ddd;
+}
+
+.btn-ignorar:hover
+{
+  border-color: #bbb;
+  color: #666;
+}
+
+.btn-registar
+{
+  background-color: #ff375f;
+  color: #fff;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 10px 20px;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.btn-registar:hover
+{
+  background-color: #e02e4f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255,55,95,0.3);
+}
+
+.btn-registar:disabled
+{
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+hr
+{
+  border: none;
+  border-top: 1px solid #e8e8e8;
+  margin: 1rem 0;
+}
+
+p[routerLink]
+{
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+p[routerLink]:hover
+{
+  color: #ff375f;
+  text-decoration: underline;
+}
+
+.mrg-b-1
+{
+  margin-bottom: 0.85rem;
+}
+
 .txt-nome, .txt-sobrenome
 {
     text-transform: capitalize;

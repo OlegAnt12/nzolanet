@@ -1,0 +1,219 @@
+.contentor
+{
+  height: 100vh;
+  background-color: #fff;
+}
+
+.conteudo
+{
+  width: 80vw;
+  height: 83vh;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 12px;
+  background-image: linear-gradient(#ff375f, #1c1c2e);
+  border-radius: 16px;
+  box-shadow: 0 1rem 2rem rgba(0,0,0,.3);
+  display: flex;
+}
+
+.conteudo-dir
+{
+  flex: 1;
+}
+
+.conteudo-esq
+{
+  width: 50%;
+  background-color: #fff;
+  border-radius: 12px;
+}
+
+.componente-login
+{
+  width: 340px;
+  margin: 0 auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn
+{
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.tema
+{
+  font-size: 1.5rem;
+  color: #1c1c2e;
+  font-weight: 700;
+}
+
+.campo-dados
+{
+  position: relative;
+  padding: 0.5rem 0.75rem 0.35rem;
+  border-radius: 8px;
+  border: solid 1.5px #d0d0d0;
+  background: #fafafa;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.campo-dados:focus-within
+{
+  border-color: #ff375f;
+  box-shadow: 0 0 0 3px rgba(255,55,95,0.1);
+  background: #fff;
+}
+
+.campo-dados label
+{
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+  margin-bottom: 0.1rem;
+  transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.campo-dados:focus-within label,
+.campo-dados input:not(:placeholder-shown) ~ label
+{
+  opacity: 0;
+  visibility: hidden;
+}
+
+.campo-dados input[type="text"],
+.campo-dados input[type="password"]
+{
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.9rem;
+  color: #1c1c2e;
+  padding: 0.1rem 0;
+}
+
+.campo-dados input[type="text"]::placeholder,
+.campo-dados input[type="password"]::placeholder
+{
+  color: #ccc;
+  font-size: 0.8rem;
+}
+
+.campo-dados input.ng-invalid.ng-touched
+{
+  color: #ff375f;
+}
+
+.btn-login
+{
+  padding: 10px 20px;
+  background-color: #1c1c2e;
+  color: #fff;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.45s ease;
+}
+
+.btn-login:hover
+{
+  background-color: #2c2c3e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(28,28,46,0.3);
+}
+
+.btn-login:active
+{
+  transform: translateY(0);
+}
+
+.btn-registar
+{
+  padding: 10px 20px;
+  background-color: #ff375f;
+  color: #fff;
+  width: 100%;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.85rem;
+  transition: all 0.45s ease;
+}
+
+.btn-registar:hover
+{
+  background-color: #e02e4f;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255,55,95,0.3);
+}
+
+.alert-error
+{
+  color: #ff375f;
+  font-size: 0.75rem;
+  padding: 0.15rem 0.75rem;
+  animation: shakeX 0.45s ease;
+}
+
+@keyframes shakeX
+{
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.alert-error small
+{
+  display: block;
+  line-height: 1.4;
+}
+
+.mrg-b-1
+{
+  margin-bottom: 0.85rem;
+}
+
+.mrg-b-1_5
+{
+  margin-bottom: 1.5rem;
+}
+
+hr
+{
+  border: none;
+  border-top: 1px solid #e8e8e8;
+  margin: 1rem 0;
+}
+
+p span
+{
+  color: #888;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+p span:hover
+{
+  color: #ff375f;
+  text-decoration: underline;
+}

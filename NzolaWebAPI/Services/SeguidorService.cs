@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Seguidor;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
@@ -16,14 +10,17 @@ namespace NzolaWebAPI.Services
     {
         private readonly ISeguidorRepository _seguidorRepo;
         private readonly IUtilizadorRepository _utilizadorRepository;
+        private readonly IPedidoSeguirRepository _pedidoSeguirRepo;
 
         public SeguidorService(
             ISeguidorRepository seguidorRepo,
-            IUtilizadorRepository utilizadorRepository
+            IUtilizadorRepository utilizadorRepository,
+            IPedidoSeguirRepository pedidoSeguirRepo
         )
         {
             _seguidorRepo = seguidorRepo;
             _utilizadorRepository = utilizadorRepository;
+            _pedidoSeguirRepo = pedidoSeguirRepo;
         }
 
         public async Task<SeguirResultadoDto> AlternarSeguirAsync(int seguidorId, int seguidoId)
@@ -48,10 +45,21 @@ namespace NzolaWebAPI.Services
             if (relacaoExistente != null)
             {
                 _seguidorRepo.Remover(relacaoExistente);
-
-                await _seguidorRepo.SalvarAsync(); // Atualiza os contadores da publicação
+                await _seguidorRepo.SalvarAsync();
                 resultado.FoiRemovido = true;
+                return resultado;
+            }
 
+            if (seguidoExiste.Privacidade == EstadoAcesso.Privado)
+            {
+                var pedidoPendente = await _pedidoSeguirRepo.ObterPendenteAsync(seguidorId, seguidoId);
+                if (pedidoPendente != null)
+                {
+                    resultado.ErroMensagem = "Já existe um pedido de seguimento pendente.";
+                    return resultado;
+                }
+
+                resultado.ErroMensagem = "PRIVADO_PEDIDO_ENVIADO";
                 return resultado;
             }
 

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { FeedPrincipalComponent } from './pages/feed-principal.component/feed-principal.component';
 import { PerfilComponent } from './pages/perfil.component/perfil.component';
+import { PesquisaComponent } from './pages/pesquisa/pesquisa.component';
 
 const routes: Routes = [
   {
@@ -12,6 +13,14 @@ const routes: Routes = [
   {
     path: 'perfil',
     component: PerfilComponent
+  },
+  {
+    path: 'perfil/:id',
+    component: PerfilComponent
+  },
+  {
+    path: 'pesquisa',
+    component: PesquisaComponent
   },
 ];
 

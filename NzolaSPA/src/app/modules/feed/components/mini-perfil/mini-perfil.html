@@ -1,1 +1,28 @@
-<p>mini-perfil works!</p>
+<div class="mini-perfil">
+  <div class="info-perfil">
+    <img [src]="utilizadorLogado?.fotoPerfil | base64Image" alt="Foto" class="foto-perfil" />
+    <h3>{{ utilizadorLogado?.nomeCompleto }}</h3>
+    <p>&#64;{{ utilizadorLogado?.nomeUtilizador }}</p>
+    <p *ngIf="utilizadorLogado?.biografia">{{ utilizadorLogado.biografia }}</p>
+    <div class="estatisticas">
+      <span><strong>{{ estatisticas?.seguidores || utilizadorLogado?.seguidores || 0 }}</strong> seguidores</span>
+      <span><strong>{{ estatisticas?.seguindo || utilizadorLogado?.seguindo || 0 }}</strong> seguindo</span>
+      <span><strong>{{ estatisticas?.publicacoes || utilizadorLogado?.publicacoes || 0 }}</strong> publicações</span>
+    </div>
+    <button *ngIf="!modoEdicao" (click)="onAbrirEdicao()">Editar Perfil</button>
+  </div>
+
+  <div class="edicao-perfil" *ngIf="modoEdicao">
+    <h4>Editar Perfil</h4>
+    <form [formGroup]="perfilForm" (ngSubmit)="onSalvarPerfil()">
+      <label>Foto de Perfil</label>
+      <input type="file" (change)="onFotoSelecionada($event)" accept="image/*" />
+      <label>Nome Completo</label>
+      <input type="text" formControlName="nomeCompleto" />
+      <label>Biografia</label>
+      <textarea formControlName="biografia" rows="3"></textarea>
+      <button type="submit" [disabled]="perfilForm.invalid">Salvar</button>
+      <button type="button" (click)="cancelarEdicao.emit()">Cancelar</button>
+    </form>
+  </div>
+</div>
