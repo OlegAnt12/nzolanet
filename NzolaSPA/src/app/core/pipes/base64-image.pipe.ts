@@ -9,7 +9,7 @@ export class Base64ImagePipe implements PipeTransform {
     console.log('Pipe base64Image recebeu:', base64String ? base64String.substring(0, 50) + '...' : 'null/undefined');
     
     if (!base64String || base64String.length === 0) {
-      return './profile/pexels-carlosfotografias-5669788.jpg'; // Avatar padrão
+      return './profile/Deafultdavy3k.jfif'; // Avatar padrão
     }
     
     // Verifica se já tem o prefixo data:image

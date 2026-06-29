@@ -1,5 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
-*{
+@font-face
+{
+  font-family: 'Montserrat';
+  src: url('assets/fonts/Montserrat-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face
+{
+  font-family: 'Montserrat';
+  src: url('assets/fonts/Montserrat-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face
+{
+  font-family: 'Inter';
+  src: url('assets/fonts/Inter-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+@font-face
+{
+  font-family: 'Merriweather';
+  src: url('assets/fonts/Merriweather-Variable.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+}
+
+:root
+{
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-serif: 'Merriweather', serif;
+}
+
+*
+{
   margin: 0;
   padding: 0;
   border: none;
@@ -12,6 +51,20 @@
 html
 {
   font-size: 15px;
+}
+
+body
+{
+  font-family: var(--font-body);
+  font-weight: 400;
+  line-height: 1.6;
+  color: #1c1c2e;
+}
+
+h1, h2, h3, h4, h5, h6
+{
+  font-family: var(--font-heading);
+  font-weight: 600;
 }
 
 .btn
