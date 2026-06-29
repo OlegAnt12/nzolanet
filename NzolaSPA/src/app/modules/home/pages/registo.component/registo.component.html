@@ -1,94 +1,137 @@
-<!-- Componente de Registo -->
+<div class="contentor">
+  <div class="conteudo">
+    <div class="conteudo-dir">
+
 <div class="componente-registo">
-  <form action="" class="formulario-registo" [formGroup]="registoForm" (ngSubmit)="fazerRegisto()">
-    <div class="form-group">
-      <label for="foto">Foto de Perfil (Opcional)</label>
-      <input type="file" id="foto" (change)="aoSelecionarFoto($event)" accept="image/*" class="form-control-file" />
-    </div>
-    <div class="campo-dados">
-      <label for="nomeId">Nome:</label>
-      <input type="text" name="nome" id="nomeId" class="txt txt-nome" formControlName="nome" />
+  <div class="passos-indicador">
+    <span [class.ativo]="currentStep >= 1" data-numero="1">Dados Pessoais</span>
+    <span [class.ativo]="currentStep >= 2" data-numero="2">Perfil</span>
+    <span [class.ativo]="currentStep >= 3" data-numero="3">Foto</span>
+  </div>
 
-      <div *ngIf="registoForm.get('nome')?.touched && registoForm.get('nome')?.invalid" class="alert-error">
-        <small *ngIf="registoForm.get('nome')?.hasError('required')"> O nome e obrigatorio.</small>
-        <small *ngIf="registoForm.get('nome')?.hasError('minlength')"> O nome deve ter pelo menos 3 caracteres.</small>
+  <form action="" class="formulario-registo" [formGroup]="registoForm">
 
+    <div *ngIf="currentStep === 1" class="mrg-b-1">
+      <div class="campo-dados mrg-b-1">
+        <input type="text" name="nome" id="nomeId" class="txt txt-nome" formControlName="nome" placeholder=" " />
+        <label for="nomeId">Nome:</label>
+      </div>
+      <div *ngIf="registoForm.get('nome')?.touched && registoForm.get('nome')?.invalid" class="alert-error mrg-b-1">
+        <small *ngIf="registoForm.get('nome')?.hasError('required')">O nome é obrigatório.</small>
+        <small *ngIf="registoForm.get('nome')?.hasError('minlength')">Mínimo de 3 caracteres.</small>
+      </div>
+      <div class="campo-dados mrg-b-1">
+        <input type="text" name="sobrenome" id="sobrenomeId" class="txt txt-sobrenome" formControlName="sobrenome" placeholder=" " />
+        <label for="sobrenomeId">Sobrenome:</label>
+      </div>
+      <div *ngIf="registoForm.get('sobrenome')?.touched && registoForm.get('sobrenome')?.invalid" class="alert-error mrg-b-1">
+        <small *ngIf="registoForm.get('sobrenome')?.hasError('required')">O sobrenome é obrigatório.</small>
+        <small *ngIf="registoForm.get('sobrenome')?.hasError('minlength')">Mínimo de 3 caracteres.</small>
+      </div>
+      <div class="campo-dados mrg-b-1">
+        <input type="email" name="email" id="emailId" class="txt txt-email" formControlName="email" placeholder=" " />
+        <label for="emailId">Email:</label>
+      </div>
+      <div *ngIf="registoForm.get('email')?.touched && registoForm.get('email')?.invalid" class="alert-error mrg-b-1">
+        <small *ngIf="registoForm.get('email')?.hasError('required')">O email é obrigatório.</small>
+        <small *ngIf="registoForm.get('email')?.hasError('email')">Introduza um email válido.</small>
+      </div>
+      <div class="campo-dados mrg-b-1">
+        <input type="password" name="palavra_passe" id="palavraPasseId" class="txt txt-palavra-passe" formControlName="palavraPasse" placeholder=" " />
+        <label for="palavraPasseId">Palavra-passe:</label>
+      </div>
+      <div *ngIf="registoForm.get('palavraPasse')?.touched && registoForm.get('palavraPasse')?.invalid" class="alert-error mrg-b-1">
+        <small *ngIf="registoForm.get('palavraPasse')?.hasError('required')">A palavra-passe é obrigatória.</small>
+        <small *ngIf="registoForm.get('palavraPasse')?.hasError('minlength')">Mínimo de 6 caracteres.</small>
+      </div>
+      <div class="campo-dados mrg-b-1">
+        <input type="password" name="confirmar_palavra_passe" id="confirmarPalavraPasseId" class="txt txt-confirmar-palavra-passe" formControlName="confirmarPalavraPasse" placeholder=" " />
+        <label for="confirmarPalavraPasseId">Confirmar Palavra-passe:</label>
+      </div>
+      <div *ngIf="registoForm.get('confirmarPalavraPasse')?.touched && registoForm.get('confirmarPalavraPasse')?.invalid" class="alert-error mrg-b-1">
+        <small *ngIf="registoForm.get('confirmarPalavraPasse')?.hasError('required')">Confirme a palavra-passe.</small>
+        <small *ngIf="registoForm.get('confirmarPalavraPasse')?.hasError('passwordMismatch')">As palavras-passe não coincidem.</small>
+      </div>
+      <div class="campo-dados_nob mrg-b-1">
+        <input type="checkbox" name="termos" id="termoId" formControlName="concordaComTermos" />
+        <label for="termoId">Concordo com os termos da Nzolanet</label>
+      </div>
+      <div *ngIf="registoForm.get('concordaComTermos')?.touched && registoForm.get('concordaComTermos')?.invalid" class="alert-error mrg-b-1">
+        <small>Tens de concordar com os termos para continuar.</small>
+      </div>
+      <div class="botoes-passo">
+        <button type="button" class="btn btn-proximo" (click)="proximoPasso()">Próximo</button>
       </div>
     </div>
-    <div class="campo-dados">
-      <label for="sobrenomeId">Sobrenome:</label>
-      <input type="text" name="sobrenome" id="sobrenomeId" class="txt txt-sobrenome" formControlName="sobrenome" />
 
-      <div *ngIf="registoForm.get('sobrenome')?.touched && registoForm.get('sobrenome')?.invalid" class="alert-error">
-        <small *ngIf="registoForm.get('sobrenome')?.hasError('required')"> O sobrenome e obrigatorio.</small>
-        <small *ngIf="registoForm.get('sobrenome')?.hasError('minlength')"> O sobrenome deve ter pelo menos 3 caracteres.</small>
-
+    <div *ngIf="currentStep === 2" class="mrg-b-1">
+      <div class="campo-dados mrg-b-1">
+        <input type="text" name="nome_utilizador" id="nomeUtilizadorId" class="txt txt-nome-utilizador" formControlName="nomeUtilizador" placeholder=" " />
+        <label for="nomeUtilizadorId">Nome de Utilizador:</label>
       </div>
-    </div>
-    <div class="campo-dados">
-      <label for="nomeUtilizadorId">Nome de Utilizador:</label>
-      <input
-        type="text"
-        name="nome_utilizador"
-        id="nomeUtilizadorId"
-        class="txt txt-nome-utilizador"
-        formControlName="nomeUtilizador"
-      />
-
       <div *ngIf="registoForm.get('nomeUtilizador')?.touched && registoForm.get('nomeUtilizador')?.invalid" class="alert-error">
-        <small *ngIf="registoForm.get('nomeUtilizador')?.hasError('required')"> O nome de utilizador e obrigatorio.</small>
-        <small *ngIf="registoForm.get('nomeUtilizador')?.hasError('minlength')">O nome de utilizador deve ter pelo menos 3 caracteres</small>
+        <small *ngIf="registoForm.get('nomeUtilizador')?.hasError('required')">O nome de utilizador é obrigatório.</small>
+        <small *ngIf="registoForm.get('nomeUtilizador')?.hasError('minlength')">Mínimo de 3 caracteres.</small>
       </div>
-    </div>
-
-    <div class="campo-dados">
-      <label for="emailId">Email:</label>
-      <input type="email" name="email" id="emailId" class="txt txt-email" formControlName="email" />
-
-      <div *ngIf="registoForm.get('email')?.touched && registoForm.get('email')?.invalid" class="alert-error">
-        <small *ngIf="registoForm.get('email')?.hasError('required')">O e-mail e obrigatorio.</small>
-        <small *ngIf="registoForm.get('email')?.hasError('email')">Introduz um e-mail com formato valido.</small>
+      <div class="campo-dados mrg-b-1">
+        <input type="date" name="data_nascimento" id="dataNascimentoId" class="txt txt-dataNascimento" formControlName="dataNascimento" />
+        <label for="dataNascimentoId">Data de Nascimento:</label>
       </div>
-    </div>
-    <div class="campo-dados">
-      <label for="dataNascimentoId">Data de Nascimento:</label>
-      <input type="date" name="data_nascimento" id="dataNascimentoId" class="txt txt-dataNascimento" formControlName="dataNascimento" />
-
       <div *ngIf="registoForm.get('dataNascimento')?.touched && registoForm.get('dataNascimento')?.invalid" class="alert-error">
-        <small *ngIf="registoForm.get('dataNascimento')?.hasError('required')">A data de nascimento e obrigatoria.</small>
+        <small *ngIf="registoForm.get('dataNascimento')?.hasError('required')">A data de nascimento é obrigatória.</small>
+        <small *ngIf="registoForm.get('dataNascimento')?.hasError('dataFutura')">A data de nascimento não pode ser no futuro.</small>
+        <small *ngIf="registoForm.get('dataNascimento')?.hasError('idadeMinima')">Tens de ter pelo menos {{ registoForm.get('dataNascimento')?.getError('idadeMinima')?.required }} anos (idade atual: {{ registoForm.get('dataNascimento')?.getError('idadeMinima')?.actual }}).</small>
+      </div>
+      <label for="generoId">Gênero:</label>
+      <div class="campo-dados_nob">
+        <input type="radio" name="genero" id="masculinoId" class="radio radio-masculino" formControlName="genero" [value]="0" />
+        <label for="masculinoId">Masculino:</label>
+      </div>
+      <div class="campo-dados_nob">
+        <input type="radio" name="genero" id="femeninoId" class="radio radio-femenino" formControlName="genero" [value]="1" />
+        <label for="fameninoId">Femenino:</label>
+      </div>
+      <div *ngIf="registoForm.get('genero')?.touched && registoForm.get('genero')?.invalid" class="alert-error">
+        <small>Selecione o género.</small>
+      </div>
+      <div class="botoes-passo">
+        <button type="button" class="btn btn-anterior" (click)="passoAnterior()">Anterior</button>
+        <button type="button" class="btn btn-proximo" (click)="proximoPasso()">Próximo</button>
       </div>
     </div>
-    <label for="generoId">Gênero:</label>
-    <div class="campo-dados">
-      <input type="radio" name="genero" id="masculinoId" class="radio radio-masculino" formControlName="genero" [value]="1" />
-      <label for="masculinoId">Masculino:</label>
-    </div>
-    <div class="campo-dados">
-      <input type="radio" name="genero" id="femeninoId" class="radio radio-femenino" formControlName="genero" [value]="2" />
-      <label for="fameninoId">Femenino:</label>
-    </div>
-    <div class="campo-dados">
-      <label for="palavraPasseId">Palavra-passe:</label>
-      <input type="password" name="palavra_passe" id="palavraPasseId" class="txt txt-palavra-passe" formControlName="palavraPasse" />
-      <div *ngIf="registoForm.get('palavraPasse')?.touched && registoForm.get('palavraPasse')?.invalid" class="alert-error">
-        <small *ngIf="registoForm.get('palavraPasse')?.hasError('required')">A palavra-passe e obrigatoria</small>
-        <small *ngIf="registoForm.get('palavraPasse')?.hasError('minlength')">A palavra-passe deve ter pelo menos 6 caracteres</small>
+
+    <div *ngIf="currentStep === 3" class="mrg-b-1">
+      <p>Carregue uma foto de perfil (opcional)</p>
+      <div class="form-group">
+        <label for="foto">Foto de Perfil</label>
+        <input type="file" id="foto" (change)="aoSelecionarFoto($event)" accept="image/*" class="form-control-file" />
+      </div>
+      <div class="botoes-passo">
+        <button type="button" class="btn btn-anterior" (click)="passoAnterior()">Anterior</button>
+        <button type="button" class="btn btn-proximo" (click)="proximoPasso()">Avançar</button>
+        <button type="button" class="btn btn-ignorar" (click)="ignorarFoto()">Ignorar</button>
       </div>
     </div>
-    <div class="campo-dados">
-      <input
-        type="checkbox"
-        name="termos"
-        id="termoId"
-        class="txt txt-palavra-passe"
-      />
-      <label for="termoId">Concordo com os termos da Nzolanet</label>
+
+    <div *ngIf="currentStep === 4" class="mrg-b-1">
+      <p>Revise os dados e confirme o registo.</p>
+      <div class="botoes-passo">
+        <button type="button" class="btn btn-anterior" (click)="passoAnterior()">Anterior</button>
+        <button type="button" class="btn btn-registar" (click)="fazerRegisto()" [disabled]="carregar">
+          <span *ngIf="!carregar">Criar Conta</span>
+          <span *ngIf="carregar">A criar conta...</span>
+        </button>
+      </div>
     </div>
-    <button type="submit" class="btn btn-registar" [disabled]="registoForm.invalid || carregar">
-      <span *ngIf="!carregar">Registar Conta</span>
-        <span *ngIf="carregar">A criar conta...</span>
-    </button>
+
     <hr />
-    <p routerLink="/home/login"><span> Já tem uma conta? </span></p>
+    <p routerLink="/home/login"><span>Já tem uma conta?</span></p>
   </form>
+</div>
+
+    </div>
+    <div class="conteudo-esq">
+
+    </div>
+  </div>
 </div>

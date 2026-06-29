@@ -1,24 +1,61 @@
-<div class="componente-login">
-  <form action="" class="formulario-login" [formGroup]="loginForm" (ngSubmit)="onLogin()">
-    <div class="campo-dados">
-      <label for="emailId">E-mail:</label>
-      <input type="text" name="email" id="emailId" class="txt txt-email" formControlName="identificador" />
-      <div *ngIf="loginForm.get('identificador')?.touched && loginForm.get('identificador')?.invalid" class="alert-error">
-        <small *ngIf="loginForm.get('identificador')?.hasError('required')">O e-mail é obrigatório.</small>
-        <small *ngIf="loginForm.get('identificador')?.hasError('email')">Introduz um e-mail com formato válido.</small>
+<div class="contentor">
+  <div class="conteudo">
+    <div class="conteudo-dir"></div>
+    <div class="conteudo-esq">
+      <div class="componente-login">
+        <h1 class="tema mrg-b-1">Faça Login Para acesso a tua conta</h1>
+        <p class="mrg-b-1_5">
+          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        </p>
+        <form action="" class="formulario-login" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+          <div class="campo-dados mrg-b-1">
+            <input
+              type="text"
+              name="email"
+              id="emailId"
+              class="txt txt-email"
+              formControlName="identificador"
+              placeholder=" "
+            />
+            <label for="emailId">E-mail ou Nome de Utilizador</label>
+          </div>
+          <div
+              *ngIf="
+                loginForm.get('identificador')?.touched && loginForm.get('identificador')?.invalid
+              "
+              class="alert-error mrg-b-1"
+            >
+              <small *ngIf="loginForm.get('identificador')?.hasError('required')"
+                >O e-mail ou nome de utilizador é obrigatório.</small
+              >
+            </div>
+          <div class="campo-dados mrg-b-1">
+            <input
+              type="password"
+              name="palavra_passe"
+              id="palavraPasseId"
+              class="txt txt-palavra-passe"
+              formControlName="palavraPasse"
+              placeholder=" "
+            />
+            <label for="palavraPasseId">Palavra-passe</label>
+          </div>
+          <div
+              *ngIf="
+                loginForm.get('palavraPasse')?.touched && loginForm.get('palavraPasse')?.invalid
+              "
+              class="alert-error mrg-b-1"
+            >
+              <small>A palavra-passe é obrigatória.</small>
+            </div>
+          <button type="submit" class="btn btn-login mrg-b-1">Entrar</button>
+          <hr />
+          <p class="mrg-b-1_5"><span> Esqueceu a palavra-passe? </span></p>
+        </form>
+        <button type="button" class="btn btn-registar" (click)="paraRegisto()">
+          Fazer Registo
+        </button>
       </div>
     </div>
-    <div class="campo-dados">
-      <label for="palavraPasseId">Palavra-passe:</label>
-      <input type="password" name="palavra_passe" id="palavraPasseId" class="txt txt-palavra-passe" formControlName="palavraPasse"  />
-      <div *ngIf="loginForm.get('palavraPasse')?.touched && loginForm.get('palavraPasse')?.invalid" class="alert-error">
-        <small>A palavra-passe é obrigatória.</small>
-      </div>
-    </div>
-    <button type="submit" class="btn btn-registar" [disabled]="loginForm.invalid">Entrar</button>
-    <hr />
-    <p><span> Esqueceu a palavra-passe? </span></p>
-    
-  </form>
-  <button type="button" class="btn btn-registar" (click)="paraRegisto()">Fazer Registo</button>
+  </div>
 </div>
