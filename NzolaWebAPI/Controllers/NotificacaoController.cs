@@ -1,7 +1,9 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Notificacao;
+using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
@@ -11,26 +13,37 @@ namespace NzolaWebAPI.Controllers
     public class NotificacaoController : ControllerBase
     {
         private readonly ContextoBDNzola _contexto;
-
-        public NotificacaoController(ContextoBDNzola contexto)
+        private readonly IUtilizadorRepository _utilizadorRepo;
+        public NotificacaoController(ContextoBDNzola contexto, IUtilizadorRepository utilizadorRepo)
         {
             _contexto = contexto;
+            _utilizadorRepo = utilizadorRepo;
         }
 
         [HttpGet]
-        public IActionResult Listar()
+        public async Task<IActionResult> Listar()
         {
-            var notificacoes = _contexto
+            var notificacoes = await _contexto
                 .Notificacoes.Select(notificacao => notificacao.ToNotificacaoDto())
-                .ToList();
+                .ToListAsync();
+
+            return Ok(notificacoes);
+        }
+
+        [HttpGet("utilizador/{utilizadorId}")]
+        public async Task<IActionResult> Listar([FromRoute] int utilizadorId)
+        {
+            var notificacoes = await _contexto
+                .Notificacoes.Where(n => n.UtilizadorId == utilizadorId).Include(n => n.UtilizadorResponsavel).Select(notificacao => notificacao.ToNotificacaoDto())
+                .ToListAsync();
 
             return Ok(notificacoes);
         }
 
         [HttpGet("{id}")]
-        public IActionResult BuscarPorId([FromRoute] int id)
+        public async Task<IActionResult> BuscarPorId([FromRoute] int id)
         {
-            var notificacao = _contexto.Notificacoes.Find(id);
+            var notificacao = await _contexto.Notificacoes.FindAsync(id);
 
             if (notificacao == null)
             {
@@ -39,13 +52,20 @@ namespace NzolaWebAPI.Controllers
             return Ok(notificacao.ToNotificacaoDto());
         }
 
-        [HttpPost]
-        public IActionResult Criar([FromBody] CriarNotificacaoDto criarNotificacaoDto)
+        [HttpPost("{utilizadorId:int}")]
+        public async Task<IActionResult> Criar([FromBody] CriarNotificacaoDto criarNotificacaoDto, [FromRoute] int utilizadorId)
         {
-            var notificacao = criarNotificacaoDto.ToNotificacaoFromCriarDto();
+            var utilizador = await _utilizadorRepo.ObterPorIdAsync(utilizadorId);
 
-            _contexto.Notificacoes.Add(notificacao);
-            _contexto.SaveChanges();
+            if (utilizador == null)
+            {
+                return BadRequest("Utilizador Inexistente");
+            }
+
+            var notificacao = criarNotificacaoDto.ToNotificacaoFromCriarDto(utilizadorId);
+
+            await _contexto.Notificacoes.AddAsync(notificacao);
+            await _contexto.SaveChangesAsync();
 
             return CreatedAtAction(
                 nameof(BuscarPorId),
@@ -55,9 +75,9 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpPut]
-        public IActionResult MarcarComoLida([FromRoute] int id)
+        public async Task<IActionResult> MarcarComoLida([FromRoute] int id)
         {
-            var notificacao = _contexto.Notificacoes.Find(id);
+            var notificacao = await _contexto.Notificacoes.FindAsync(id);
 
             if (notificacao == null)
             {
@@ -65,7 +85,7 @@ namespace NzolaWebAPI.Controllers
             }
 
             notificacao.Lida = true;
-           _contexto.SaveChanges();
+            await _contexto.SaveChangesAsync();
 
             return Ok(notificacao.ToNotificacaoDto());
         }
@@ -81,7 +101,7 @@ namespace NzolaWebAPI.Controllers
             }
 
             _contexto.Notificacoes.Remove(notificacao);
-           _contexto.SaveChanges();
+            _contexto.SaveChanges();
 
             return NoContent();
         }

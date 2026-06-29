@@ -21,6 +21,7 @@ namespace NzolaWebAPI.Mappers
                 Privacidade = utilizador.Privacidade,
                 Genero = utilizador.Genero,
                 DataNascimento = utilizador.DataNascimento,
+                ConcordaComTermos = utilizador.ConcordaComTermos,
             };
         }
 
@@ -37,6 +38,7 @@ namespace NzolaWebAPI.Mappers
                 Genero = utilizadorDto.genero,
                 NomeUtilizador = utilizadorDto.NomeUtilizador,
                 DataNascimento = utilizadorDto.DataNascimento,
+                ConcordaComTermos = utilizadorDto.ConcordaComTermos,
             };
         }
 

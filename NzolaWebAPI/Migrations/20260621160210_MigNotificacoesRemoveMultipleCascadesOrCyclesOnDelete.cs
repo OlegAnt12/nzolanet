@@ -6,29 +6,11 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace NzolaWebAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class AlterarFotoPerfilParaVarbinary : Migration
+    public partial class MigNotificacoesRemoveMultipleCascadesOrCyclesOnDelete : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Notificacoes",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UtilizadorId = table.Column<int>(type: "int", nullable: false),
-                    Tipo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    OrigemId = table.Column<int>(type: "int", nullable: false),
-                    Mensagem = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Lida = table.Column<bool>(type: "bit", nullable: false),
-                    CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Notificacoes", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "tb_Utilizadores",
                 columns: table => new
@@ -52,6 +34,37 @@ namespace NzolaWebAPI.Migrations
                 {
                     table.PrimaryKey("PK_tb_Utilizadores", x => x.Id);
                     table.CheckConstraint("CK_Utilizadores_Genero", "Genero IN ('Masculino','Feminino')");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tb_Notificacoes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UtilizadorId = table.Column<int>(type: "int", nullable: false),
+                    Tipo = table.Column<string>(type: "nvarchar(10)", nullable: false),
+                    OrigemId = table.Column<int>(type: "int", nullable: false),
+                    Mensagem = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Lida = table.Column<bool>(type: "bit", nullable: false),
+                    CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tb_Notificacoes", x => x.Id);
+                    table.CheckConstraint("CK_Notificacoes_Tipo", "Tipo IN ('Baze','Comentario', 'Seguidor')");
+                    table.ForeignKey(
+                        name: "FK_tb_Notificacoes_tb_Utilizadores_OrigemId",
+                        column: x => x.OrigemId,
+                        principalTable: "tb_Utilizadores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_tb_Notificacoes_tb_Utilizadores_UtilizadorId",
+                        column: x => x.UtilizadorId,
+                        principalTable: "tb_Utilizadores",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -218,6 +231,16 @@ namespace NzolaWebAPI.Migrations
                 column: "PublicacaoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_tb_Notificacoes_OrigemId",
+                table: "tb_Notificacoes",
+                column: "OrigemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tb_Notificacoes_UtilizadorId",
+                table: "tb_Notificacoes",
+                column: "UtilizadorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_tb_Publicacoes_AutorId",
                 table: "tb_Publicacoes",
                 column: "AutorId");
@@ -249,9 +272,6 @@ namespace NzolaWebAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Notificacoes");
-
-            migrationBuilder.DropTable(
                 name: "tb_Bazes");
 
             migrationBuilder.DropTable(
@@ -259,6 +279,9 @@ namespace NzolaWebAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "tb_FicheirosConteudo");
+
+            migrationBuilder.DropTable(
+                name: "tb_Notificacoes");
 
             migrationBuilder.DropTable(
                 name: "tb_Seguidores");

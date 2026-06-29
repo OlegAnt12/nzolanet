@@ -40,7 +40,7 @@ namespace NzolaWebAPI.Services
             Microsoft.AspNetCore.Http.IFormFile? file = null
         )
         {
-            var utilizadorExistente = _utilizadorRepo.ObterPorIdAsync(utilizadorId);
+            var utilizadorExistente = await _utilizadorRepo.ObterPorIdAsync(utilizadorId);
 
             if (utilizadorExistente == null)
                 return null;
@@ -183,16 +183,14 @@ namespace NzolaWebAPI.Services
             return publicacaoExistente;
         }
 
-        // PublicacaoService.cs
         public async Task<List<PublicacaoFeedDto>> ListarFeedAsync(int? utilizadorLogadoId = null)
         {
-            var publicacoes = await _publicacaoRepo.ListarRecentesAsync();
+            var publicacoes = await _publicacaoRepo.ListarRecentesPorFeedAsync(utilizadorLogadoId);
 
             var result = new List<PublicacaoFeedDto>();
 
             foreach (var pub in publicacoes)
             {
-                // Verificar se o usuário logado segue o autor
                 bool jaSegues = false;
                 if (utilizadorLogadoId.HasValue && utilizadorLogadoId.Value != pub.AutorId)
                 {
@@ -203,37 +201,29 @@ namespace NzolaWebAPI.Services
                     jaSegues = relacao != null;
                 }
 
-                var dto = new PublicacaoFeedDto
-                {
-                    Id = pub.Id,
-                    Texto = pub.Texto,
-
-                    DataPublicacao = pub.DataPublicacao,
-                    QuantidadeBazes = pub.Bazes.Count,
-                    QuantidadeComentarios = pub.Comentarios.Count,
-
-                    Ficheiros = pub
-                        .Ficheiros.Select(f => new FicheiroPublicacaoDto
-                        {
-                            Id = f.Id,
-                            CaminhoFicheiro = f.CaminhoFicheiro,
-                            TipoMime = f.TipoMime,
-                            TamanhoBytes = f.TamanhoBytes,
-                            DataUpload = f.DataUpload,
-                        })
-                        .ToList(),
-                    Autor = new AutorPublicacaoDto
-                    {
-                        Id = pub.Utilizador.Id,
-                        NomeCompleto = pub.Utilizador.NomeCompleto,
-                        //FotoPerfil = pub.Utilizador.FotoPerfil
-                    },
-                };
-
+                var dto = pub.ToPublicacaoFeedDto();
                 result.Add(dto);
             }
 
             return result;
+        }
+
+        public async Task<List<PublicacaoFeedDto>> PesquisarPublicacoesAsync(string termo)
+        {
+            if (string.IsNullOrWhiteSpace(termo)) return new List<PublicacaoFeedDto>();
+
+            var publicacoes = await _contexto.Publicacoes
+                .Where(p => p.Existencia == EstadoExistenciaLogica.Existente &&
+                            p.Utilizador.Privacidade == EstadoAcesso.Publico &&
+                            (p.Texto.Contains(termo)))
+                .Include(p => p.Utilizador)
+                .Include(p => p.Ficheiros)
+                .Include(p => p.Comentarios).ThenInclude(c => c.Utilizador)
+                .OrderByDescending(p => p.DataPublicacao)
+                .Take(20)
+                .ToListAsync();
+
+            return publicacoes.Select(p => p.ToPublicacaoFeedDto()).ToList();
         }
     }
 }

@@ -93,7 +93,6 @@ namespace NzolaWebAPI.Services
             return utilizador;
         }
 
-        // UtilizadorService.cs
         public async Task<UtilizadorDto?> ObterPorIdServiceAsync(
             int id,
             int? utilizadorLogadoId = null
@@ -103,16 +102,9 @@ namespace NzolaWebAPI.Services
             if (utilizador == null)
                 return null;
 
-            var seguidores = await _seguidorRepository.ContarSeguidoresAsync(id);
-            var seguindo = await _seguidorRepository.ContarSeguindoAsync(id); // NOVO
-            var publicacoes = await _publicacaoRepository.ContarPorUtilizadorAsync(id);
-
             var utilizadorDto = utilizador.ToUtilizadorDto();
-            utilizadorDto.Seguidores = seguidores;
-            utilizadorDto.Seguindo = seguindo; // NOVO
-            utilizadorDto.Publicacoes = publicacoes;
 
-            // Verificar se o utilizador logado segue este perfil
+            bool podeVerPerfilCompleto = true;
             if (utilizadorLogadoId.HasValue && utilizadorLogadoId.Value != id)
             {
                 var relacao = await _seguidorRepository.ObterPorRelacaoAsync(
@@ -120,6 +112,31 @@ namespace NzolaWebAPI.Services
                     id
                 );
                 utilizadorDto.JaSegues = relacao != null;
+
+                if (utilizador.Privacidade == Models.Enums.EstadoAcesso.Privado && !utilizadorDto.JaSegues)
+                {
+                    podeVerPerfilCompleto = false;
+                }
+            }
+            else if (utilizadorLogadoId.HasValue && utilizadorLogadoId.Value == id)
+            {
+                utilizadorDto.JaSegues = false;
+            }
+
+            if (podeVerPerfilCompleto)
+            {
+                var seguidores = await _seguidorRepository.ContarSeguidoresAsync(id);
+                var seguindo = await _seguidorRepository.ContarSeguindoAsync(id);
+                var publicacoes = await _publicacaoRepository.ContarPorUtilizadorAsync(id);
+                utilizadorDto.Seguidores = seguidores;
+                utilizadorDto.Seguindo = seguindo;
+                utilizadorDto.Publicacoes = publicacoes;
+            }
+            else
+            {
+                utilizadorDto.Seguidores = 0;
+                utilizadorDto.Seguindo = 0;
+                utilizadorDto.Publicacoes = 0;
             }
 
             return utilizadorDto;

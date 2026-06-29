@@ -1,0 +1,49 @@
+<div class="pesquisa-page">
+  <div class="pesquisa-header">
+    <button (click)="voltar()">Voltar</button>
+    <h2>Pesquisar</h2>
+    <input
+      type="text"
+      [formControl]="termoControl"
+      placeholder="Pesquisar na NzolaNet..."
+    />
+    <div class="filtros">
+      <button
+        *ngFor="let f of [{key:'tudo', label:'Tudo'}, {key:'publicacoes', label:'Publicações'}, {key:'perfis', label:'Perfis'}]"
+        (click)="definirFiltro(f.key)"
+        [class.ativo]="tipoFiltro === f.key"
+      >
+        {{ f.label }}
+      </button>
+    </div>
+  </div>
+
+  <div class="pesquisa-resultados">
+    <div *ngIf="carregando">A pesquisar...</div>
+
+    <div *ngIf="!carregando && pesquisou && tipoFiltro !== 'perfis' && publicacoes.length" class="seccao-resultados">
+      <h3>Publicações</h3>
+      <div *ngFor="let pub of publicacoes" class="resultado-item">
+        <p>{{ pub.texto }}</p>
+        <small>{{ pub.autor?.nomeCompleto }} - {{ pub.dataPublicacao | date:'dd/MM/yyyy' }}</small>
+      </div>
+    </div>
+
+    <div *ngIf="!carregando && pesquisou && tipoFiltro !== 'publicacoes' && perfis.length" class="seccao-resultados">
+      <h3>Perfis</h3>
+      <div *ngFor="let perfil of perfis" class="resultado-item perfil-item" (click)="irParaPerfil(perfil.id)">
+        <img [src]="perfil.fotoPerfil | base64Image" alt="Foto" class="foto-perfil-pesquisa" />
+        <div>
+          <strong>{{ perfil.nomeCompleto }}</strong>
+          <p>&#64;{{ perfil.nomeUtilizador }}</p>
+          <p *ngIf="perfil.biografia">{{ perfil.biografia }}</p>
+          <small *ngIf="perfil.privacidade === 1">Conta Privada</small>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="!carregando && pesquisou && !publicacoes.length && !perfis.length">
+      <p>Nenhum resultado encontrado.</p>
+    </div>
+  </div>
+</div>

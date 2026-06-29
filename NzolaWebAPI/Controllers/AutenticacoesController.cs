@@ -28,6 +28,9 @@ namespace NzolaWebAPI.Controllers
         [HttpPost("registo")]
         public async Task<IActionResult> Registar([FromBody] CriarUtilizadorRequestDto registoDto)
         {
+            if (!registoDto.ConcordaComTermos)
+                return BadRequest("É necessário concordar com os termos da NzolaNet.");
+
             var emailExiste = await _contexto.Utilizadores.AnyAsync(u =>
                 u.Email.ToLower() == registoDto.Email.ToLower()
             );
@@ -49,13 +52,16 @@ namespace NzolaWebAPI.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
+            var identificador = loginDto.Identificador.ToLower();
+
             var utilizador = await _contexto.Utilizadores.FirstOrDefaultAsync(u =>
-                u.Email.ToLower() == loginDto.Identificador.ToLower()
+                u.Email.ToLower() == identificador ||
+                u.NomeUtilizador.ToLower() == identificador
             );
 
             if (utilizador == null || utilizador.PalavraPasse != loginDto.PalavraPasse)
             {
-                return Unauthorized("E-mail ou palavra-passe incorretos");
+                return Unauthorized("E-mail, nome de utilizador ou palavra-passe incorretos");
             }
 
             var tokenGerado = _tokenService.CriarToken(utilizador);

@@ -13,6 +13,7 @@ namespace NzolaWebAPI.Interfaces
         Task<int> ContarPorUtilizadorAsync(int utilizadorId);
         Task AdicionarAsync(Publicacao publicacao);
         Task<bool> SalvarAsync();
+        Task<List<Publicacao>> ListarRecentesPorFeedAsync(int? utilizadorLogadoId = null);
         Task<List<Publicacao>> ListarRecentesAsync();
         Task<Publicacao?> SelecionarAsync(int id);
 

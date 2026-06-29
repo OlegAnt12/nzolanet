@@ -32,7 +32,14 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ListarPublicacoes()
+        public async Task<IActionResult> ListarPublicacoes([FromQuery] int? utilizadorLogadoId = null)
+        {
+            var publicacoes = await _publicacaoService.ListarFeedAsync(utilizadorLogadoId);
+            return Ok(publicacoes);
+        }
+
+        [HttpGet("todas")]
+        public async Task<IActionResult> ListarTodasPublicacoes()
         {
             var publicacoes = await _pubRepo.ListarRecentesAsync();
             var publicacaoesDtos = publicacoes.Select(p => p.ToPublicacaoFeedDto()).ToList();

@@ -1,1 +1,54 @@
-<p>perfil.component works!</p>
+<div class="perfil-container" *ngIf="utilizador.id">
+  <div class="perfil-header">
+    <div class="foto-perfil">
+      <img [src]="utilizador.fotoPerfil | base64Image" alt="Foto de Perfil" />
+    </div>
+    <div class="info-base">
+      <h2>{{ utilizador.nomeCompleto }}</h2>
+      <p class="nome-utilizador">&#64;{{ utilizador.nomeUtilizador }}</p>
+      <p class="email" *ngIf="perfilCompletoVisivel">{{ utilizador.email }}</p>
+      <p class="biografia" *ngIf="utilizador.biografia">{{ utilizador.biografia }}</p>
+      <div class="estatisticas" *ngIf="perfilCompletoVisivel">
+        <span><strong>{{ utilizador.seguidores }}</strong> seguidores</span>
+        <span><strong>{{ utilizador.seguindo }}</strong> seguindo</span>
+        <span><strong>{{ utilizador.publicacoes }}</strong> publicações</span>
+      </div>
+      <small *ngIf="perfilPrivado && !perfilCompletoVisivel">Esta conta é privada</small>
+    </div>
+    <div class="acoes-perfil">
+      <button *ngIf="ehPerfilProprio" (click)="abrirEdicao()">Editar Perfil</button>
+      <button *ngIf="!ehPerfilProprio && !utilizador.jaSegues && !pedidoPendente && !perfilPrivado"
+        (click)="alternarSeguir()">Seguir</button>
+      <button *ngIf="!ehPerfilProprio && !utilizador.jaSegues && !pedidoPendente && perfilPrivado"
+        (click)="alternarSeguir()">Solicitar Seguimento</button>
+      <button *ngIf="!ehPerfilProprio && utilizador.jaSegues"
+        (click)="alternarSeguir()">Seguindo</button>
+      <span *ngIf="!ehPerfilProprio && pedidoPendente">Pedido enviado</span>
+    </div>
+  </div>
+
+  <div class="perfil-detalhes" *ngIf="!modoEdicao && perfilCompletoVisivel">
+    <div class="detalhe"><span class="rotulo">Género</span><span>{{ utilizador.genero }}</span></div>
+    <div class="detalhe"><span class="rotulo">Data de Nascimento</span><span>{{ utilizador.dataNascimento | date:'dd/MM/yyyy' }}</span></div>
+    <div class="detalhe"><span class="rotulo">Privacidade</span><span>{{ utilizador.privacidade === 1 ? 'Privado' : 'Público' }}</span></div>
+  </div>
+
+  <div class="edicao-perfil" *ngIf="modoEdicao">
+    <h3>Atualizar Perfil</h3>
+    <form [formGroup]="perfilForm" (ngSubmit)="salvarPerfil()">
+      <div class="foto-edit">
+        <img [src]="previewFotoUrl ? previewFotoUrl : (utilizador.fotoPerfil | base64Image)" alt="Preview" />
+        <label for="foto-input">Escolher Foto</label>
+        <input id="foto-input" type="file" accept="image/*" (change)="aoMudarFoto($event)" hidden />
+      </div>
+      <label>Nome Completo</label>
+      <input type="text" formControlName="nomeCompleto" />
+      <label>Biografia</label>
+      <textarea formControlName="biografia"></textarea>
+      <div class="botoes-edit">
+        <button type="button" (click)="modoEdicao = false" [disabled]="salvando">Cancelar</button>
+        <button type="submit" [disabled]="perfilForm.invalid || salvando">{{ salvando ? 'A guardar...' : 'Salvar' }}</button>
+      </div>
+    </form>
+  </div>
+</div>

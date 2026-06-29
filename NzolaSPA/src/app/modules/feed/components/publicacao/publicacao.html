@@ -1,1 +1,58 @@
-<p>publicacao works!</p>
+<div class="cartao-publicacao">
+  <div class="cabecalho-publicacao">
+    <img [src]="publicacao.autor?.fotoPerfil | base64Image" alt="foto" class="foto-autor" />
+    <div class="info-autor">
+      <strong>{{ publicacao.autor?.nomeCompleto }}</strong>
+      <span>&#64;{{ publicacao.autor?.nomeUtilizador }}</span>
+    </div>
+    <div class="acoes-autor" *ngIf="!ehAutor">
+      <button (click)="onAlternarSeguir()">
+        {{ autorSeguido ? 'A seguir' : 'Seguir' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="conteudo-publicacao" *ngIf="!modoEdicao">
+    <p>{{ publicacao.texto }}</p>
+    <div *ngIf="publicacao.ficheiros?.length" class="ficheiros">
+      <div *ngFor="let f of publicacao.ficheiros">
+        <img *ngIf="f.tipoMime?.startsWith('image')" [src]="f.urlCompleta || f.caminhoFicheiro" />
+        <video *ngIf="f.tipoMime?.startsWith('video')" [src]="f.urlCompleta || f.caminhoFicheiro" controls></video>
+      </div>
+    </div>
+  </div>
+
+  <div class="edicao-publicacao" *ngIf="modoEdicao">
+    <textarea [formControl]="textoEdicaoControl" rows="3"></textarea>
+    <button (click)="salvarEdicaoAcao()">Salvar</button>
+    <button (click)="cancelarEdicaoAcao()">Cancelar</button>
+  </div>
+
+  <div class="acoes-publicacao">
+    <button (click)="onBaze()">
+      Baze ({{ publicacao.quantidadeBazes || 0 }})
+    </button>
+    <button (click)="onComentar()">
+      Comentar ({{ publicacao.quantidadeComentarios || 0 }})
+    </button>
+    <button *ngIf="!ehAutor" (click)="onDenunciar()">Denunciar</button>
+    <button *ngIf="ehAutor" (click)="iniciarEdicao()">Editar</button>
+    <button *ngIf="ehAutor" (click)="onEliminar()">Eliminar</button>
+  </div>
+
+  <div class="comentarios" *ngIf="publicacao.mostrarComentarios">
+    <div *ngFor="let c of publicacao.comentarios" class="comentario">
+      <img [src]="c.comentador?.fotoPerfil | base64Image" class="foto-comentador" />
+      <div>
+        <strong>{{ c.comentador?.nomeCompleto }}</strong>
+        <p>{{ c.conteudoComentario }}</p>
+      </div>
+    </div>
+    <div class="form-comentario">
+      <form [formGroup]="comentarioForm" (ngSubmit)="onEnviarComentario()">
+        <input type="text" formControlName="textoComentario" placeholder="Escreve um comentário..." />
+        <button type="submit" [disabled]="comentarioForm.invalid">Enviar</button>
+      </form>
+    </div>
+  </div>
+</div>

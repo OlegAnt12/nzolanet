@@ -1,1 +1,16 @@
-<p>lista-notificacoes works!</p>
+<div class="lista-notificacoes">
+  <h4>Notificações</h4>
+  <div *ngIf="!notificacoes.length" class="sem-notificacoes">
+    Nenhuma notificação.
+  </div>
+  <div *ngFor="let n of notificacoes" class="notificacao-item">
+    <div class="notificacao-conteudo">
+      <img [src]="n.utilizadorResponsavel?.fotoPerfil | base64Image" class="foto-responsavel" />
+      <div class="notificacao-texto">
+        <span class="tipo-tag">{{ getTipoLabel(n.tipo) }}</span>
+        <p>{{ n.mensagem }}</p>
+        <small>{{ n.criadoEm | date:'dd/MM/yyyy HH:mm' }}</small>
+      </div>
+    </div>
+  </div>
+</div>

@@ -17,5 +17,6 @@ namespace NzolaWebAPI.DTOs.Utilizador
         public string PalavraPasse { get; set; } = string.Empty;
         public Genero genero { get; set; }
         public DateTime DataNascimento { get; set; }
+        public bool ConcordaComTermos { get; set; }
     }
 }

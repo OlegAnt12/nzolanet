@@ -62,11 +62,8 @@ namespace NzolaWebAPI.Models
         public List<Seguidor> Seguindo { get; set; } = new List<Seguidor>();
         public List<Publicacao> Publicacoes { get; set; } = new List<Publicacao>();
         public List<Comentario> Comentarios { get; set; } = new List<Comentario>();
+        public List<Notificacao> Notificacoes { get; set; } = new List<Notificacao>();
         public List<Baze> Bazes { get; set; } = new List<Baze>();
-
-        public static implicit operator Utilizador?(Task<Utilizador?>? v)
-        {
-            throw new NotImplementedException();
-        }
+        public bool ConcordaComTermos { get; set; } 
     }
 }

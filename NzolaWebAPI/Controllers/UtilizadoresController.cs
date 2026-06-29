@@ -48,16 +48,16 @@ namespace NzolaWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> SelecionarUtilizador(int id)
+        public async Task<IActionResult> SelecionarUtilizador(int id, [FromQuery] int? utilizadorLogadoId = null)
         {
-            var utilizador = await _contexto.Utilizadores.FindAsync(id);
+            var utilizador = await _utilizadorService.ObterPorIdServiceAsync(id, utilizadorLogadoId);
 
             if (utilizador == null)
             {
                 return NotFound();
             }
 
-            return Ok(utilizador.ToUtilizadorDto());
+            return Ok(utilizador);
         }
 
         [HttpPost]
@@ -67,7 +67,7 @@ namespace NzolaWebAPI.Controllers
         {
             var utilizador = criarUtilizadorDto.ToUtilizadorFromCriarDto();
 
-            _contexto.Utilizadores.Add(utilizador);
+            await _contexto.Utilizadores.AddAsync(utilizador);
             await _contexto.SaveChangesAsync();
 
             return CreatedAtAction(

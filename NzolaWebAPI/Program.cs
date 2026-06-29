@@ -78,6 +78,8 @@ builder.Services.AddScoped<IComentarioRepository, ComentarioRepository>();
 builder.Services.AddScoped<IPublicacaoRepository, PublicacaoRepository>();
 builder.Services.AddScoped<ISeguidorRepository, SeguidorRepository>();
 builder.Services.AddScoped<IUtilizadorRepository, UtilizadorRepository>();
+builder.Services.AddScoped<IDenunciaRepository, DenunciaRepository>();
+builder.Services.AddScoped<IPedidoSeguirRepository, PedidoSeguirRepository>();
 
 // Registra a implementação do serviço de e-mail
 builder.Services.AddScoped<IBazeService, BazeService>();
@@ -87,7 +89,8 @@ builder.Services.AddScoped<IPublicacaoService, PublicacaoService>();
 builder.Services.AddScoped<ISeguidorService, SeguidorService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUtilizadorService, UtilizadorService>();
-builder.Services.AddScoped<IUtilizadorService, UtilizadorService>();
+builder.Services.AddScoped<IDenunciaService, DenunciaService>();
+builder.Services.AddScoped<IPedidoSeguirService, PedidoSeguirService>();
 
 var app = builder.Build();
 

@@ -19,6 +19,8 @@ namespace NzolaWebAPI.Data
         public DbSet<Notificacao> Notificacoes { get; set; }
         public DbSet<Utilizador> Utilizadores { get; set; }
         public DbSet<Seguidor> Seguidores { get; set; }
+        public DbSet<Denuncia> Denuncias { get; set; }
+        public DbSet<PedidoSeguir> PedidosSeguir { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -109,11 +111,61 @@ namespace NzolaWebAPI.Data
                     .IsRequired();
 
                 // Adiciona constraint para aceitar apenas Masculino e Feminino
-                entity.HasCheckConstraint(
+                entity.ToTable(t => t.HasCheckConstraint(
                     "CK_Utilizadores_Genero",
                     "Genero IN ('Masculino','Feminino')"
-                );
+                ));
             });
+
+            modelBuilder.Entity<Denuncia>(entity =>
+            {
+                entity
+                    .HasOne(d => d.Denunciante)
+                    .WithMany()
+                    .HasForeignKey(d => d.DenuncianteId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<PedidoSeguir>(entity =>
+            {
+                entity
+                    .HasOne(p => p.UtilizadorSeguidor)
+                    .WithMany()
+                    .HasForeignKey(p => p.SeguidorId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity
+                    .HasOne(p => p.UtilizadorSeguido)
+                    .WithMany()
+                    .HasForeignKey(p => p.SeguidoId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            modelBuilder.Entity<Notificacao>(entity =>
+           {
+
+
+               // Armazena o enum Genero como string e define o tipo de coluna
+               entity.Property(n => n.Tipo)
+                   .HasConversion<string>()
+                   .HasColumnType("nvarchar(10)");
+
+               entity.Property(n => n.Mensagem)
+                   .HasMaxLength(256)
+                   .IsRequired();
+
+               entity
+                .HasOne(n => n.UtilizadorNotificacao)
+                .WithMany(u => u.Notificacoes)
+                .HasForeignKey(n => n.UtilizadorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+               // Adiciona constraint para aceitar apenas Masculino e Feminino
+               entity.ToTable(t => t.HasCheckConstraint(
+                   "CK_Notificacoes_Tipo",
+                   "Tipo IN ('Baze','Comentario', 'Seguidor')"
+               ));
+           });
         }
     }
 }

@@ -35,6 +35,37 @@ namespace NzolaWebAPI.Repositories
             return (await _contexto.SaveChangesAsync()) > 0;
         }
 
+        public async Task<List<Publicacao>> ListarRecentesPorFeedAsync(int? utilizadorLogadoId = null)
+        {
+            var query = _contexto
+                .Publicacoes.Where(p => p.Existencia != (EstadoExistenciaLogica)0)
+                .Include(p => p.Utilizador).ThenInclude(u => u.Seguidores)
+                .Include(p => p.Utilizador).ThenInclude(u => u.Seguindo)
+                .Include(p => p.Ficheiros)
+                .Include(p => p.Comentarios).ThenInclude(c => c.Utilizador)
+                .AsQueryable();
+
+            if (utilizadorLogadoId.HasValue)
+            {
+                var seguindoIds = await _contexto.Seguidores
+                    .Where(s => s.SeguidorId == utilizadorLogadoId.Value)
+                    .Select(s => s.SeguidoId)
+                    .ToListAsync();
+
+                query = query.Where(p =>
+                    p.Utilizador.Privacidade == Models.Enums.EstadoAcesso.Publico ||
+                    seguindoIds.Contains(p.AutorId));
+            }
+            else
+            {
+                query = query.Where(p => p.Utilizador.Privacidade == Models.Enums.EstadoAcesso.Publico);
+            }
+
+            return await query
+                .OrderByDescending(p => p.DataPublicacao)
+                .ToListAsync();
+        }
+
         public async Task<List<Publicacao>> ListarRecentesAsync()
         {
             return await _contexto

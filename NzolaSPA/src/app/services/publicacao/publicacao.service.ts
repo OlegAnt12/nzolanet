@@ -21,6 +21,12 @@ export class PublicacaoService {
     return this.api.get<PublicacaoDto[]>(`${this.endpoint}/`);
   }
 
+  listarFeed(utilizadorLogadoId?: number): Observable<PublicacaoDto[]>
+  {
+    const query = utilizadorLogadoId ? `?utilizadorLogadoId=${utilizadorLogadoId}` : '';
+    return this.api.get<PublicacaoDto[]>(`${this.endpoint}/${query}`);
+  }
+
   publicar(novaPublicacao: RequisicaoCriarPublicacaoDto, utilizadorId: number): Observable<PublicacaoDto>
   {
     const formData = new FormData();
