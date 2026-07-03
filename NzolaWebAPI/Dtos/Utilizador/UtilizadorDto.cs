@@ -16,6 +16,7 @@ namespace NzolaWebAPI.DTOs.Utilizador
         public EstadoAcesso Privacidade { get; set; }
         public EstadoConta EstadoConta { get; set; }
         public string? FotoPerfil { get; set; }
+        public NivelAcesso NivelAcesso { get; set; }
 
         public Genero Genero { get; set; }
         public DateTime DataNascimento { get; set; }

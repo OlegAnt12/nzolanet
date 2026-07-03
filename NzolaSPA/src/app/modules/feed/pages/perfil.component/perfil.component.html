@@ -7,12 +7,16 @@
       <h2>{{ utilizador.nomeCompleto }}</h2>
       <p class="nome-utilizador">&#64;{{ utilizador.nomeUtilizador }}</p>
       <p class="email" *ngIf="perfilCompletoVisivel">{{ utilizador.email }}</p>
-      <p class="biografia" *ngIf="utilizador.biografia">{{ utilizador.biografia }}</p>
-      <div class="estatisticas" *ngIf="perfilCompletoVisivel">
-        <span><strong>{{ utilizador.seguidores }}</strong> seguidores</span>
-        <span><strong>{{ utilizador.seguindo }}</strong> seguindo</span>
-        <span><strong>{{ utilizador.publicacoes }}</strong> publicações</span>
-      </div>
+      <p class="biografia" *ngIf="temBiografia()">{{ utilizador.biografia }}</p>
+      <p class="biografia biografia-vazia" *ngIf="!temBiografia() && !ehPerfilProprio">Sem biografia.</p>
+      <button
+        type="button"
+        class="btn-adicionar-biografia"
+        *ngIf="!temBiografia() && ehPerfilProprio"
+        (click)="adicionarBiografia()"
+      >
+        Adicionar biografia
+      </button>
       <small *ngIf="perfilPrivado && !perfilCompletoVisivel">Esta conta é privada</small>
     </div>
     <div class="acoes-perfil">
@@ -31,6 +35,50 @@
     <div class="detalhe"><span class="rotulo">Género</span><span>{{ generoTexto(utilizador.genero) }}</span></div>
     <div class="detalhe"><span class="rotulo">Data de Nascimento</span><span>{{ utilizador.dataNascimento | date:'dd/MM/yyyy' }}</span></div>
     <div class="detalhe"><span class="rotulo">Privacidade</span><span>{{ utilizador.privacidade === 1 ? 'Privado' : 'Público' }}</span></div>
+  </div>
+
+  <div class="perfil-seccoes" *ngIf="perfilCompletoVisivel && !modoEdicao">
+    <div class="perfil-seccoes-cabeca">
+      <div class="seccoes-tabs">
+        <button type="button" [class.ativo]="abaAtiva === 'publicacoes'" (click)="selecionarAba('publicacoes')"><span> Publicações </span> <strong>{{ utilizador.publicacoes }}</strong></button>
+        <button type="button" [class.ativo]="abaAtiva === 'seguidores'" (click)="selecionarAba('seguidores')"><span> Seguidores </span> <strong>{{ utilizador.seguidores }}</strong></button>
+        <button type="button" [class.ativo]="abaAtiva === 'seguindo'" (click)="selecionarAba('seguindo')"><span> Seguindo </span> <strong>{{ utilizador.seguindo }}</strong></button>
+      </div>
+    </div>
+
+    <div class="seccao-conteudo" *ngIf="carregandoListas">
+      <p>A carregar informação do perfil...</p>
+    </div>
+
+    <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'seguidores'">
+      <div *ngIf="!seguidoresPerfil.length" class="lista-vazia">Sem seguidores.</div>
+      <div *ngFor="let relacao of seguidoresPerfil" class="item-lista">
+        <img [src]="fotoOuPadrao(relacao.seguidor) | base64Image" alt="Seguidor" />
+        <div>
+          <strong>{{ nomeOuUtilizador(relacao.seguidor) }}</strong>
+          <p>&#64;{{ relacao.seguidor?.nomeUtilizador }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'seguindo'">
+      <div *ngIf="!seguindoPerfil.length" class="lista-vazia">Não segue ninguém.</div>
+      <div *ngFor="let relacao of seguindoPerfil" class="item-lista">
+        <img [src]="fotoOuPadrao(relacao.seguido) | base64Image" alt="Seguido" />
+        <div>
+          <strong>{{ nomeOuUtilizador(relacao.seguido) }}</strong>
+          <p>&#64;{{ relacao.seguido?.nomeUtilizador }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'publicacoes'">
+      <div *ngIf="!publicacoesPerfil.length" class="lista-vazia">Sem publicações.</div>
+      <div *ngFor="let pub of publicacoesPerfil" class="item-publicacao-perfil">
+        <p>{{ pub.texto }}</p>
+        <small>{{ pub.dataPublicacao | date:'dd/MM/yyyy HH:mm' }}</small>
+      </div>
+    </div>
   </div>
 
   <div class="edicao-perfil" *ngIf="modoEdicao">

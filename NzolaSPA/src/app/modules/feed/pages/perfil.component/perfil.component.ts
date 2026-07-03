@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -8,15 +8,21 @@ import { PedidoSeguirService } from '../../../../services/pedido-seguir/pedido-s
 import { UtilizadorDto } from '../../../../dtos/utilizador/utilizadorfeed/utilizador.dto';
 import { AuthService } from '../../../../services/auth/auth';
 import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
+import { RouterModule } from '@angular/router';
+import { PublicacaoService } from '../../../../services/publicacao/publicacao.service';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-perfil.component',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, Base64ImagePipe],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, Base64ImagePipe],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })
 export class PerfilComponent implements OnInit {
+  private readonly publicacaoService = inject(PublicacaoService);
+
   utilizador: UtilizadorDto = new UtilizadorDto();
   utilizadorLogadoId: number = 0;
   dadosCarregados = false;
@@ -30,6 +36,11 @@ export class PerfilComponent implements OnInit {
   eliminandoConta = false;
   notificacao: { mensagem: string; tipo: 'sucesso' | 'erro' } | null = null;
   estadoCarregamento = 'A carregar perfil...';
+  carregandoListas = false;
+  abaAtiva: 'publicacoes' | 'seguidores' | 'seguindo' = 'publicacoes';
+  seguidoresPerfil: any[] = [];
+  seguindoPerfil: any[] = [];
+  publicacoesPerfil: any[] = [];
 
   generoTexto(genero: number | null | undefined): string {
     switch (genero) {
@@ -40,6 +51,10 @@ export class PerfilComponent implements OnInit {
       default:
         return 'Não especificado';
     }
+  }
+
+  temBiografia(): boolean {
+    return !!this.utilizador.biografia && this.utilizador.biografia.trim().length > 0;
   }
 
   mostrarNotificacao(mensagem: string, tipo: 'sucesso' | 'erro'): void {
@@ -67,9 +82,52 @@ export class PerfilComponent implements OnInit {
     this.perfilPrivado = perfil.privacidade === 1;
     this.dadosCarregados = true;
 
+    this.carregarDadosPerfil();
+
     if (!this.ehPerfilProprio && this.perfilPrivado) {
       this.verificarPedidoPendente();
     }
+  }
+
+  selecionarAba(aba: 'publicacoes' | 'seguidores' | 'seguindo'): void {
+    this.abaAtiva = aba;
+  }
+
+  nomeOuUtilizador(item: any): string {
+    return item?.nomeCompleto || item?.nomeUtilizador || 'Utilizador';
+  }
+
+  fotoOuPadrao(item: any): string | null {
+    return item?.fotoPerfil ?? null;
+  }
+
+  private carregarDadosPerfil(): void {
+    if (!this.perfilCompletoVisivel) {
+      return;
+    }
+
+    this.carregandoListas = true;
+
+    forkJoin({
+      seguidores: this.seguidorService.obterSeguidores(this.utilizador.id).pipe(catchError(() => of([]))),
+      seguindo: this.seguidorService.obterSeguindo(this.utilizador.id).pipe(catchError(() => of([]))),
+      publicacoes: this.publicacaoService
+        .listarFeed(this.utilizadorLogadoId || undefined, 1, 200)
+        .pipe(
+          map((res: any) => (res?.publicacoes ?? res ?? []).filter((pub: any) => pub?.autor?.id === this.utilizador.id)),
+          catchError(() => of([])),
+        ),
+    }).subscribe({
+      next: (res) => {
+        this.seguidoresPerfil = res.seguidores;
+        this.seguindoPerfil = res.seguindo;
+        this.publicacoesPerfil = res.publicacoes;
+        this.carregandoListas = false;
+      },
+      error: () => {
+        this.carregandoListas = false;
+      },
+    });
   }
 
   private sincronizarPerfilLocal(): void {
@@ -148,6 +206,10 @@ export class PerfilComponent implements OnInit {
       nomeCompleto: this.utilizador.nomeCompleto,
       biografia: this.utilizador.biografia,
     });
+  }
+
+  adicionarBiografia(): void {
+    this.abrirEdicao();
   }
 
   aoMudarFoto(event: any): void {

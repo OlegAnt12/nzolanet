@@ -7,6 +7,7 @@ export class UtilizadorDto {
   privacidade: number = 0;
   estadoConta: number = 0;
   fotoPerfil: string | null = null;
+  nivelAcesso: number = 0;
   genero: number = 0;
   dataNascimento: string = '';
   seguidores: number = 0;

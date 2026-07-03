@@ -14,6 +14,7 @@ namespace NzolaWebAPI.Mappers
                 NomeUtilizador = utilizador.NomeUtilizador,
                 Email = utilizador.Email,
                 Biografia = utilizador.Biografia,
+                NivelAcesso = utilizador.NivelAcesso,
                 FotoPerfil =
                     utilizador.FotoPerfil != null
                         ? Convert.ToBase64String(utilizador.FotoPerfil)
