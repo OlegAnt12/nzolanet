@@ -1,6 +1,5 @@
 using MailKit.Net.Smtp;
 using MailKit.Security;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using NzolaWebAPI.Configurations;
@@ -11,12 +10,23 @@ namespace NzolaWebAPI.Services
     public class EmailService : IEmailService
     {
         private readonly EmailSettings _emailSettings;
-        private readonly IConfiguration _config;
 
-        public EmailService(IOptions<EmailSettings> emailSettings, IConfiguration config)
+        public EmailService(IOptions<EmailSettings> emailSettings)
         {
             _emailSettings = emailSettings.Value;
-            _config = config;
+        }
+
+        private async Task EnviarAsync(MimeMessage mensagem)
+        {
+            using var smtp = new SmtpClient();
+            await smtp.ConnectAsync(
+                _emailSettings.SmtpServer,
+                _emailSettings.Port,
+                SecureSocketOptions.StartTls
+            );
+            await smtp.AuthenticateAsync(_emailSettings.SenderEmail, _emailSettings.SenderPassword);
+            await smtp.SendAsync(mensagem);
+            await smtp.DisconnectAsync(true);
         }
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
@@ -27,15 +37,7 @@ namespace NzolaWebAPI.Services
             email.Subject = subject;
             email.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = body };
 
-            using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(
-                _emailSettings.SmtpServer,
-                _emailSettings.Port,
-                SecureSocketOptions.StartTls
-            );
-            await smtp.AuthenticateAsync(_emailSettings.SenderEmail, _emailSettings.SenderPassword);
-            await smtp.SendAsync(email);
-            await smtp.DisconnectAsync(true);
+            await EnviarAsync(email);
         }
 
         public async Task EnviarEmailConfirmacaoAsync(
@@ -45,12 +47,8 @@ namespace NzolaWebAPI.Services
         {
             var mensagem = new MimeMessage();
 
-            // 1. Configurar o Remetente (Nzola)
             mensagem.From.Add(
-                new MailboxAddress(
-                    _config["SmtpSettings:NomeEmissor"],
-                    _config["SmtpSettings:EmailEmissor"]
-                )
+                new MailboxAddress(_emailSettings.NomeEmissor, _emailSettings.EmailEmissor)
             );
 
             mensagem.To.Add(new MailboxAddress(nomeUtilizador, emailDestinatario));
@@ -71,34 +69,7 @@ namespace NzolaWebAPI.Services
 
             mensagem.Body = corpoBuilder.ToMessageBody();
 
-            using var clienteSmtp = new SmtpClient();
-
-            try
-            {
-                await clienteSmtp.ConnectAsync(
-                    _config["SmtpSettings:Server"],
-                    int.Parse(_config["SmtpSettings:Port"]!),
-                    SecureSocketOptions.StartTls
-                );
-
-                // Autentica na conta de e-mail de envio
-                await clienteSmtp.AuthenticateAsync(
-                    _config["SmtpSettings:SenderEmail"],
-                    _config["SmtpSettings:Password"]
-                );
-
-                // Envia o e-mail de forma assíncrona
-                await clienteSmtp.SendAsync(mensagem);
-            }
-            catch (System.Exception)
-            {
-                throw;
-            }
-            finally
-            {
-                // Garante que a ligação é fechada corretamente mesmo que ocorra algum erro
-                await clienteSmtp.DisconnectAsync(true);
-            }
+            await EnviarAsync(mensagem);
         }
     }
 }

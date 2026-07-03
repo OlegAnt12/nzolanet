@@ -21,6 +21,7 @@ namespace NzolaWebAPI.Data
         public DbSet<Seguidor> Seguidores { get; set; }
         public DbSet<Denuncia> Denuncias { get; set; }
         public DbSet<PedidoSeguir> PedidosSeguir { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -30,4 +30,8 @@ export class UtilizadorService {
 
     return this.api.put<any>(`${this.endpoint}/perfil`,utilizadorId, formData);
   }
+
+  eliminarConta(id: number): Observable<any> {
+    return this.api.delete<any>(this.endpoint, id);
+  }
 }

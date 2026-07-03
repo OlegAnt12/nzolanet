@@ -11,6 +11,7 @@ namespace NzolaWebAPI.Configurations
         public int Port { get; set; }
         public string SenderEmail { get; set; } = string.Empty;
         public string SenderPassword { get; set; } = string.Empty;
-        
+        public string NomeEmissor { get; set; } = string.Empty;
+        public string EmailEmissor { get; set; } = string.Empty;
     }
 }

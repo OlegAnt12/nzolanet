@@ -55,6 +55,8 @@
 .prev-noti
 {
   width: 27%;
+  padding: 7rem 44px 26px 2rem;
+  box-sizing: border-box;
   /*background-color: chartreuse;*/
 }
 

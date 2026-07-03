@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Publicacao;
 using NzolaWebAPI.DTOs.Utilizador;
@@ -19,18 +21,21 @@ namespace NzolaWebAPI.Services
         private readonly ContextoBDNzola _contexto; // Usado apenas se precisares controlar a transação aqui
         private readonly IUtilizadorRepository _utilizadorRepo;
         private readonly ISeguidorRepository _seguidorRepo;
+        private readonly IWebHostEnvironment _env;
 
         public PublicacaoService(
             IPublicacaoRepository publicacaoRepo,
             IUtilizadorRepository utilizadorRepo,
             ISeguidorRepository seguidorRepo,
-            ContextoBDNzola contexto
+            ContextoBDNzola contexto,
+            IWebHostEnvironment env
         )
         {
             _publicacaoRepo = publicacaoRepo;
             _utilizadorRepo = utilizadorRepo;
             _seguidorRepo = seguidorRepo;
             _contexto = contexto;
+            _env = env;
         }
 
         public async Task<PublicacaoFeedDto?> CriarAsync(
@@ -129,14 +134,13 @@ namespace NzolaWebAPI.Services
             return publicacao != null ? publicacao.ToPublicacaoFeedDto() : null;
         }
 
-        // Função auxiliar privada para isolar o upload físico
         private async Task<string> SalvarFicheiroNoServidorAsync(IFormFile? ficheiro)
         {
             if (ficheiro == null || ficheiro.Length == 0)
                 return "/uploads/default.png";
 
             var nomeFicheiro = $"{Guid.NewGuid()}{Path.GetExtension(ficheiro.FileName)}";
-            var caminhoPasta = Path.Combine("wwwroot", "uploads");
+            var caminhoPasta = Path.Combine(_env.WebRootPath, "uploads");
             Directory.CreateDirectory(caminhoPasta);
 
             var caminhoCompleto = Path.Combine(caminhoPasta, nomeFicheiro);
@@ -183,9 +187,10 @@ namespace NzolaWebAPI.Services
             return publicacaoExistente;
         }
 
-        public async Task<List<PublicacaoFeedDto>> ListarFeedAsync(int? utilizadorLogadoId = null)
+        public async Task<(List<PublicacaoFeedDto> Publicacoes, int Total)> ListarFeedAsync(int? utilizadorLogadoId = null, int pagina = 1, int tamanho = 10)
         {
-            var publicacoes = await _publicacaoRepo.ListarRecentesPorFeedAsync(utilizadorLogadoId);
+            var publicacoes = await _publicacaoRepo.ListarRecentesPorFeedAsync(utilizadorLogadoId, pagina, tamanho);
+            var total = await _publicacaoRepo.ContarFeedAsync(utilizadorLogadoId);
 
             var result = new List<PublicacaoFeedDto>();
 
@@ -205,7 +210,7 @@ namespace NzolaWebAPI.Services
                 result.Add(dto);
             }
 
-            return result;
+            return (result, total);
         }
 
         public async Task<List<PublicacaoFeedDto>> PesquisarPublicacoesAsync(string termo)

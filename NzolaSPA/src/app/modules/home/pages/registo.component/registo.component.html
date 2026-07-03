@@ -129,6 +129,10 @@
   </form>
 </div>
 
+<div *ngIf="notificacao" style="position: fixed; bottom: 20px; right: 20px; padding: 12px 24px; border-radius: 6px; color: white; font-weight: 500; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" [style.background]="notificacao.tipo === 'sucesso' ? '#28a745' : '#dc3545'">
+  {{ notificacao.mensagem }}
+</div>
+
     </div>
     <div class="conteudo-esq">
 

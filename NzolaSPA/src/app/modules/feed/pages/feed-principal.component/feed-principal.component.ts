@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, ChangeDetectorRef, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PublicacaoService } from '../../../../services/publicacao/publicacao.service';
 import { AuthService } from '../../../../services/auth/auth';
@@ -7,29 +7,38 @@ import { ComentariosService } from '../../../../services/comentario/comentarios.
 import { RequisicaoCriarPublicacaoDto } from '../../../../dtos/publicacao/requisicao-criar-publicacao.dto';
 import { CriarComentarioDto } from '../../../../dtos/comentario/comentario-dto';
 import { CommonModule, DatePipe, isPlatformBrowser } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { SeguidorService } from '../../../../services/seguidor/seguidor.service';
 import { UtilizadorService } from '../../../../services/utilizador/utilizador.service';
-import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
-import { ChangeDetectorRef } from '@angular/core';
-import {
-  EstatisticasUtilizadorDto,
-  UtilizadorSimplificadoDto,
-} from '../../../../dtos/utilizador/utilizadorfeed/utilizador.dto';
+import { Router, NavigationEnd, RouterModule } from '@angular/router';
+import { EstatisticasUtilizadorDto } from '../../../../dtos/utilizador/utilizadorfeed/utilizador.dto';
 import { SeguidorDto } from '../../../../dtos/seguidor/seguidor.dto';
 import { RequisicaoEditarComentarioDto } from '../../../../dtos/comentario/requisicao-editar-comentario-dto';
+import { DenunciaService } from '../../../../services/denuncia/denuncia.service';
+import { CriarDenunciaDto } from '../../../../dtos/denuncia/denuncia.dto';
+import { PedidoSeguirService } from '../../../../services/pedido-seguir/pedido-seguir.service';
+import { SignalRService } from '../../../../services/signalr/signalr.service';
+import { NotificacaoService } from '../../../../services/Notificacao/notificacao.service';
+import { NotificacaoDto } from '../../../../dtos/notificacao/notificacao.dto';
+import { PesquisaService } from '../../../../services/pesquisa/pesquisa.service';
+import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
+import { filter, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-feed-principal.component',
+  standalone: true,
   imports: [
-    CommonModule, // <-- 2. ADICIONA AQUI para libertar diretivas como *ngIf e *ngFor
-    DatePipe, // <-- 2. ADICIONA AQUI para libertar o pipe de formatação de datas
+    CommonModule,
+    DatePipe,
     ReactiveFormsModule,
+    FormsModule,
+    RouterModule,
     Base64ImagePipe,
   ],
   templateUrl: './feed-principal.component.html',
   styleUrl: './feed-principal.component.css',
 })
-export class FeedPrincipalComponent implements OnInit {
+export class FeedPrincipalComponent implements OnInit, OnDestroy {
   // Lista de publicações que alimenta o Feed
   feedPublicacoes: any[] = [];
   comentariosPublicacao: any[] = [];
@@ -60,42 +69,110 @@ export class FeedPrincipalComponent implements OnInit {
   ficheirosSelecionados: File[] = [];
 
   publicacaoAEditarId: number | null = null;
+  publicacaoAEliminarId: number | null = null;
   comentarioAEditarId: number | null = null;
+  comentarioAEliminarId: number | null = null;
   textoEdicaoControl = new FormControl('', Validators.required);
   comentarioEdicaoControl = new FormControl('', Validators.required);
   estadoEditarPublicacao: boolean = false;
   estadoEditarComentario: boolean = false;
   estadoEliminarPublicacao: boolean = false;
   estadoEliminarComentario: boolean = false;
-  modoEdicaoPerfil = false;
-  fotoSelecionadaPerfil: File | null = null;
-  previewFotoUrl: string | null = null;
-  salvandoPerfilStatus = false;
-
   novoComentario: RequisicaoEditarComentarioDto = new RequisicaoEditarComentarioDto();
 
-  estadoSeguirCache = new Map<number, boolean>();
+  estadoSeguirCache = new Set<number>();
 
-  perfilForm = new FormGroup({
-    nomeCompleto: new FormControl('', Validators.required),
-    biografia: new FormControl(''),
-  });
+  paginaAtual = 1;
+  totalPublicacoes = 0;
+  carregandoMais = false;
+  fimDoFeed = false;
+  private routerSub: Subscription | null = null;
+
+  vistaAtiva: 'feed' | 'notificacoes' | 'pesquisa' = 'feed';
+  termoPesquisa = '';
+  resultadosPesquisa: any = null;
+  pedidosPendentes: any[] = [];
+  notificacoes: NotificacaoDto[] = [];
+  carregandoNotificacoes = false;
+
+  base64Image(base64String: string | undefined | null): string {
+    if (!base64String) return './profile/Deafultdavy3k.jfif';
+    if (base64String.startsWith('data:image')) return base64String;
+    let mimeType = 'image/jpeg';
+    if (base64String.startsWith('iVBOR')) mimeType = 'image/png';
+    else if (base64String.startsWith('R0lGOD')) mimeType = 'image/gif';
+    else if (base64String.startsWith('UklGR')) mimeType = 'image/webp';
+    return `data:${mimeType};base64,${base64String}`;
+  }
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
+    public router: Router,
     private publicacaoService: PublicacaoService,
     private bazeService: BazeService,
     private seguidorService: SeguidorService,
     private comentarioService: ComentariosService,
     private authService: AuthService,
     private utilizadorService: UtilizadorService,
+    private denunciaService: DenunciaService,
+    private pedidoSeguirService: PedidoSeguirService,
+    private signalRService: SignalRService,
+    private notificacaoService: NotificacaoService,
+    private pesquisaService: PesquisaService,
     private cdr: ChangeDetectorRef,
   ) {}
+
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
+
+  private getLocalStorageItem(key: string): string | null {
+    return this.isBrowser() ? localStorage.getItem(key) : null;
+  }
+
+  private setLocalStorageItem(key: string, value: string): void {
+    if (this.isBrowser()) {
+      localStorage.setItem(key, value);
+    }
+  }
 
   ngOnInit(): void {
     this.carregarDadosDoUtilizador();
     this.obterTodosOsPosts();
-    this.obterEstatisticaUtilizador();
+    if (this.utilizadorLogado?.id) {
+      this.obterEstatisticaUtilizador();
+    }
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', this.onScroll.bind(this));
+    }
+    this.routerSub = this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe(() => {
+        if (isPlatformBrowser(this.platformId)) {
+          this.carregarDadosDoUtilizador();
+          if (this.utilizadorLogado?.id) {
+            this.obterEstatisticaUtilizador();
+          }
+          this.cdr.markForCheck();
+        }
+      });
+    this.signalRService.baze$.subscribe((data: any) => {
+      const post = this.feedPublicacoes.find((p) => p.id === data.publicacaoId);
+      if (post) {
+        post.quantidadeBazes = data.quantidadeBazes;
+        post.jaDeuBaze = data.jaDeuBaze;
+        this.cdr.markForCheck();
+      }
+    });
+    if (isPlatformBrowser(this.platformId)) {
+      this.carregarPedidosPendentes();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.routerSub) {
+      this.routerSub.unsubscribe();
+    }
   }
 
   iniciarEdicaoComentario(comentario: any) {
@@ -104,21 +181,27 @@ export class FeedPrincipalComponent implements OnInit {
   }
 
   confirmarEliminarComentario(id: number) {
+    this.comentarioAEliminarId = id;
+  }
+
+  cancelarEliminarComentario(): void {
+    this.comentarioAEliminarId = null;
+  }
+
+  executarEliminarComentario(): void {
+    if (!this.comentarioAEliminarId) return;
     this.estadoEliminarComentario = true;
-    const confirmacao = confirm(
-      'Tens a certeza de que queres eliminar esta publicação na NzolaNet? 🗑️',
-    );
-    if (!confirmacao) return;
+    const id = this.comentarioAEliminarId;
     this.comentarioService.excluirComentario(id).subscribe({
       next: () => {
-        setTimeout(() => {
-          // Remove o post da lista local filtrando pelo ID
-          alert('O comentario foi removido com sucesso!');
-        }, 0);
+        this.comentarioAEliminarId = null;
+        this.estadoEliminarComentario = false;
+        this.mostrarNotificacao('Comentário removido com sucesso!', 'sucesso');
       },
       error: (err) => {
-        console.error('Erro ao tentar eliminar o comentario:', err);
-        alert('Não foi possível eliminar o comentario. Tenta novamente mais tarde.');
+        console.error('Erro ao tentar eliminar o comentário:', err);
+        this.estadoEliminarComentario = false;
+        this.mostrarNotificacao('Não foi possível eliminar o comentário.', 'erro');
       },
     });
   }
@@ -131,7 +214,7 @@ export class FeedPrincipalComponent implements OnInit {
 
     this.comentarioService.editarComentario(id, this.novoComentario).subscribe({
       next: (comentarioActualizado) => {
-        alert(`O comentario foi actualizado ${comentarioActualizado}`);
+        this.mostrarNotificacao('Comentário atualizado com sucesso!', 'sucesso');
         setTimeout(() => {
           
           this.cancelarEdicaoComentario();
@@ -156,15 +239,15 @@ export class FeedPrincipalComponent implements OnInit {
 
   // NOVO: Carregar estado de seguir do localStorage
   private carregarEstadoSeguirCache(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const seguidosStr = localStorage.getItem('seguidosIds');
+    if (this.isBrowser()) {
+      const seguidosStr = this.getLocalStorageItem('seguidosIds');
       if (seguidosStr) {
         const seguidosIds = JSON.parse(seguidosStr);
         this.estadoSeguirCache.clear();
         seguidosIds.forEach((id: number) => {
-          this.estadoSeguirCache.set(id, true);
+            this.estadoSeguirCache.add(id);
         });
-        console.log('Cache de seguidos carregado:', Array.from(this.estadoSeguirCache.keys()));
+        //console.log('Cache de seguidos carregado:', Array.from(this.estadoSeguirCache));
       }
     }
   }
@@ -172,27 +255,22 @@ export class FeedPrincipalComponent implements OnInit {
   // NOVO: Salvar estado de seguir no localStorage
   private salvarEstadoSeguirCache(seguidoId: number, estaSeguindo: boolean): void {
     if (estaSeguindo) {
-      this.estadoSeguirCache.set(seguidoId, true);
+      this.estadoSeguirCache.add(seguidoId);
     } else {
       this.estadoSeguirCache.delete(seguidoId);
     }
 
     // Salvar no localStorage
-    const seguidosArray = Array.from(this.estadoSeguirCache.keys());
-    localStorage.setItem('seguidosIds', JSON.stringify(seguidosArray));
-    console.log('Cache atualizado:', seguidosArray);
+    const seguidosArray = Array.from(this.estadoSeguirCache);
+    this.setLocalStorageItem('seguidosIds', JSON.stringify(seguidosArray));
+    //console.log('Cache atualizado:', seguidosArray);
   }
 
-  // NOVO: Aplicar estado de seguir do cache aos autores
   private aplicarEstadoSeguirCache(): void {
     this.feedPublicacoes.forEach((pub) => {
       if (pub.autor && pub.autor.id !== this.utilizadorLogado?.id) {
-        // Verificar no cache
         const estaSeguindo = this.estadoSeguirCache.has(pub.autor.id);
         pub.autor.jaSegues = estaSeguindo;
-        console.log(
-          `Autor ${pub.autor.id} (${pub.autor.nome}): ${estaSeguindo ? 'SEGUE' : 'NÃO SEGUE'}`,
-        );
       }
     });
     this.cdr.detectChanges();
@@ -200,24 +278,20 @@ export class FeedPrincipalComponent implements OnInit {
 
   obterEstatisticaUtilizador() {
     if (!this.utilizadorLogado || isNaN(this.utilizadorLogado.id)) {
-      console.error(
-        'Erro: ID do utilizador não encontrado no localStorage. Valor atual:',
-        this.utilizadorLogado,
-      );
       return;
     }
     const utilizadorLogadoId = Number(this.utilizadorLogado.id);
     this.utilizadorService.obterEstatisticas(utilizadorLogadoId).subscribe({
       next: (res) => {
         this.estatisticaUtilizador = res;
-        console.log(this.estatisticaUtilizador);
+        //console.log(this.estatisticaUtilizador);
       },
       error: (erro) => {
         console.error('Erro em estatisticas do Utilizador', erro);
         if (erro.error && typeof erro.error === 'string') {
-          alert(erro.error);
+          this.mostrarNotificacao(erro.error, 'erro');
         } else {
-          alert('Não foi possível processar a interação de momento.');
+          this.mostrarNotificacao('Não foi possível processar a interação.', 'erro');
         }
       },
     });
@@ -225,8 +299,8 @@ export class FeedPrincipalComponent implements OnInit {
 
   // Carrega do localStorage o perfil guardado no Login
   carregarDadosDoUtilizador(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      const dadosLocais = localStorage.getItem('utilizadorLogado');
+    if (this.isBrowser()) {
+      const dadosLocais = this.getLocalStorageItem('utilizadorLogado');
 
       if (dadosLocais) {
         const utilizadorReal = JSON.parse(dadosLocais);
@@ -270,17 +344,17 @@ export class FeedPrincipalComponent implements OnInit {
     // Buscar todos os IDs que este usuário segue
     this.seguidorService.listarSeguidos(this.utilizadorLogado.id).subscribe({
       next: (seguidos: SeguidorDto[]) => {
-        console.log('IDs que o usuário segue:', seguidos);
+        //console.log('IDs que o usuário segue:', seguidos);
         this.listaSeguidoresMeu = seguidos;
-        console.log('Dados completos de seguidos:', seguidos);
+        //console.log('Dados completos de seguidos:', seguidos);
 
         // Extrair apenas os IDs dos utilizadores seguidos
         const seguidosIds = seguidos
           .map((item) => item.seguido?.id) // Pega o ID do seguido
           .filter((id) => id !== undefined && id !== null); // Remove nulos
 
-        console.log('IDs dos seguidos:', seguidosIds);
-        localStorage.setItem('seguidosIds', JSON.stringify(seguidosIds));
+        //console.log('IDs dos seguidos:', seguidosIds);
+        this.setLocalStorageItem('seguidosIds', JSON.stringify(seguidosIds));
       },
       error: (erro) => {
         console.error('ERRO ao listar seguidos:', erro);
@@ -292,121 +366,50 @@ export class FeedPrincipalComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
-  // NOVO MÉTODO: Aplicar estado "jaSegues" a todos os autores
-  private aplicarEstadoSeguir(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+  carregarMaisPosts(): void {
+    if (this.carregandoMais || this.fimDoFeed) return;
 
-    const seguidosIdsStr = localStorage.getItem('seguidosIds');
-    let seguidosIds: number[] = [];
+    this.carregandoMais = true;
+    this.paginaAtual++;
 
-    try {
-      const parsed = JSON.parse(seguidosIdsStr || '[]');
-      // Se for array de objetos, extrair IDs
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        if (typeof parsed[0] === 'object' && parsed[0].id !== undefined) {
-          // É um array de objetos SeguidorDto
-          seguidosIds = parsed.map((item) => item.seguido?.id || item.id).filter((id) => id);
-        } else if (typeof parsed[0] === 'number') {
-          // Já é um array de números
-          seguidosIds = parsed;
-        }
-      }
-    } catch (e) {
-      console.error('Erro ao parsear seguidosIds:', e);
-      seguidosIds = [];
-    }
+    this.publicacaoService.listarFeed(this.utilizadorLogado?.id, this.paginaAtual).subscribe({
+      next: (res: any) => {
+        const dados = res.publicacoes ?? res;
+        const urlBaseBackend = 'http://localhost:5043';
 
-    console.log('IDs seguidos processados:', seguidosIds);
-    const seguidosSet = new Set(seguidosIds);
-
-    // Criar nova cópia para evitar mutação direta
-    this.feedPublicacoes = this.feedPublicacoes.map((pub) => {
-      if (pub.autor && pub.autor.id !== this.utilizadorLogado?.id) {
-        const novoEstado = seguidosSet.has(pub.autor.id);
-        console.log(`Autor ${pub.autor.id}: ${novoEstado ? 'SEGUE' : 'NÃO SEGUE'}`);
-        return {
-          ...pub,
-          autor: {
-            ...pub.autor,
-            jaSegues: novoEstado,
-          },
-        };
-      }
-      return pub;
-    });
-    this.cdr.detectChanges();
-  }
-
-  abrirEdicaoPerfil(): void {
-    this.modoEdicaoPerfil = true;
-    this.previewFotoUrl = null;
-    this.fotoSelecionadaPerfil = null;
-
-    // Injeta os dados atuais mapeados da tua tabela
-    this.perfilForm.patchValue({
-      nomeCompleto: this.utilizadorLogado.nomeCompleto,
-      biografia: this.utilizadorLogado.biografia,
-    });
-  }
-
-  aoMudarFotoPerfil(event: any): void {
-    if (event.target.files && event.target.files.length > 0) {
-      this.fotoSelecionadaPerfil = event.target.files[0];
-
-      // Gera um preview instantâneo na tela para o utilizador ver a foto antes de clicar em Confirmar
-      const reader = new FileReader();
-      reader.onload = () => (this.previewFotoUrl = reader.result as string);
-      if (this.fotoSelecionadaPerfil != null) reader.readAsDataURL(this.fotoSelecionadaPerfil);
-    }
-  }
-
-  salvarPerfil(): void {
-    if (this.perfilForm.invalid || this.salvandoPerfilStatus) return;
-
-    this.salvandoPerfilStatus = true;
-    const id = Number(this.utilizadorLogado.id);
-    const nome = this.perfilForm.value.nomeCompleto!;
-    const bio = this.perfilForm.value.biografia || '';
-
-    this.utilizadorService
-      .atualizarPerfil(id, nome, bio, this.fotoSelecionadaPerfil || undefined)
-      .subscribe({
-        next: (resBackend) => {
-          // Converte byte[] para Base64 string para o frontend
-          let fotoBase64: string | null = null;
-
-          if (resBackend.fotoPerfil && Array.isArray(resBackend.fotoPerfil)) {
-            // Converte o array de bytes para Base64
-            const byteArray = new Uint8Array(resBackend.fotoPerfil);
-            let binary = '';
-            for (let i = 0; i < byteArray.length; i++) {
-              binary += String.fromCharCode(byteArray[i]);
-            }
-            fotoBase64 = btoa(binary);
+        const novosPosts = dados.map((pub: any) => {
+          if (pub.autor) pub.autor = this.converterFotoUtilizador(pub.autor);
+          if (pub.ficheiros && pub.ficheiros.length > 0) {
+            pub.ficheiros = pub.ficheiros.map((file: any) => ({
+              ...file,
+              urlCompleta: `${urlBaseBackend}${file.caminhoFicheiro}`,
+            }));
           }
+          return pub;
+        });
 
-          // Atualiza o objeto na memória do Angular
-          this.utilizadorLogado.nomeCompleto = resBackend.nomeCompleto;
-          this.utilizadorLogado.biografia = resBackend.biografia;
-          this.utilizadorLogado.fotoPerfil = fotoBase64; // Agora é string Base64
+        this.feedPublicacoes = [...this.feedPublicacoes, ...novosPosts];
+        this.totalPublicacoes = res.total ?? this.feedPublicacoes.length;
+        this.fimDoFeed = novosPosts.length === 0 || this.feedPublicacoes.length >= this.totalPublicacoes;
+        this.carregandoMais = false;
+        this.aplicarEstadoSeguirCache();
+      },
+      error: () => {
+        this.carregandoMais = false;
+        this.paginaAtual--;
+      },
+    });
+  }
 
-          // Salva de volta no LocalStorage
-          localStorage.setItem('utilizadorLogado', JSON.stringify(this.utilizadorLogado));
+  onScroll(): void {
+    if (this.carregandoMais || this.fimDoFeed) return;
 
-          setTimeout(() => {
-            this.modoEdicaoPerfil = false;
-            this.salvandoPerfilStatus = false;
-            alert('Perfil atualizado com sucesso na base de dados da NzolaNet! 🔄');
-          }, 0);
-        },
-        error: (err: any) => {
-          console.error('Erro ao salvar dados do utilizador:', err);
-          setTimeout(() => {
-            this.salvandoPerfilStatus = false;
-          }, 0);
-          alert('Erro ao atualizar dados no servidor.');
-        },
-      });
+    const scrollPos = window.innerHeight + window.scrollY;
+    const threshold = document.documentElement.scrollHeight - 200;
+
+    if (scrollPos >= threshold) {
+      this.carregarMaisPosts();
+    }
   }
 
   private converterFotoUtilizador(utilizador: any): any {
@@ -426,11 +429,16 @@ export class FeedPrincipalComponent implements OnInit {
 
   obterTodosOsPosts(): void {
     this.carregandoFeed = true;
-    this.publicacaoService.listarRecentes().subscribe({
-      next: (dados: any[]) => {
+    this.paginaAtual = 1;
+    this.fimDoFeed = false;
+    this.publicacaoService.listarFeed(this.utilizadorLogado?.id, this.paginaAtual).subscribe({
+      next: (res: any) => {
+        const dados = res.publicacoes ?? res;
+        this.totalPublicacoes = res.total ?? dados.length;
+        this.fimDoFeed = dados.length === 0 || this.feedPublicacoes.length >= this.totalPublicacoes;
         const urlBaseBackend = 'http://localhost:5043';
 
-        const postsTratados = dados.map((pub) => {
+        const postsTratados = dados.map((pub: any) => {
           // Converte a foto do autor se necessário
           if (pub.autor) {
             pub.autor = this.converterFotoUtilizador(pub.autor);
@@ -445,16 +453,10 @@ export class FeedPrincipalComponent implements OnInit {
 
           return pub;
         });
-        // Aplicar estado de seguir
-        // FORÇAR DETEÇÃO DE ALTERAÇÕES
         this.feedPublicacoes = postsTratados;
-        setTimeout(() => {
-          console.log(this.estadoSeguirCache, ' Novo!');
-          
-        }, 0);
         this.aplicarEstadoSeguirCache();
-        this.aplicarEstadoSeguir();
         this.carregandoFeed = false;
+        this.carregandoMais = false;
         this.cdr.detectChanges();
         
       },
@@ -475,17 +477,12 @@ export class FeedPrincipalComponent implements OnInit {
   fazerPublicacao(): void {
     if (this.publicacaoForm.invalid || this.enviarPost) return;
 
-    const utilizadorIdStr = localStorage.getItem('utilizadorId');
+    const utilizadorIdStr = this.getLocalStorageItem('utilizadorId');
     if (!this.utilizadorLogado || isNaN(this.utilizadorLogado.id)) {
-      console.error(
-        'Erro: ID do utilizador não encontrado no localStorage. Valor atual:',
-        utilizadorIdStr,
-      );
-      alert('Sessão expirada ou inválida. Por favor, faz login novamente.');
+      this.mostrarNotificacao('Sessão expirada. Faz login novamente.', 'erro');
       return;
     }
-
-    console.log();
+    
     const utilizadorId = this.utilizadorLogado.id;
     this.enviarPost = true;
 
@@ -495,8 +492,15 @@ export class FeedPrincipalComponent implements OnInit {
     };
 
     this.publicacaoService.publicar(dadosParaEnvio, utilizadorId).subscribe({
-      next: (novoPost) => {
+      next: (novoPost: any) => {
         setTimeout(() => {
+          const urlBaseBackend = 'http://localhost:5043';
+          if (novoPost.ficheiros && novoPost.ficheiros.length > 0) {
+            novoPost.ficheiros = novoPost.ficheiros.map((file: any) => ({
+              ...file,
+              urlCompleta: `${urlBaseBackend}${file.caminhoFicheiro}`,
+            }));
+          }
           // Insere a nova publicação no topo do feed imediatamente
           this.feedPublicacoes.unshift(novoPost);
 
@@ -505,7 +509,7 @@ export class FeedPrincipalComponent implements OnInit {
           this.ficheirosSelecionados = [];
           this.enviarPost = false;
 
-          alert('Publicado com sucesso na NzolaNet!');
+          this.mostrarNotificacao('Publicado com sucesso!', 'sucesso');
         }, 0);
       },
       error: (erro) => {
@@ -515,7 +519,7 @@ export class FeedPrincipalComponent implements OnInit {
         setTimeout(() => {
           this.enviarPost = false;
         }, 0);
-        alert('Não foi possível processar a tua publicação no servidor.');
+        this.mostrarNotificacao('Não foi possível publicar. Tenta novamente.', 'erro');
       },
     });
   }
@@ -523,11 +527,7 @@ export class FeedPrincipalComponent implements OnInit {
   // Função para acionar o botão "Dar Baze" (Fogo/Raio)
   darBaze(publicacaoId: number): void {
     if (!this.utilizadorLogado || isNaN(this.utilizadorLogado.id)) {
-      console.error(
-        'Erro: ID do utilizador não encontrado no localStorage. Valor atual:',
-        this.utilizadorLogado,
-      );
-      alert('Precisas de estar autenticado para dar Baze! ');
+      this.mostrarNotificacao('Precisas de estar autenticado para dar Baze!', 'erro');
       return;
     }
 
@@ -537,22 +537,23 @@ export class FeedPrincipalComponent implements OnInit {
 
         if (post) {
           if (resposta.mensagem && resposta.mensagem.includes('removido')) {
-            console.log('Baze retirado pelo utilizador.');
+            //console.log('Baze retirado pelo utilizador.');
             post.quantidadeBazes = resposta.quantidadeBazes;
             post.jaDeuBaze = false;
           } else {
-            console.log('Baze adicionado com sucesso!');
+            //console.log('Baze adicionado com sucesso!');
             post.quantidadeBazes++;
             post.jaDeuBaze = true;
           }
+          this.cdr.markForCheck();
         }
       },
       error: (erro) => {
         console.error('Erro ao processar a ação de Baze no servidor', erro);
         if (erro.error && typeof erro.error === 'string') {
-          alert(erro.error);
+          this.mostrarNotificacao(erro.error, 'erro');
         } else {
-          alert('Não foi possível processar a interação de momento.');
+          this.mostrarNotificacao('Não foi possível processar a interação.', 'erro');
         }
       },
     });
@@ -610,56 +611,29 @@ export class FeedPrincipalComponent implements OnInit {
     });
   }*/
 
-  // Atualizar o método alternarSeguir
-  alternarSeguir(autor: UtilizadorSimplificadoDto): void {
+  alternarSeguir(autor: any): void {
     if (!autor?.id || !this.utilizadorLogado?.id) return;
     if (this.utilizadorLogado.id === autor.id) return;
 
     const seguidorId = this.utilizadorLogado.id;
     const seguidoId = autor.id;
-    const estadoAnterior = autor.jaSegues;
+    const estadoAnterior = this.estadoSeguirCache.has(seguidoId);
     const novoEstado = !estadoAnterior;
 
-    setTimeout(() => {
-      autor.jaSegues = novoEstado;
-      this.feedPublicacoes.forEach((pub) => {
-        if (pub.autor?.id === seguidoId) {
-          pub.autor.jaSegues = novoEstado;
-        }
-      });
-    }, 0);
-
-    // Atualizar cache local
     this.salvarEstadoSeguirCache(seguidoId, novoEstado);
+    this.atualizarEstadoAutorNosPosts(seguidoId, novoEstado);
 
     this.seguidorService.alternarSeguir(seguidorId, seguidoId).subscribe({
       next: (resposta) => {
-        console.log('Sucesso:', resposta);
+        //console.log('Sucesso:', resposta);
         this.atualizarListaSeguidos(seguidoId, novoEstado);
       },
       error: (erro) => {
         console.error('Erro:', erro);
-        // Rollback
-        // Rollback em caso de erro
-        autor.jaSegues = estadoAnterior;
-        this.feedPublicacoes.forEach((pub) => {
-          if (pub.autor?.id === seguidoId) {
-            pub.autor.jaSegues = estadoAnterior;
-          }
-        });
+        this.salvarEstadoSeguirCache(seguidoId, estadoAnterior);
+        this.atualizarEstadoAutorNosPosts(seguidoId, estadoAnterior);
 
-        // Reverter cache também
-        if (estadoAnterior) {
-          this.estadoSeguirCache.set(seguidoId, true);
-        } else {
-          this.estadoSeguirCache.delete(seguidoId);
-        }
-        localStorage.setItem(
-          'seguidosIds',
-          JSON.stringify(Array.from(this.estadoSeguirCache.keys())),
-        );
-
-        alert('Não foi possível atualizar. Tente novamente.');
+        this.mostrarNotificacao('Não foi possível atualizar. Tente novamente.', 'erro');
       },
     });
   }
@@ -690,7 +664,7 @@ export class FeedPrincipalComponent implements OnInit {
 
   private atualizarListaSeguidos(seguidoId: number, estaSeguindo: boolean): void {
     // Recuperar lista atual
-    let seguidosIdsStr = localStorage.getItem('seguidosIds');
+    let seguidosIdsStr = this.getLocalStorageItem('seguidosIds');
     let seguidosIds = seguidosIdsStr ? JSON.parse(seguidosIdsStr) : [];
 
     if (estaSeguindo) {
@@ -704,11 +678,11 @@ export class FeedPrincipalComponent implements OnInit {
     }
 
     // Salvar atualizado
-    localStorage.setItem('seguidosIds', JSON.stringify(seguidosIds));
+    this.setLocalStorageItem('seguidosIds', JSON.stringify(seguidosIds));
 
     // Atualizar contador de "seguindo"
     this.utilizadorLogado.seguindo = seguidosIds.length;
-    localStorage.setItem('utilizadorLogado', JSON.stringify(this.utilizadorLogado));
+    this.setLocalStorageItem('utilizadorLogado', JSON.stringify(this.utilizadorLogado));
   }
 
   private atualizarEstadoAutorNosPosts(autorId: number, estado: boolean): void {
@@ -717,6 +691,11 @@ export class FeedPrincipalComponent implements OnInit {
         pub.autor.jaSegues = estado;
       }
     });
+    this.cdr.detectChanges();
+  }
+
+  isSeguindo(autorId: number): boolean {
+    return this.estadoSeguirCache.has(autorId);
   }
 
   /**
@@ -741,7 +720,7 @@ export class FeedPrincipalComponent implements OnInit {
           this.comentariosPublicacao = comentariosVindosDaApi;
           post.carregandoComentarios = false;
 
-          console.log(post.comentarios);
+          //console.log(post.comentarios);
         },
         error: (erro) => {
           console.error('Erro ao listar comentários da publicação ' + publicacaoId, erro);
@@ -758,11 +737,7 @@ export class FeedPrincipalComponent implements OnInit {
     if (this.comentarioForm.invalid) return;
 
     if (!this.utilizadorLogado || isNaN(this.utilizadorLogado.id)) {
-      console.error(
-        'Erro: ID do utilizador não encontrado no localStorage. Valor atual:',
-        this.utilizadorLogado,
-      );
-      alert('Sessão expirada ou inválida. Por favor, faz login novamente.');
+      this.mostrarNotificacao('Sessão expirada. Faz login novamente.', 'erro');
       return;
     }
 
@@ -786,7 +761,7 @@ export class FeedPrincipalComponent implements OnInit {
         },
         error: (erro) => {
           console.error('Erro ao submeter comentário', erro);
-          alert('Não foi possível enviar o teu comentário.');
+          this.mostrarNotificacao('Não foi possível enviar o comentário.', 'erro');
         },
       });
   }
@@ -848,27 +823,135 @@ export class FeedPrincipalComponent implements OnInit {
   }
 
   confirmarEliminarPublicacao(publicacaoId: number) {
+    this.publicacaoAEliminarId = publicacaoId;
+  }
+
+  cancelarEliminarPublicacao(): void {
+    this.publicacaoAEliminarId = null;
+  }
+
+  executarEliminarPublicacao(): void {
+    if (!this.publicacaoAEliminarId) return;
     this.estadoEliminarPublicacao = true;
-    const confirmacao = confirm(
-      'Tens a certeza de que queres eliminar esta publicação na NzolaNet? 🗑️',
-    );
-    if (!confirmacao) return;
-    this.publicacaoService.eliminarPublicacao(publicacaoId).subscribe({
+    const id = this.publicacaoAEliminarId;
+    this.publicacaoService.eliminarPublicacao(id).subscribe({
       next: () => {
-        setTimeout(() => {
-          // Remove o post da lista local filtrando pelo ID
-          this.feedPublicacoes = this.feedPublicacoes.filter((pub) => pub.id !== publicacaoId);
-          alert('A publicação foi removida com sucesso!');
-        }, 0);
+        this.publicacaoAEliminarId = null;
+        this.estadoEliminarPublicacao = false;
+        this.feedPublicacoes = this.feedPublicacoes.filter((pub) => pub.id !== id);
+        this.mostrarNotificacao('Publicação removida com sucesso!', 'sucesso');
       },
       error: (err) => {
         console.error('Erro ao tentar eliminar a publicação:', err);
-        alert('Não foi possível eliminar o post. Tenta novamente mais tarde.');
+        this.estadoEliminarPublicacao = false;
+        this.mostrarNotificacao('Não foi possível eliminar a publicação.', 'erro');
       },
+    });
+  }
+
+  denunciaEmProgresso: { id: number; tipo: number } | null = null;
+  motivoDenuncia = '';
+  mostrarFormDenuncia = false;
+
+  notificacao: { mensagem: string; tipo: 'sucesso' | 'erro' } | null = null;
+
+  mostrarNotificacao(mensagem: string, tipo: 'sucesso' | 'erro'): void {
+    this.notificacao = { mensagem, tipo };
+    this.cdr.markForCheck();
+    setTimeout(() => {
+      this.notificacao = null;
+      this.cdr.markForCheck();
+    }, 4000);
+  }
+
+  abrirDenuncia(idEntidade: number, tipoEntidade: number): void {
+    this.denunciaEmProgresso = { id: idEntidade, tipo: tipoEntidade };
+    this.mostrarFormDenuncia = true;
+    this.motivoDenuncia = '';
+  }
+
+  cancelarDenuncia(): void {
+    this.denunciaEmProgresso = null;
+    this.mostrarFormDenuncia = false;
+    this.motivoDenuncia = '';
+  }
+
+  enviarDenuncia(): void {
+    if (!this.motivoDenuncia.trim() || !this.denunciaEmProgresso || !this.utilizadorLogado?.id) return;
+
+    const dto: CriarDenunciaDto = {
+      tipoEntidade: this.denunciaEmProgresso.tipo,
+      idEntidade: this.denunciaEmProgresso.id,
+      motivo: this.motivoDenuncia,
+      descricao: this.motivoDenuncia,
+      denuncianteId: this.utilizadorLogado.id,
+    };
+
+    this.denunciaService.criarDenuncia(dto).subscribe({
+      next: () => {
+        this.mostrarNotificacao('Denúncia enviada com sucesso!', 'sucesso');
+        this.cancelarDenuncia();
+      },
+      error: () => this.mostrarNotificacao('Erro ao enviar denúncia.', 'erro'),
     });
   }
 
   executarLogout(): void {
     this.authService.logout();
+  }
+
+  alternarVista(vista: 'feed' | 'notificacoes' | 'pesquisa'): void {
+    this.vistaAtiva = vista;
+    if (vista === 'notificacoes' && this.utilizadorLogado?.id) {
+      this.carregarNotificacoes();
+    }
+  }
+
+  fazerPesquisa(): void {
+    if (this.termoPesquisa.length < 2) return;
+    this.vistaAtiva = 'pesquisa';
+    this.pesquisaService.pesquisar(this.termoPesquisa).subscribe({
+      next: (res) => { this.resultadosPesquisa = res; this.cdr.markForCheck(); },
+      error: () => { this.resultadosPesquisa = null; this.cdr.markForCheck(); },
+    });
+  }
+
+  carregarPedidosPendentes(): void {
+    if (!this.utilizadorLogado?.id) return;
+    this.pedidoSeguirService.listarPendentes(this.utilizadorLogado.id).subscribe({
+      next: (res) => { this.pedidosPendentes = res; this.cdr.markForCheck(); },
+      error: () => { this.pedidosPendentes = []; this.cdr.markForCheck(); },
+    });
+  }
+
+  aceitarPedido(pedidoId: number): void {
+    this.pedidoSeguirService.aceitarPedido(pedidoId).subscribe({
+      next: () => {
+        this.pedidosPendentes = this.pedidosPendentes.filter(p => p.id !== pedidoId);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  rejeitarPedido(pedidoId: number): void {
+    this.pedidoSeguirService.rejeitarPedido(pedidoId).subscribe({
+      next: () => {
+        this.pedidosPendentes = this.pedidosPendentes.filter(p => p.id !== pedidoId);
+        this.cdr.markForCheck();
+      },
+    });
+  }
+
+  carregarNotificacoes(): void {
+    if (!this.utilizadorLogado?.id) return;
+    this.carregandoNotificacoes = true;
+    this.notificacaoService.listarPorUtilizador(this.utilizadorLogado.id).subscribe({
+      next: (res) => {
+        this.notificacoes = res;
+        this.carregandoNotificacoes = false;
+        this.cdr.markForCheck();
+      },
+      error: () => { this.carregandoNotificacoes = false; this.cdr.markForCheck(); },
+    });
   }
 }

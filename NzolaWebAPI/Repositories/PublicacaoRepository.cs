@@ -35,7 +35,7 @@ namespace NzolaWebAPI.Repositories
             return (await _contexto.SaveChangesAsync()) > 0;
         }
 
-        public async Task<List<Publicacao>> ListarRecentesPorFeedAsync(int? utilizadorLogadoId = null)
+        public async Task<List<Publicacao>> ListarRecentesPorFeedAsync(int? utilizadorLogadoId = null, int pagina = 1, int tamanho = 10)
         {
             var query = _contexto
                 .Publicacoes.Where(p => p.Existencia != (EstadoExistenciaLogica)0)
@@ -63,7 +63,34 @@ namespace NzolaWebAPI.Repositories
 
             return await query
                 .OrderByDescending(p => p.DataPublicacao)
+                .Skip((pagina - 1) * tamanho)
+                .Take(tamanho)
                 .ToListAsync();
+        }
+
+        public async Task<int> ContarFeedAsync(int? utilizadorLogadoId = null)
+        {
+            var query = _contexto
+                .Publicacoes.Where(p => p.Existencia != (EstadoExistenciaLogica)0)
+                .AsQueryable();
+
+            if (utilizadorLogadoId.HasValue)
+            {
+                var seguindoIds = await _contexto.Seguidores
+                    .Where(s => s.SeguidorId == utilizadorLogadoId.Value)
+                    .Select(s => s.SeguidoId)
+                    .ToListAsync();
+
+                query = query.Where(p =>
+                    p.Utilizador.Privacidade == Models.Enums.EstadoAcesso.Publico ||
+                    seguindoIds.Contains(p.AutorId));
+            }
+            else
+            {
+                query = query.Where(p => p.Utilizador.Privacidade == Models.Enums.EstadoAcesso.Publico);
+            }
+
+            return await query.CountAsync();
         }
 
         public async Task<List<Publicacao>> ListarRecentesAsync()

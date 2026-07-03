@@ -5,6 +5,7 @@ export class LoginDtos {
 
 export class LoginResponseDto {
   token: string='';
+  refreshToken: string='';
   id: string='';
   email: string='';
   nomeUtilizador: string='';

@@ -33,6 +33,7 @@ Rede social para comunicação, partilha de informação e interação entre uti
 - [Garantias Técnicas e Mecanismos do Backend](Docs/GarantiasTecnicas.md) — Detalhes sobre restrições de base de dados, Fluent API, anotações de dados, migrations, JWT, email e upload de ficheiros.
 - [Requisitos Funcionais](Docs/RequisitosFuncionais.md) — Descrição das funcionalidades do sistema, atores, regras de negócio e fluxos principais.
 - [Documentação da API](Docs/API.md) — Lista de endpoints, DTOs e exemplos.
+- [Guia de diagnóstico da UI do perfil](Docs/SPA/Perfil_UI_Blanca_e_Lenta.md) — Causa, solução e passos para resolver a página de perfil em branco ou lenta.
 
 ## Equipa Técnica
 

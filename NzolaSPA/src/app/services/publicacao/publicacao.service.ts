@@ -21,10 +21,11 @@ export class PublicacaoService {
     return this.api.get<PublicacaoDto[]>(`${this.endpoint}/`);
   }
 
-  listarFeed(utilizadorLogadoId?: number): Observable<PublicacaoDto[]>
+  listarFeed(utilizadorLogadoId?: number, pagina: number = 1, tamanho: number = 10): Observable<any>
   {
-    const query = utilizadorLogadoId ? `?utilizadorLogadoId=${utilizadorLogadoId}` : '';
-    return this.api.get<PublicacaoDto[]>(`${this.endpoint}/${query}`);
+    let query = `?pagina=${pagina}&tamanho=${tamanho}`;
+    if (utilizadorLogadoId) query += `&utilizadorLogadoId=${utilizadorLogadoId}`;
+    return this.api.get<any>(`${this.endpoint}/${query}`);
   }
 
   publicar(novaPublicacao: RequisicaoCriarPublicacaoDto, utilizadorId: number): Observable<PublicacaoDto>

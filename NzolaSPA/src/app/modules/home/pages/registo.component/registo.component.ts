@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Inject, PLATFORM_ID } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RegistoRequestDto } from '../../../../dtos/utilizador/auth/registo/registo-request.dto';
 import { AuthService } from '../../../../services/auth/auth';
 import { Router, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { LoginDtos } from '../../../../dtos/utilizador/auth/login/login.dtos';
 import { passwordMatch, dataNaoFuturaValidator, idadeMinimaValidator } from '../../../../core/validators/custom-validators';
 
 @Component({
@@ -16,6 +17,13 @@ export class RegistoComponent {
   currentStep = 1;
   carregar = false;
   imagemBase64: string | null = null;
+  notificacao: { mensagem: string; tipo: 'sucesso' | 'erro' } | null = null;
+  private isBrowser: boolean;
+
+  mostrarNotificacao(mensagem: string, tipo: 'sucesso' | 'erro'): void {
+    this.notificacao = { mensagem, tipo };
+    setTimeout(() => { this.notificacao = null; }, 4000);
+  }
 
   private camposPasso1 = ['nome', 'sobrenome', 'email', 'palavraPasse', 'confirmarPalavraPasse', 'concordaComTermos'];
   private camposPasso2 = ['nomeUtilizador', 'dataNascimento', 'genero'];
@@ -36,9 +44,12 @@ export class RegistoComponent {
   );
 
   constructor(
+      @Inject(PLATFORM_ID) platformId: Object,
       private authService: AuthService,
       private route: Router,
-    ) {}
+    ) {
+      this.isBrowser = isPlatformBrowser(platformId);
+    }
 
   aoSelecionarFoto(evento: any): void {
     const ficheiro = evento.target.files[0];
@@ -109,14 +120,33 @@ export class RegistoComponent {
 
     this.authService.registar(dadosRegisto).subscribe({
       next: () => {
-        alert('Conta criada com sucesso na NzolaNet!');
-        this.carregar = false;
-        this.route.navigate(['/home/login']);
+        const loginDados: LoginDtos = {
+          identificador: dadosRegisto.email,
+          palavraPasse: dadosRegisto.palavraPasse,
+        };
+        this.authService.login(loginDados).subscribe({
+          next: (res) => {
+            if (this.isBrowser) {
+              localStorage.setItem('token', res.token);
+              localStorage.setItem('refreshToken', res.refreshToken);
+              localStorage.setItem('utilizadorId', res.id);
+              if (res.utilizador) {
+                localStorage.setItem('utilizadorLogado', JSON.stringify(res.utilizador));
+              }
+            }
+            this.carregar = false;
+            this.route.navigate(['/feed']);
+          },
+          error: () => {
+            this.carregar = false;
+            this.route.navigate(['/home/login']);
+          }
+        });
       },
       error: (erro) => {
         console.error('Erro ao registar', erro);
         this.carregar = false;
-        alert('Ocorreu um erro ao processar o registo no servidor.');
+        this.mostrarNotificacao('Erro ao processar o registo.', 'erro');
       }
     });
   }

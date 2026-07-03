@@ -2,21 +2,22 @@
 
 ## Segurança
 - [ ] **Hashing de passwords** — usar BCrypt em vez de texto plano
-- [ ] **Refresh token / expiração de JWT** — manter sessão segura sem login constante
+- [x] **Refresh token / expiração de JWT** — manter sessão segura sem login constante
 - [ ] **Rate limiting** — proteção contra brute force no login/registo
 - [ ] **Sanitização de input** — prevenir XSS e SQL injection
 
 ## Autenticação & Utilizador
 - [ ] **Recuperação de password** — fluxo "esqueci a palavra-passe" com email
 - [ ] **Confirmação de email** — enviar link de verificação após registo
-- [ ] **Editar perfil** — página de definições do utilizador
-- [ ] **Eliminar conta** — opção de apagar conta com confirmação
+- [x] **Editar perfil** — página de definições do utilizador (apenas na página de perfil)
+- [x] **Eliminar conta** — opção de apagar conta com confirmação
 
 ## Funcionalidades Core
-- [ ] **Notificações em tempo real** — SignalR para notificar seguidores, bazes, comentários
+- [x] **Notificações em tempo real** — SignalR para notificar seguidores, bazes, comentários
+- [x] **Baze em tempo real** — atualizar contagem de bazes via SignalR sem refresh
 - [ ] **Mensagens privadas / Chat** — comunicação direta entre utilizadores
-- [ ] **Paginação infinita** — feed, comentários, pesquisa com scroll infinito
-- [ ] **Pesquisa global** — pesquisar utilizadores, publicações, hashtags
+- [x] **Paginação infinita** — feed com scroll infinito
+- [x] **Pesquisa global** — pesquisar utilizadores e publicações
 - [ ] **Hashtags** — clicáveis e pesquisáveis
 - [ ] **Partilha de publicações** — link copiável ou partilha interna
 
@@ -24,13 +25,13 @@
 - [ ] **Feed algorítmico** — mostrar publicações relevantes primeiro
 - [ ] **Reações múltiplas** — além de "baze" (gostos, risos, etc.)
 - [ ] **Guardar publicações** — bookmarks/saved posts
-- [ ] **Denunciar conteúdo** — flag para moderação
+- [x] **Denunciar conteúdo** — flag para moderação (frontend + backend ligados)
 
 ## UI/UX
 - [ ] **Responsividade** — adaptar interfaces para mobile/tablet
 - [ ] **Modo escuro** — tema dark/light
 - [ ] **Animações de transição** — entre rotas e steps do wizard
-- [ ] **Toast/Snackbar** — feedback visual de ações (sucesso/erro)
+- [x] **Toast/Snackbar** — feedback visual de ações (sucesso/erro)
 - [ ] **Skeleton loading** — placeholders durante carregamento
 - [ ] **Upload otimizado** — compressão de imagens antes de enviar
 

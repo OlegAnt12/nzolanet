@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.DTOs.Baze;
+using NzolaWebAPI.Hubs;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Repositories;
@@ -20,16 +22,19 @@ namespace NzolaWebAPI.Controllers
         private readonly ContextoBDNzola _contexto;
         private readonly IBazeRepository _bazeRepo;
         private readonly IBazeService _bazeService;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
         public BazesController(
             ContextoBDNzola contexto,
             IBazeRepository bazeRepo,
-            IBazeService bazeService
+            IBazeService bazeService,
+            IHubContext<NotificationHub> hubContext
         )
         {
             _contexto = contexto;
             _bazeRepo = bazeRepo;
             _bazeService = bazeService;
+            _hubContext = hubContext;
         }
 
         /*[HttpGet]
@@ -94,6 +99,13 @@ namespace NzolaWebAPI.Controllers
             {
                 return BadRequest(resultado.ErroMensagem);
             }
+
+            await _hubContext.Clients.All.SendAsync("AtualizarBaze", new
+            {
+                publicacaoId,
+                quantidadeBazes = resultado.QuantidadeBazes,
+                jaDeuBaze = !resultado.FoiRemovido,
+            });
 
             if (resultado.FoiRemovido)
             {

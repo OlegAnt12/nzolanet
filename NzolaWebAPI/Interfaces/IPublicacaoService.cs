@@ -17,7 +17,7 @@ namespace NzolaWebAPI.Interfaces
         );
         Task<Publicacao?> ActualizarAsync(int publicacaoId, ActualizarPublicacaoRequestDto putDto);
         Task<Publicacao?> EliminarAsync(int publicacaoId);
-        Task<List<PublicacaoFeedDto>> ListarFeedAsync(int? utilizadorLogadoId = null);
+        Task<(List<PublicacaoFeedDto> Publicacoes, int Total)> ListarFeedAsync(int? utilizadorLogadoId = null, int pagina = 1, int tamanho = 10);
         Task<List<PublicacaoFeedDto>> PesquisarPublicacoesAsync(string termo);
     }
 }

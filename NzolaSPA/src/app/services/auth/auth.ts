@@ -5,13 +5,18 @@ import { LoginDtos, LoginResponseDto } from '../../dtos/utilizador/auth/login/lo
 import { RegistoRequestDto } from '../../dtos/utilizador/auth/registo/registo-request.dto';
 import { Api } from '../api/api';
 import { Router } from '@angular/router';
+import { Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private endpoint = 'Autenticacoes'; 
+  private endpoint = 'Autenticacoes';
+  private isBrowser: boolean;
 
-  constructor(private api: Api, private router: Router) {}
-  
+  constructor(private api: Api, private router: Router, @Inject(PLATFORM_ID) platformId: Object) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
+
   login(dados: LoginDtos): Observable<LoginResponseDto> {
     return this.api.post<LoginResponseDto>(`${this.endpoint}/login`, dados);
   }
@@ -21,20 +26,17 @@ export class AuthService {
   }
 
   logout(): void {
-    // 1. Remove os dados específicos da sessão guardados no login
-    localStorage.removeItem('token');
-    localStorage.removeItem('utilizadorId');
-    localStorage.removeItem('nomeUtilizador');
-
-    // Dica: Se quiseres apagar absolutamente tudo o que está guardado, podes usar:
-    // localStorage.clear();
-
-    // 2. Redireciona o utilizador imediatamente para o ecrã de login
+    const refreshToken = this.isBrowser ? localStorage.getItem('refreshToken') : null;
+    if (refreshToken) {
+      this.api.post(`${this.endpoint}/logout`, { refreshToken }).subscribe();
+    }
+    if (this.isBrowser) {
+      localStorage.clear();
+    }
     this.router.navigate(['/home/login']);
   }
 
-  // Método auxiliar para verificar se o utilizador está autenticado (útil para os Guards de rotas)
   isAutenticado(): boolean {
-    return !!localStorage.getItem('token'); // Retorna true se houver um token
+    return this.isBrowser ? !!localStorage.getItem('token') : false;
   }
 }

@@ -2,13 +2,14 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { PesquisaService } from '../../../../services/pesquisa/pesquisa.service';
-import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
+import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
 
 @Component({
   selector: 'app-pesquisa',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, Base64ImagePipe],
   templateUrl: './pesquisa.component.html',
   styleUrl: './pesquisa.component.css',
@@ -20,6 +21,16 @@ export class PesquisaComponent {
   perfis: any[] = [];
   carregando = false;
   pesquisou = false;
+
+  base64Image(base64String: string | undefined | null): string {
+    if (!base64String) return './profile/Deafultdavy3k.jfif';
+    if (base64String.startsWith('data:image')) return base64String;
+    let mimeType = 'image/jpeg';
+    if (base64String.startsWith('iVBOR')) mimeType = 'image/png';
+    else if (base64String.startsWith('R0lGOD')) mimeType = 'image/gif';
+    else if (base64String.startsWith('UklGR')) mimeType = 'image/webp';
+    return `data:${mimeType};base64,${base64String}`;
+  }
 
   constructor(
     private pesquisaService: PesquisaService,

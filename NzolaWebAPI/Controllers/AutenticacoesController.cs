@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NzolaWebAPI.Data;
-using NzolaWebAPI.DTOs;
 using NzolaWebAPI.DTOs.Utilizador;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
@@ -36,9 +31,7 @@ namespace NzolaWebAPI.Controllers
             );
 
             if (emailExiste)
-            {
                 return BadRequest("Este e-mail já está a ser utilizado");
-            }
 
             var novoUtilizador = registoDto.ToUtilizadorFromCriarDto();
             novoUtilizador.DataRegistro = DateTime.UtcNow;
@@ -60,20 +53,48 @@ namespace NzolaWebAPI.Controllers
             );
 
             if (utilizador == null || utilizador.PalavraPasse != loginDto.PalavraPasse)
-            {
                 return Unauthorized("E-mail, nome de utilizador ou palavra-passe incorretos");
-            }
 
-            var tokenGerado = _tokenService.CriarToken(utilizador);
+            var token = _tokenService.CriarToken(utilizador);
+            var refreshToken = _tokenService.GerarRefreshToken(utilizador.Id);
+            await _contexto.SaveChangesAsync();
 
-            return Ok(
-                new
-                {
-                    mensagem = "Login efetuado com sucesso!",
-                    token = tokenGerado,
-                    utilizador = utilizador.ToUtilizadorDto(),
-                }
-            );
+            return Ok(new
+            {
+                mensagem = "Login efetuado com sucesso!",
+                token,
+                refreshToken = refreshToken.Token,
+                utilizador = utilizador.ToUtilizadorDto(),
+            });
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto request)
+        {
+            var refreshToken = await _tokenService.ValidarRefreshTokenAsync(request.RefreshToken);
+            if (refreshToken == null)
+                return Unauthorized("Refresh token inválido ou expirado");
+
+            await _tokenService.RevogarRefreshTokenAsync(request.RefreshToken);
+
+            var novoToken = _tokenService.CriarToken(refreshToken.Utilizador);
+            var novoRefreshToken = _tokenService.GerarRefreshToken(refreshToken.UtilizadorId);
+            await _contexto.SaveChangesAsync();
+
+            return Ok(new RefreshTokenResponseDto
+            {
+                Token = novoToken,
+                RefreshToken = novoRefreshToken.Token,
+                Utilizador = refreshToken.Utilizador.ToUtilizadorDto(),
+            });
+        }
+
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] RefreshTokenRequestDto request)
+        {
+            await _tokenService.RevogarRefreshTokenAsync(request.RefreshToken);
+            await _contexto.SaveChangesAsync();
+            return Ok(new { mensagem = "Sessão terminada com sucesso!" });
         }
     }
 }

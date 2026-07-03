@@ -1,13 +1,17 @@
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NzolaWebAPI.Configurations;
 using NzolaWebAPI.Data;
 using NzolaWebAPI.Helpers;
+using NzolaWebAPI.Hubs;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Repositories;
 using NzolaWebAPI.Services;
@@ -49,17 +53,51 @@ builder.Services.AddSwaggerGen(options =>
     options.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
 });
 
-// CORS: Política permissiva para permitir todas as origens, métodos e cabeçalhos
+// CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "AllowAll",
         policy =>
         {
-            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+            policy.SetIsOriginAllowed(_ => true).AllowAnyMethod().AllowAnyHeader().AllowCredentials();
         }
     );
 });
+
+// SignalR
+builder.Services.AddSignalR();
+
+// JWT Authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"]!)),
+            ValidateIssuer = true,
+            ValidIssuer = builder.Configuration["JWT:Issuer"],
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWT:Audience"],
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.Zero,
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notifications"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
+        };
+    });
 
 // dotnet add package Microsoft.EntityFrameworkCore.InMemory
 // using Microsoft.EntityFrameworkCore;
@@ -112,6 +150,10 @@ if (!app.Environment.IsDevelopment())
 // Habilita CORS globalmente com a política permissiva
 app.UseCors("AllowAll");
 
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseStaticFiles();
+
 var summaries = new[]
 {
     "Freezing",
@@ -146,9 +188,23 @@ app.MapGet(
 
 // 1. Ativa o mapeamento padrão da pasta 'wwwroot'
 // Com isto, qualquer ficheiro em 'wwwroot/uploads/foto.png' fica acessível via http://localhost:5043/uploads/foto.png
-app.UseStaticFiles();
+//app.UseStaticFiles();
+
+// 2. Mapeia explicitamente a pasta de uploads para servir ficheiros via URL
+var pastaUploads = Path.Combine(app.Environment.WebRootPath, "uploads");
+if (!Directory.Exists(pastaUploads))
+{
+    Directory.CreateDirectory(pastaUploads);
+}
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(pastaUploads),
+    RequestPath = "/uploads"
+});
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/hubs/notifications");
 
 app.Run();
 

@@ -1,0 +1,3 @@
+[35mPrerendered 0 static routes.[39m
+Application bundle generation failed. [184.492 seconds] - 2026-07-02T23:06:50.127Z
+
