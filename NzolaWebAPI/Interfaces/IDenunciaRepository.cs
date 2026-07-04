@@ -9,5 +9,7 @@ namespace NzolaWebAPI.Interfaces
         Task<List<Denuncia>> ListarTodasAsync();
         Task<List<Denuncia>> ListarPorEntidadeAsync(TipoEntidade tipoEntidade, int idEntidade);
         Task<bool> SalvarAsync();
+        Task<int> ContarTodasAsync();
+        Task<int> ContarPendentesAsync();
     }
 }

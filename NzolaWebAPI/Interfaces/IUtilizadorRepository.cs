@@ -11,5 +11,6 @@ namespace NzolaWebAPI.Interfaces
         Task AdicionarAsync(Utilizador utilizador);
         Task<bool> ExisteEmailAsync(string email);
         Task<bool> SalvarAsync();
+        Task<int> ContarTodosAsync();
     }
 }

@@ -7,10 +7,12 @@
 .cabeca-feed
 {
   position: fixed;
-  width: 100%;
+  width: calc(100% - 48px);
+
   background-color: #272320;
-  padding: 24px 44px;
-  border-radius: 0 0 16px 16px;
+  padding: 20px 44px;
+  margin: 12px 24px;
+  border-radius: 12px;
   box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .25);
   z-index: 999;
 }
@@ -33,12 +35,58 @@
 {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 32px;
+}
+
+.sup-esq fa-icon
+{
+  font-size: 16px;
+  
 }
 
 .home-feed
 {
   display: flex;
+}
+
+.caixa-pesquisa
+{
+  padding: 2px 12px 2px 6px;
+  border-radius: 32px;
+  background-color: #ccc;
+  font-size: 16px;
+}
+
+.btn-pesquisa
+{
+  background: transparent;
+  margin-right: 8px;
+}
+
+.txt-pesquisa
+{
+  background: transparent;
+}
+
+.btn-home-feed, .btn-notificacao
+{
+  background: transparent;
+  color: #ccc;
+}
+
+.btn-logout
+{
+  padding: 4px 10px;
+  border-radius: 16px;
+  transition: all .3s;
+}
+
+.btn-logout:hover
+{
+  padding: 4px 10px;
+  border-radius: 16px;
+  background-color: #ff375f; /*#dc3545*/
+  color: #fff;
 }
 
 .prev-util
@@ -72,48 +120,54 @@
 {
   position: relative;
   width: 24%;
-  padding: 7rem 28px 6px 44px;
+  padding: 8rem 28px 6px 44px;
 }
 
 .utilizador-area
 {
 position: fixed;
 width: 232px;
+
 }
 
 .utilizador-banner
 {
   background-color: #fff;
-  border-radius: 16px 16px 0 0;
-}
-
-.capa-utilizador
-{
-  overflow: hidden;
-  height: 188px;
-  border-radius: 16px;
-}
-
-.capa-utilizador img
-{
-  width: 100%;
-  height: 100%;
+  border-radius: 12px;
 }
 
 .area-desc
 {
-  
-  padding: 36px 12px 6px;
+  padding: 20px 12px 6px;
   margin-top: -16px;
-  border-radius: 16px;
+}
+
+.infor-perfil
+{
+  padding: 0 12px 12px; 
+}
+
+.metricas
+{
+  margin-bottom: 16px;
+}
+
+.mb-16
+{
+  margin-bottom: 16px;
+}
+
+.btn-acessar-perfil
+{
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
 }
 
 .publicacao-formlr
 {
-  padding: 8px;
-  border-radius: 0 0 16px 16px;
+  border-radius: 16px;
   background-color: #fff;
-  /*box-shadow: 0 .25rem 12px rgba(83, 84, 85, 0.25);*/
   margin-bottom: 1.5rem;
 }
 
@@ -136,21 +190,21 @@ width: 232px;
 .area-texto
 {
   position: relative;
-  background-color: #eeeff1;
-  padding: 6px 18px;
-  border-radius: 32px;
+  border-radius: 16px;
+  padding: 16px 12px 12px;
+  background-color: #fff;
   flex: 1;
 }
 
 .txt-box
 {
-  font-size: 16px;
+  font-size: 17px;
   background-color: transparent;
   width: 100%;
   resize: none;
   word-wrap: break-word;
-  height: 40px;
-  /*background-color: #eeeeee;*/
+  height: 52px;
+  border-bottom: solid 1px #eeeff1;
 }
 
 .btn-publicar
@@ -187,20 +241,21 @@ width: 232px;
 .area-feed
 {
   padding: 6px;
-  border-radius: 16px;
-  background-color: #fff;
-  /*box-shadow: 0 .25rem 12px rgba(65, 66, 66, 0.25);*/
 }
 
 .publicacao
 {
-  padding: 6px 0 12px;
-  border-bottom: solid 1px silver;
+  padding: 12px 6px;
+  background-color: #fff;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  /*border-bottom: solid 1px silver;*/
 }
 
 .cabeca-publicacao
 {
   display: flex;
+  padding: 0 6px;
   justify-content: space-between;
   align-items: center;
 }
@@ -217,7 +272,7 @@ width: 232px;
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  
+
   overflow: hidden;
 }
 
@@ -226,6 +281,41 @@ width: 232px;
   width: 48px;
   height: 48px;
   object-fit: cover;
+}
+
+.opcoes-auxiliares
+{
+
+}
+
+.opcoes-auxiliares .menu-opcoes
+{
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 .25rem .5rem rgba(0, 0, 0, .15);
+}
+
+.opcoes-auxiliares .item-opcoes
+{
+  padding: 3px 8px;
+  width: 128px;
+  transition: all .3s;
+  cursor: pointer;
+}
+
+.opcoes-auxiliares .item-opcoes:hover
+{
+  background-color: #eeeff1;
+}
+
+.opcoes-auxiliares .item-opcoes .btn
+{
+  background: transparent;
+}
+
+.opcoes-auxiliares .item-opcoes:not(:last-child)
+{
+  border-bottom: 1px solid #eee;
 }
 
 .btn-seguir {
@@ -322,7 +412,7 @@ width: 232px;
   height: 24px;
   background-color: transparent;
   border-radius: 0 0 0 16px;
-  box-shadow: -4px 6px 0 2px #fff;
+  box-shadow: -4px 6px 0 3px #fff;
 }
 .item-interacao
 {
@@ -332,7 +422,7 @@ width: 232px;
 }
 .item-baze
 {
-  width: 22px;
+  width: 20px;
   display: inline;
   transition: all .45s;
   /*opacity: .33;*/

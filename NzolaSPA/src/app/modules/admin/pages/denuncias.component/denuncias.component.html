@@ -1,0 +1,62 @@
+<div class="contentor-analitico">
+  <div class="topo-anali">
+    <div class="area-navegacao">
+      <button type="button" class="btn btn-voltar">
+        <fa-icon [icon]="voltarIcon"></fa-icon>
+      </button>
+      <h1 class="titulo-desc-area">Denúncias</h1>
+    </div>
+  </div>
+
+  <ng-container *ngIf="carregando; else conteudo">
+    <p class="estado-carregamento">A carregar denúncias...</p>
+  </ng-container>
+
+  <ng-template #conteudo>
+    <ng-container *ngIf="erro; else tabela">
+      <p class="estado-erro">{{ erro }}</p>
+    </ng-container>
+
+    <ng-template #tabela>
+      <div class="tabela-dados">
+        <div class="area-desc-topo">
+          <h3>Total: {{ denuncias.length }} denúncias</h3>
+        </div>
+
+        <div class="area-tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Denunciante</th>
+                <th>Motivo</th>
+                <th>Descrição</th>
+                <th>Data</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let d of denuncias">
+                <td>{{ d.id }}</td>
+                <td>{{ d.nomeDenunciante }}</td>
+                <td>{{ d.motivo }}</td>
+                <td class="cell-texto" [title]="d.descricao">
+                  {{ d.descricao.length > 80 ? (d.descricao | slice:0:80) + '...' : d.descricao }}
+                </td>
+                <td>{{ d.dataDenuncia | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td>
+                  <span class="badge"
+                        [class.badge-pendente]="d.estadoDenuncia === 0"
+                        [class.badge-resolvida]="d.estadoDenuncia === 1"
+                        [class.badge-ignorada]="d.estadoDenuncia === 2">
+                    {{ d.estadoDenuncia === 0 ? 'Pendente' : d.estadoDenuncia === 1 ? 'Resolvida' : 'Ignorada' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>

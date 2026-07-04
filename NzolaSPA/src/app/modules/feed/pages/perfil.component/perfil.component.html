@@ -31,13 +31,13 @@
     </div>
   </div>
 
-  <div class="perfil-detalhes" *ngIf="!modoEdicao && perfilCompletoVisivel">
+  <div class="perfil-detalhes" *ngIf="!modoEdicao">
     <div class="detalhe"><span class="rotulo">Género</span><span>{{ generoTexto(utilizador.genero) }}</span></div>
     <div class="detalhe"><span class="rotulo">Data de Nascimento</span><span>{{ utilizador.dataNascimento | date:'dd/MM/yyyy' }}</span></div>
     <div class="detalhe"><span class="rotulo">Privacidade</span><span>{{ utilizador.privacidade === 1 ? 'Privado' : 'Público' }}</span></div>
   </div>
 
-  <div class="perfil-seccoes" *ngIf="perfilCompletoVisivel && !modoEdicao">
+  <div class="perfil-seccoes" *ngIf="!modoEdicao">
     <div class="perfil-seccoes-cabeca">
       <div class="seccoes-tabs">
         <button type="button" [class.ativo]="abaAtiva === 'publicacoes'" (click)="selecionarAba('publicacoes')"><span> Publicações </span> <strong>{{ utilizador.publicacoes }}</strong></button>
@@ -46,39 +46,47 @@
       </div>
     </div>
 
-    <div class="seccao-conteudo" *ngIf="carregandoListas">
-      <p>A carregar informação do perfil...</p>
-    </div>
+    <ng-container *ngIf="perfilCompletoVisivel; else semAcesso">
+      <div class="seccao-conteudo" *ngIf="carregandoListas">
+        <p>A carregar informação do perfil...</p>
+      </div>
 
-    <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'seguidores'">
-      <div *ngIf="!seguidoresPerfil.length" class="lista-vazia">Sem seguidores.</div>
-      <div *ngFor="let relacao of seguidoresPerfil" class="item-lista">
-        <img [src]="fotoOuPadrao(relacao.seguidor) | base64Image" alt="Seguidor" />
-        <div>
-          <strong>{{ nomeOuUtilizador(relacao.seguidor) }}</strong>
-          <p>&#64;{{ relacao.seguidor?.nomeUtilizador }}</p>
+      <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'seguidores'">
+        <div *ngIf="!seguidoresPerfil.length" class="lista-vazia">Sem seguidores.</div>
+        <div *ngFor="let relacao of seguidoresPerfil" class="item-lista">
+          <img [src]="fotoOuPadrao(relacao.seguidor) | base64Image" alt="Seguidor" />
+          <div>
+            <strong>{{ nomeOuUtilizador(relacao.seguidor) }}</strong>
+            <p>&#64;{{ relacao.seguidor?.nomeUtilizador }}</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'seguindo'">
-      <div *ngIf="!seguindoPerfil.length" class="lista-vazia">Não segue ninguém.</div>
-      <div *ngFor="let relacao of seguindoPerfil" class="item-lista">
-        <img [src]="fotoOuPadrao(relacao.seguido) | base64Image" alt="Seguido" />
-        <div>
-          <strong>{{ nomeOuUtilizador(relacao.seguido) }}</strong>
-          <p>&#64;{{ relacao.seguido?.nomeUtilizador }}</p>
+      <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'seguindo'">
+        <div *ngIf="!seguindoPerfil.length" class="lista-vazia">Não segue ninguém.</div>
+        <div *ngFor="let relacao of seguindoPerfil" class="item-lista">
+          <img [src]="fotoOuPadrao(relacao.seguido) | base64Image" alt="Seguido" />
+          <div>
+            <strong>{{ nomeOuUtilizador(relacao.seguido) }}</strong>
+            <p>&#64;{{ relacao.seguido?.nomeUtilizador }}</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'publicacoes'">
-      <div *ngIf="!publicacoesPerfil.length" class="lista-vazia">Sem publicações.</div>
-      <div *ngFor="let pub of publicacoesPerfil" class="item-publicacao-perfil">
-        <p>{{ pub.texto }}</p>
-        <small>{{ pub.dataPublicacao | date:'dd/MM/yyyy HH:mm' }}</small>
+      <div class="seccao-conteudo" *ngIf="!carregandoListas && abaAtiva === 'publicacoes'">
+        <div *ngIf="!publicacoesPerfil.length" class="lista-vazia">Sem publicações.</div>
+        <div *ngFor="let pub of publicacoesPerfil" class="item-publicacao-perfil">
+          <p>{{ pub.texto }}</p>
+          <small>{{ pub.dataPublicacao | date:'dd/MM/yyyy HH:mm' }}</small>
+        </div>
       </div>
-    </div>
+    </ng-container>
+
+    <ng-template #semAcesso>
+      <div class="seccao-conteudo">
+        <p class="lista-vazia">Segue este utilizador para ver as suas publicações, seguidores e seguidos.</p>
+      </div>
+    </ng-template>
   </div>
 
   <div class="edicao-perfil" *ngIf="modoEdicao">

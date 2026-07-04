@@ -1,1 +1,64 @@
-<p>publicacoes.component works!</p>
+<div class="contentor-analitico">
+  <div class="topo-anali">
+    <div class="area-navegacao">
+      <button type="button" class="btn btn-voltar">
+        <fa-icon [icon]="voltarIcon"></fa-icon>
+      </button>
+      <h1 class="titulo-desc-area">Publicações</h1>
+    </div>
+  </div>
+
+  <ng-container *ngIf="carregando; else conteudo">
+    <p class="estado-carregamento">A carregar publicações...</p>
+  </ng-container>
+
+  <ng-template #conteudo>
+    <ng-container *ngIf="erro; else tabela">
+      <p class="estado-erro">{{ erro }}</p>
+    </ng-container>
+
+    <ng-template #tabela>
+      <div class="tabela-dados">
+        <div class="area-desc-topo">
+          <h3>Total: {{ publicacoes.length }} publicações</h3>
+        </div>
+
+        <div class="area-tabela">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Autor</th>
+                <th>Texto</th>
+                <th>Data</th>
+                <th>Bazes</th>
+                <th>Comentários</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of publicacoes">
+                <td>{{ p.id }}</td>
+                <td>
+                  <div class="autor-info">
+                    <img
+                      [src]="p.autor?.fotoPerfil || 'assets/default-avatar.png'"
+                      alt="Foto"
+                      class="foto-utilizador"
+                    />
+                    <span>{{ p.autor?.nomeCompleto }}</span>
+                  </div>
+                </td>
+                <td class="cell-texto" [title]="p.texto">
+                  {{ p.texto.length > 100 ? (p.texto | slice:0:100) + '...' : p.texto }}
+                </td>
+                <td>{{ p.dataPublicacao | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="cell-numero">{{ p.quantidadeBazes }}</td>
+                <td class="cell-numero">{{ p.quantidadeComentarios }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>

@@ -15,6 +15,9 @@ using NzolaWebAPI.Services;
 
 namespace NzolaWebAPI.Controllers
 {
+    /// <summary>
+    /// Controlador de bazes (likes/reactions) em publicações.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class BazesController : ControllerBase
@@ -59,7 +62,18 @@ namespace NzolaWebAPI.Controllers
             return Ok(bazesUtilizador);
         }*/
 
+        /// <summary>
+        /// Obtém os detalhes de um baze específico pelo seu ID.
+        /// </summary>
+        /// <param name="id">ID do baze</param>
+        /// <returns>Detalhes do baze</returns>
+        /// <response code="200">Baze encontrado com sucesso</response>
+        /// <response code="404">Baze não encontrado</response>
+        /// <response code="500">Erro interno do servidor</response>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(BazeDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> SelecionarBaze([FromRoute] int id)
         {
             var baze = await _bazeRepo.SelecionarBazeAsync(id);
@@ -72,7 +86,18 @@ namespace NzolaWebAPI.Controllers
             return Ok(baze.ToBazeDto());
         }
 
+        /// <summary>
+        /// Obtém a lista de bazes de uma publicação específica.
+        /// </summary>
+        /// <param name="id">ID da publicação</param>
+        /// <returns>Lista de bazes da publicação</returns>
+        /// <response code="200">Lista de bazes retornada com sucesso</response>
+        /// <response code="404">Publicação não encontrada</response>
+        /// <response code="500">Erro interno do servidor</response>
         [HttpGet("publicacao/{id}")]
+        [ProducesResponseType(typeof(IEnumerable<BazeDto>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> GetBazesPorPublicacao([FromRoute] int id)
         {
             var bazesPublicacao = await _bazeRepo.GetBazesPorPublicacaoAsync(id);
@@ -87,7 +112,21 @@ namespace NzolaWebAPI.Controllers
             return Ok(bazeDto);
         }
 
+        /// <summary>
+        /// Adiciona ou remove um baze (like) a uma publicação. Se o utilizador já deu baze, remove-o (toggle).
+        /// </summary>
+        /// <param name="publicacaoId">ID da publicação</param>
+        /// <param name="utilizadorId">ID do utilizador</param>
+        /// <returns>Resultado da operação (adicionado/removido)</returns>
+        /// <response code="200">Baze removido com sucesso</response>
+        /// <response code="201">Baze adicionado com sucesso</response>
+        /// <response code="400">Dados inválidos fornecidos</response>
+        /// <response code="500">Erro interno do servidor</response>
         [HttpPost("{publicacaoId:int}/{utilizadorId:int}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> DarBaze(
             [FromRoute] int publicacaoId,
             [FromRoute] int utilizadorId

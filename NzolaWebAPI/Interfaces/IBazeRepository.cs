@@ -15,5 +15,6 @@ namespace NzolaWebAPI.Interfaces
         Task AdicionarAsync(Baze baze);
         void Remover(Baze baze);
         Task<bool> SalvarAsync();
+        Task<int> ContarTodasAsync();
     }
 }

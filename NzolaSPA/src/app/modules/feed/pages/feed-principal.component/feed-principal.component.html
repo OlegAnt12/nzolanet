@@ -5,43 +5,72 @@
         <div class="logotipo" routerLink="/feed" style="cursor: pointer">NzolaNet</div>
         <div class="caixa-pesquisa">
           <form class="pesquisa-form" (ngSubmit)="fazerPesquisa()">
-            <input type="text" [(ngModel)]="termoPesquisa" [ngModelOptions]="{standalone: true}" placeholder="Pesquisar na rede..." class="txt txt-pesquisa" />
-            <button type="submit" class="btn btn-pesquisa">Pesquisar</button>
+            <div class="caixa-pesquisa">
+              <button type="submit" class="btn btn-pesquisa">
+                <fa-icon [icon]="pesquisaIcon"></fa-icon>
+              </button>
+              <input
+                type="text"
+                class="txt txt-pesquisa"
+                [(ngModel)]="termoPesquisa"
+                [ngModelOptions]="{ standalone: true }"
+                placeholder="Pesquisar na rede..."
+                class="txt txt-pesquisa"
+              />
+            </div>
           </form>
         </div>
       </div>
       <div class="sup-esq">
-        <button type="button" class="btn btn-home-feed" [class.ativo]="vistaAtiva === 'feed'" (click)="alternarVista('feed')">Feed</button>
-        <button type="button" class="btn btn-notificacao" [class.ativo]="vistaAtiva === 'notificacoes'" (click)="alternarVista('notificacoes')">Notificação</button>
+        <button
+          type="button"
+          class="btn btn-home-feed"
+          [class.ativo]="vistaAtiva === 'feed'"
+          (click)="alternarVista('feed')"
+        >
+          <span> <fa-icon [icon]="feedIcon"></fa-icon> Feed </span>
+        </button>
+        <button
+          type="button"
+          class="btn btn-notificacao"
+          [class.ativo]="vistaAtiva === 'notificacoes'"
+          (click)="alternarVista('notificacoes')"
+        >
+          <span> <fa-icon [icon]="notifIcon"></fa-icon> Notificações </span>
+        </button>
         <button
           type="button"
           class="btn btn-logout"
           (click)="$event.preventDefault(); executarLogout()"
-          style="background-color: #dc3545; color: white"
         >
-          Sair
+          <span>
+            <fa-icon [icon]="shutdownIcon"></fa-icon>
+            Sair
+          </span>
         </button>
       </div>
     </div>
   </div>
 
   <div class="home-feed">
-    <div class="seccao-utilizador prev-util" *ngIf="utilizadorLogado" style="flex: 0 0 280px; max-width: 280px;">
+    <div
+      class="seccao-utilizador prev-util"
+      *ngIf="utilizadorLogado"
+      style="flex: 0 0 280px; max-width: 280px"
+    >
       <div class="utilizador-area">
         <div class="utilizador-banner">
-          <div class="capa-utilizador">
-            <img src="./profile/Blackisbeautiful.jpg" alt="Capa" />
-          </div>
           <div class="area-desc">
             <div class="minifoto-perfil">
               <img [src]="utilizadorLogado.fotoPerfil | base64Image" alt="Avatar do Utilizador" />
             </div>
             <div class="info-util">
-              <strong>{{ utilizadorLogado.nomeCompleto }}</strong>
               <p style="color: gray; font-size: 12px; margin: 2px 0">
-                {{ utilizadorLogado.nomeUtilizador || utilizadorLogado.nome }}
+                &#64;{{ utilizadorLogado.nomeUtilizador || utilizadorLogado.nome }}
               </p>
-              <p style="font-size: 13px; color: #444; font-style: italic">
+              <strong class="mb-16">{{ utilizadorLogado.nomeCompleto }}</strong>
+
+              <p class="mb-16" style="font-size: 13px; color: #444; font-style: italic">
                 {{ utilizadorLogado.biografia || 'Sem biografia definida.' }}
               </p>
             </div>
@@ -52,8 +81,12 @@
               <span>{{ estatisticaUtilizador.seguindo || 0 }} seguindo</span> •
               <span>{{ estatisticaUtilizador.publicacoes }} posts</span>
             </div>
-            <button type="button" class="btn btn-acessar-perfil" [routerLink]="['/feed/perfil', utilizadorLogado.id]">
-              👤 Ver Perfil
+            <button
+              type="button"
+              class="btn btn-acessar-perfil"
+              [routerLink]="['/feed/perfil', utilizadorLogado.id]"
+            >
+              <span> <fa-icon [icon]="utilizadorIcon"></fa-icon> Ver Perfil </span>
             </button>
           </div>
         </div>
@@ -61,15 +94,10 @@
     </div>
 
     <!-- CENTER: Feed / Notificações / Pesquisa -->
-    <div class="seccao-publicacao prev-pub" style="flex: 1; min-width: 0;">
-
+    <div class="seccao-publicacao prev-pub" style="flex: 1; min-width: 0">
       <!-- FEED -->
       <main class="area-feed" *ngIf="vistaAtiva === 'feed'">
-        <form
-          [formGroup]="publicacaoForm"
-          (ngSubmit)="fazerPublicacao()"
-          class="publicacao-formlr"
-        >
+        <form [formGroup]="publicacaoForm" (ngSubmit)="fazerPublicacao()" class="publicacao-formlr">
           <div class="componentes-publicacao">
             <div class="area-texto">
               <textarea
@@ -78,8 +106,20 @@
                 placeholder="O que estás a pensar, dar um baze post?"
               ></textarea>
               <div class="base-formPost">
-                <div class="area-botoes-auxiliares" style="display: flex; gap: 10px; margin-top: 8px">
-                  <label for="upload-feed" style="cursor: pointer; background: #eee; padding: 6px 12px; border-radius: 4px; font-size: 13px;">
+                <div
+                  class="area-botoes-auxiliares"
+                  style="display: flex; gap: 10px; margin-top: 8px"
+                >
+                  <label
+                    for="upload-feed"
+                    style="
+                      cursor: pointer;
+                      background: #eee;
+                      padding: 6px 12px;
+                      border-radius: 4px;
+                      font-size: 13px;
+                    "
+                  >
                     📁 Anexar Imagens/Vídeos
                   </label>
                   <input
@@ -90,12 +130,19 @@
                     (change)="aoAdicionarImagensDoFeed($event)"
                     style="display: none"
                   />
-                  <span *ngIf="ficheirosSelecionados.length > 0" style="font-size: 12px; color: green; align-self: center">
+                  <span
+                    *ngIf="ficheirosSelecionados.length > 0"
+                    style="font-size: 12px; color: green; align-self: center"
+                  >
                     {{ ficheirosSelecionados.length }} ficheiro(s) prontos!
                   </span>
                 </div>
                 <div class="botao-enviar">
-                  <button type="submit" class="btn btn-publicar" [disabled]="publicacaoForm.invalid || enviarPost">
+                  <button
+                    type="submit"
+                    class="btn btn-publicar"
+                    [disabled]="publicacaoForm.invalid || enviarPost"
+                  >
                     {{ enviarPost ? 'A publicar...' : 'Publicar' }}
                   </button>
                 </div>
@@ -116,21 +163,26 @@
               </div>
               <div class="identidade-autor">
                 <strong>{{ pub.autor?.nomeCompleto || 'Membro da Rede' }}</strong>
-                <small style="display: block; color: gray">{{ pub.dataPublicacao | date: 'dd/MM/yyyy HH:mm' }}</small>
+                <small style="display: block; color: gray">{{
+                  pub.dataPublicacao | date: 'dd/MM/yyyy HH:mm'
+                }}</small>
               </div>
             </div>
             <div *ngIf="utilizadorLogado?.id == pub.autor?.id" class="opcoes-auxiliares">
               <ul class="menu-opcoes">
-                <li class="item-opcoes">
-                  <div style="margin-top: 10px; text-align: right">
-                    <button class="btn" (click)="iniciarEdicao(pub)" style="background: #ffc107; color: black; font-size: 12px; padding: 4px 10px">
-                      Editar
-                    </button>
-                  </div>
+                <li class="item-opcoes" (click)="iniciarEdicao(pub)">
+                  <button
+                    class="btn"
+                    
+                  >
+                    Editar
+                  </button>
                 </li>
-                <li class="item-opcoes">
-                  <button class="btn" (click)="confirmarEliminarPublicacao(pub.id)" style="background: #ff375f; color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px;">
-                    🗑️ Eliminar
+                <li class="item-opcoes" (click)="confirmarEliminarPublicacao(pub.id)">
+                  <button
+                    class="btn" 
+                  >
+                    Eliminar
                   </button>
                 </li>
               </ul>
@@ -141,8 +193,19 @@
                 (click)="alternarSeguir(pub.autor)"
                 [class.seguindo]="pub.autor?.id && isSeguindo(pub.autor.id)"
                 [class.nao-seguindo]="!pub.autor?.id || !isSeguindo(pub.autor.id)"
-                style="color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; transition: all 0.2s;"
-                [style.background]="pub.autor?.id && isSeguindo(pub.autor.id) ? '#6c757d' : '#ff375f'"
+                style="
+                  color: white;
+                  font-size: 12px;
+                  padding: 4px 10px;
+                  border-radius: 4px;
+                  border: none;
+                  cursor: pointer;
+                  font-weight: bold;
+                  transition: all 0.2s;
+                "
+                [style.background]="
+                  pub.autor?.id && isSeguindo(pub.autor.id) ? '#6c757d' : '#ff375f'
+                "
               >
                 {{ pub.autor?.id && isSeguindo(pub.autor.id) ? '✓ Seguindo' : '+ Seguir' }}
               </button>
@@ -150,26 +213,60 @@
           </div>
 
           <div class="corpo-publicacao">
-            <div *ngIf="publicacaoAEditarId === pub.id" style="padding: 10px; background: #fff3cd; border-radius: 6px">
-              <textarea [formControl]="textoEdicaoControl" class="txt txt-box" style="width: 100%; min-height: 80px"></textarea>
+            <div
+              *ngIf="publicacaoAEditarId === pub.id"
+              style="padding: 10px; background: #fff3cd; border-radius: 6px"
+            >
+              <textarea
+                [formControl]="textoEdicaoControl"
+                class="txt txt-box"
+                style="width: 100%; min-height: 80px"
+              ></textarea>
               <div style="margin-top: 8px; display: flex; justify-content: flex-end; gap: 5px">
-                <button class="btn" (click)="cancelarEdicao()" [disabled]="estadoEditarPublicacao" style="background: #6c757d; color: white; padding: 4px 10px; font-size: 12px">
+                <button
+                  class="btn"
+                  (click)="cancelarEdicao()"
+                  [disabled]="estadoEditarPublicacao"
+                  style="background: #6c757d; color: white; padding: 4px 10px; font-size: 12px"
+                >
                   Cancelar
                 </button>
-                <button class="btn" (click)="salvarEdicao(pub.id)" [disabled]="textoEdicaoControl.invalid || estadoEditarPublicacao" style="background: #28a745; color: white; padding: 4px 10px; font-size: 12px">
+                <button
+                  class="btn"
+                  (click)="salvarEdicao(pub.id)"
+                  [disabled]="textoEdicaoControl.invalid || estadoEditarPublicacao"
+                  style="background: #28a745; color: white; padding: 4px 10px; font-size: 12px"
+                >
                   {{ estadoEditarPublicacao ? 'A guardar...' : 'Confirmar' }}
                 </button>
               </div>
             </div>
 
-            <div class="texto-publicacao" [style.margin]="pub.ficheiros.length > 0 ? '0' : '0 0 3rem'">
+            <div
+              class="texto-publicacao"
+              [style.margin]="pub.ficheiros.length > 0 ? '0' : '0 0 3rem'"
+            >
               <p>{{ pub.texto }}</p>
             </div>
 
             <div class="media-publicacao" *ngIf="pub.ficheiros && pub.ficheiros.length > 0">
-              <div class="conteudo-media" *ngFor="let file of pub.ficheiros" style="margin-bottom: 10px">
-                <img *ngIf="file.tipoMime.startsWith('image/')" [src]="file.urlCompleta" alt="Imagem da publicação" style="max-width: 100%; border-radius: 8px; display: block" />
-                <video *ngIf="file.tipoMime.startsWith('video/')" [src]="file.urlCompleta" controls style="max-width: 100%; border-radius: 8px; display: block">
+              <div
+                class="conteudo-media"
+                *ngFor="let file of pub.ficheiros"
+                style="margin-bottom: 10px"
+              >
+                <img
+                  *ngIf="file.tipoMime.startsWith('image/')"
+                  [src]="file.urlCompleta"
+                  alt="Imagem da publicação"
+                  style="max-width: 100%; border-radius: 8px; display: block"
+                />
+                <video
+                  *ngIf="file.tipoMime.startsWith('video/')"
+                  [src]="file.urlCompleta"
+                  controls
+                  style="max-width: 100%; border-radius: 8px; display: block"
+                >
                   O teu navegador não suporta a reprodução deste vídeo.
                 </video>
               </div>
@@ -182,118 +279,262 @@
                 <div class="item-baze" [style.filter]="pub.jaDeuBaze ? 'none' : 'grayscale(100%)'">
                   <img src="./ico/icons8-fire-40.png" alt="dar baze" />
                 </div>
-                <span [style.color]="pub.jaDeuBaze ? '#ff4500' : 'inherit'" style="font-weight: 500">
+                <span
+                  [style.color]="pub.jaDeuBaze ? '#ff4500' : 'inherit'"
+                  style="font-weight: 500"
+                >
                   {{ pub.quantidadeBazes }} Bazes
                 </span>
               </li>
 
-              <li class="item-interacao" (click)="selecionarParaComentar(pub.id)" style="cursor: pointer">
-                <span>💬 {{ pub.quantidadeComentarios }} Comentários</span>
+              <li
+                class="item-interacao"
+                (click)="selecionarParaComentar(pub.id)"
+                style="cursor: pointer"
+              >
+                <span
+                  ><fa-icon [icon]="comentarioIcon"></fa-icon>
+                  {{ pub.quantidadeComentarios }} Comentários</span
+                >
               </li>
-              <li class="item-interacao" (click)="abrirDenuncia(pub.id, 1)" style="cursor: pointer; color: #dc3545; font-size: 13px">
-                <span>🚩 Denunciar</span>
+              <li
+                class="item-interacao"
+                (click)="abrirDenuncia(pub.id, 1)"
+                style="cursor: pointer; color: #dc3545; font-size: 13px"
+              >
+                <span><fa-icon [icon]="bandeiraIcon"></fa-icon> Denunciar</span>
               </li>
             </ul>
           </div>
 
-          <div class="seccao-comentarios-caixa" *ngIf="publicacaoEmFocoId === pub.id" style="padding: 15px; background: #f9f9f9; border-top: 1px solid #eee">
+          <div
+            class="seccao-comentarios-caixa"
+            *ngIf="publicacaoEmFocoId === pub.id"
+            style="padding: 15px; background: #f9f9f9; border-top: 1px solid #eee"
+          >
             <form [formGroup]="comentarioForm" (ngSubmit)="enviarComentario(pub.id)">
               <div style="display: flex; gap: 10px">
-                <input type="text" formControlName="textoComentario" placeholder="Escreve um comentário..." class="txt" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px" />
-                <button type="submit" class="btn" [disabled]="comentarioForm.invalid" style="background: #007bff; color: white; padding: 0 15px; border-radius: 4px">
+                <input
+                  type="text"
+                  formControlName="textoComentario"
+                  placeholder="Escreve um comentário..."
+                  class="txt"
+                  style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px"
+                />
+                <button
+                  type="submit"
+                  class="btn"
+                  [disabled]="comentarioForm.invalid"
+                  style="background: #007bff; color: white; padding: 0 15px; border-radius: 4px"
+                >
                   Enviar
                 </button>
               </div>
             </form>
 
-            <div *ngIf="pub.carregandoComentarios" style="margin-top: 12px; color: gray; font-size: 13px; text-align: center">
+            <div
+              *ngIf="pub.carregandoComentarios"
+              style="margin-top: 12px; color: gray; font-size: 13px; text-align: center"
+            >
               A carregar comentários...
             </div>
 
-            <div class="lista-comentarios-rend" *ngIf="!pub.carregandoComentarios && comentariosPublicacao && comentariosPublicacao.length > 0" style="margin-top: 12px">
-              <div *ngFor="let c of comentariosPublicacao" style="margin-bottom: 8px; background: white; padding: 10px; border-radius: 4px; border-left: 3px solid #007bff; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);">
+            <div
+              class="lista-comentarios-rend"
+              *ngIf="
+                !pub.carregandoComentarios &&
+                comentariosPublicacao &&
+                comentariosPublicacao.length > 0
+              "
+              style="margin-top: 12px"
+            >
+              <div
+                *ngFor="let c of comentariosPublicacao"
+                style="
+                  margin-bottom: 8px;
+                  background: white;
+                  padding: 10px;
+                  border-radius: 4px;
+                  border-left: 3px solid #007bff;
+                  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+                "
+              >
                 <div *ngIf="utilizadorLogado?.id == c.comentador.id" class="opcoes-auxiliares">
                   <ul class="menu-opcoes">
                     <li class="item-opcoes">
                       <div style="margin-top: 10px; text-align: right">
-                        <button class="btn" (click)="iniciarEdicaoComentario(c)" style="background: #ffc107; color: black; font-size: 12px; padding: 4px 10px">
+                        <button
+                          class="btn"
+                          (click)="iniciarEdicaoComentario(c)"
+                          style="
+                            background: #ffc107;
+                            color: black;
+                            font-size: 12px;
+                            padding: 4px 10px;
+                          "
+                        >
                           Editar
                         </button>
                       </div>
                     </li>
                     <li class="item-opcoes">
-                      <button class="btn" (click)="confirmarEliminarComentario(c.id)" style="background: #ff375f; color: white; font-size: 12px; padding: 4px 10px; border-radius: 4px;">
+                      <button
+                        class="btn"
+                        (click)="confirmarEliminarComentario(c.id)"
+                        style="
+                          background: #ff375f;
+                          color: white;
+                          font-size: 12px;
+                          padding: 4px 10px;
+                          border-radius: 4px;
+                        "
+                      >
                         🗑️ Eliminar
                       </button>
                     </li>
                   </ul>
                 </div>
-                <div *ngIf="comentarioAEditarId === c.id" style="padding: 10px; background: #fff3cd; border-radius: 6px">
-                  <textarea [formControl]="comentarioEdicaoControl" class="txt txt-box" style="width: 100%; min-height: 80px"></textarea>
+                <div
+                  *ngIf="comentarioAEditarId === c.id"
+                  style="padding: 10px; background: #fff3cd; border-radius: 6px"
+                >
+                  <textarea
+                    [formControl]="comentarioEdicaoControl"
+                    class="txt txt-box"
+                    style="width: 100%; min-height: 80px"
+                  ></textarea>
                   <div style="margin-top: 8px; display: flex; justify-content: flex-end; gap: 5px">
-                    <button class="btn" (click)="cancelarEdicaoComentario()" [disabled]="estadoEditarComentario" style="background: #6c757d; color: white; padding: 4px 10px; font-size: 12px">
+                    <button
+                      class="btn"
+                      (click)="cancelarEdicaoComentario()"
+                      [disabled]="estadoEditarComentario"
+                      style="background: #6c757d; color: white; padding: 4px 10px; font-size: 12px"
+                    >
                       Cancelar
                     </button>
-                    <button class="btn" (click)="salvarEdicaoComentario(c.id)" [disabled]="comentarioEdicaoControl.invalid || estadoEditarComentario" style="background: #28a745; color: white; padding: 4px 10px; font-size: 12px">
+                    <button
+                      class="btn"
+                      (click)="salvarEdicaoComentario(c.id)"
+                      [disabled]="comentarioEdicaoControl.invalid || estadoEditarComentario"
+                      style="background: #28a745; color: white; padding: 4px 10px; font-size: 12px"
+                    >
                       {{ estadoEditarComentario ? 'A guardar...' : 'Confirmar' }}
                     </button>
                   </div>
                 </div>
-                <strong style="color: #333">{{ c.comentador.nomeUtilizador || 'Utilizador #' + c.comentador.nomeCompleto }}: </strong>
+                <strong style="color: #333"
+                  >{{ c.comentador.nomeUtilizador || 'Utilizador #' + c.comentador.nomeCompleto }}:
+                </strong>
                 <span style="color: #555">{{ c.conteudoComentario }}</span>
               </div>
             </div>
 
-            <div *ngIf="!pub.carregandoComentarios && (!pub.comentarios || pub.comentarios.length === 0)" style="margin-top: 12px; color: gray; font-size: 13px; text-align: center">
+            <div
+              *ngIf="
+                !pub.carregandoComentarios && (!pub.comentarios || pub.comentarios.length === 0)
+              "
+              style="margin-top: 12px; color: gray; font-size: 13px; text-align: center"
+            >
               Ninguém comentou ainda. Deixa a tua marca! 💬
             </div>
           </div>
         </div>
 
-        <div *ngIf="!carregandoFeed && feedPublicacoes.length === 0" style="text-align: center; padding: 40px; color: gray">
+        <div
+          *ngIf="!carregandoFeed && feedPublicacoes.length === 0"
+          style="text-align: center; padding: 40px; color: gray"
+        >
           <p>Ainda não há nenhuma publicação por aqui. Dá o primeiro baze! 🔥</p>
         </div>
       </main>
 
       <!-- NOTIFICAÇÕES -->
       <main class="area-feed" *ngIf="vistaAtiva === 'notificacoes'">
-        <div *ngIf="carregandoNotificacoes" style="text-align: center; padding: 20px;">A carregar notificações...</div>
-        <div *ngIf="!carregandoNotificacoes && notificacoes.length === 0" style="text-align: center; padding: 40px; color: gray;">
+        <div *ngIf="carregandoNotificacoes" style="text-align: center; padding: 20px">
+          A carregar notificações...
+        </div>
+        <div
+          *ngIf="!carregandoNotificacoes && notificacoes.length === 0"
+          style="text-align: center; padding: 40px; color: gray"
+        >
           <p>Nenhuma notificação ainda.</p>
         </div>
-        <div *ngFor="let n of notificacoes" style="padding: 12px; border-bottom: 1px solid #eee; display: flex; gap: 10px; align-items: center;">
-          <div style="width: 40px; height: 40px; border-radius: 50%; background: #e9ecef; display: flex; align-items: center; justify-content: center; font-size: 18px;">
-            {{ n.tipo === 'Seguidor' ? '👤' : n.tipo === 'Baze' ? '🔥' : n.tipo === 'Comentario' ? '💬' : '🔔' }}
+        <div
+          *ngFor="let n of notificacoes"
+          style="
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+          "
+        >
+          <div
+            style="
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              background: #e9ecef;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 18px;
+            "
+          >
+            {{
+              n.tipo === 'Seguidor'
+                ? '👤'
+                : n.tipo === 'Baze'
+                  ? '🔥'
+                  : n.tipo === 'Comentario'
+                    ? '💬'
+                    : '🔔'
+            }}
           </div>
-          <div style="flex: 1;">
-            <div style="font-size: 13px;">{{ n.mensagem }}</div>
-            <div style="font-size: 11px; color: #999;">{{ n.criadoEm | date:'dd/MM/yyyy HH:mm' }}</div>
+          <div style="flex: 1">
+            <div style="font-size: 13px">{{ n.mensagem }}</div>
+            <div style="font-size: 11px; color: #999">
+              {{ n.criadoEm | date: 'dd/MM/yyyy HH:mm' }}
+            </div>
           </div>
         </div>
       </main>
 
       <!-- PESQUISA -->
       <main class="area-feed" *ngIf="vistaAtiva === 'pesquisa' && resultadosPesquisa">
-        <div style="padding: 12px;">
-          <h3 style="margin: 0 0 12px;">Resultados da Pesquisa</h3>
+        <div style="padding: 12px">
+          <h3 style="margin: 0 0 12px">Resultados da Pesquisa</h3>
 
-          <div *ngIf="resultadosPesquisa.perfis?.length" style="margin-bottom: 20px;">
-            <h4 style="margin: 0 0 8px; font-size: 14px; color: #555;">Perfis</h4>
-            <div *ngFor="let perfil of resultadosPesquisa.perfis" style="padding: 8px; border-bottom: 1px solid #eee; cursor: pointer;" [routerLink]="['/feed/perfil', perfil.id]">
+          <div *ngIf="resultadosPesquisa.perfis?.length" style="margin-bottom: 20px">
+            <h4 style="margin: 0 0 8px; font-size: 14px; color: #555">Perfis</h4>
+            <div
+              *ngFor="let perfil of resultadosPesquisa.perfis"
+              style="padding: 8px; border-bottom: 1px solid #eee; cursor: pointer"
+              [routerLink]="['/feed/perfil', perfil.id]"
+            >
               <strong>{{ perfil.nomeCompleto }}</strong>
-              <span style="color: gray; font-size: 12px;"> &#64;{{ perfil.nomeUtilizador }}</span>
+              <span style="color: gray; font-size: 12px"> &#64;{{ perfil.nomeUtilizador }}</span>
             </div>
           </div>
 
           <div *ngIf="resultadosPesquisa.publicacoes?.length">
-            <h4 style="margin: 0 0 8px; font-size: 14px; color: #555;">Publicações</h4>
-            <div *ngFor="let pub of resultadosPesquisa.publicacoes" style="padding: 8px; border-bottom: 1px solid #eee;">
-              <p style="margin: 0;">{{ pub.texto }}</p>
-              <small style="color: gray;">{{ pub.autor?.nomeCompleto }} - {{ pub.dataPublicacao | date:'dd/MM/yyyy' }}</small>
+            <h4 style="margin: 0 0 8px; font-size: 14px; color: #555">Publicações</h4>
+            <div
+              *ngFor="let pub of resultadosPesquisa.publicacoes"
+              style="padding: 8px; border-bottom: 1px solid #eee"
+            >
+              <p style="margin: 0">{{ pub.texto }}</p>
+              <small style="color: gray"
+                >{{ pub.autor?.nomeCompleto }} -
+                {{ pub.dataPublicacao | date: 'dd/MM/yyyy' }}</small
+              >
             </div>
           </div>
 
-          <div *ngIf="!resultadosPesquisa.perfis?.length && !resultadosPesquisa.publicacoes?.length" style="text-align: center; padding: 20px; color: gray;">
+          <div
+            *ngIf="!resultadosPesquisa.perfis?.length && !resultadosPesquisa.publicacoes?.length"
+            style="text-align: center; padding: 20px; color: gray"
+          >
             Nenhum resultado encontrado.
           </div>
         </div>
@@ -302,16 +543,47 @@
 
     <!-- RIGHT SIDEBAR: Pedidos de Seguimento -->
     <div class="seccao-info prev-noti">
-      <div style="padding: 10px; background: #f8f9fa; border-radius: 6px;">
-        <h4 style="margin: 0 0 10px; font-size: 13px; color: #555;">Pedidos de Seguimento</h4>
-        <div *ngIf="pedidosPendentes.length === 0" style="font-size: 12px; color: #999;">
+      <div style="padding: 10px; background: #f8f9fa; border-radius: 6px">
+        <h4 style="margin: 0 0 10px; font-size: 13px; color: #555">Pedidos de Seguimento</h4>
+        <div *ngIf="pedidosPendentes.length === 0" style="font-size: 12px; color: #999">
           Nenhum pedido pendente.
         </div>
-        <div *ngFor="let pedido of pedidosPendentes" style="padding: 6px 0; border-bottom: 1px solid #eee; font-size: 12px;">
-          <span style="font-weight: bold;">{{ pedido.seguidorNome || 'Utilizador #' + pedido.seguidorId }}</span>
-          <div style="margin-top: 4px; display: flex; gap: 4px;">
-            <button (click)="aceitarPedido(pedido.id)" style="background: #28a745; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 11px;">Aceitar</button>
-            <button (click)="rejeitarPedido(pedido.id)" style="background: #dc3545; color: white; border: none; padding: 2px 8px; border-radius: 3px; cursor: pointer; font-size: 11px;">Rejeitar</button>
+        <div
+          *ngFor="let pedido of pedidosPendentes"
+          style="padding: 6px 0; border-bottom: 1px solid #eee; font-size: 12px"
+        >
+          <span style="font-weight: bold">{{
+            pedido.seguidorNome || 'Utilizador #' + pedido.seguidorId
+          }}</span>
+          <div style="margin-top: 4px; display: flex; gap: 4px">
+            <button
+              (click)="aceitarPedido(pedido.id)"
+              style="
+                background: #28a745;
+                color: white;
+                border: none;
+                padding: 2px 8px;
+                border-radius: 3px;
+                cursor: pointer;
+                font-size: 11px;
+              "
+            >
+              Aceitar
+            </button>
+            <button
+              (click)="rejeitarPedido(pedido.id)"
+              style="
+                background: #dc3545;
+                color: white;
+                border: none;
+                padding: 2px 8px;
+                border-radius: 3px;
+                cursor: pointer;
+                font-size: 11px;
+              "
+            >
+              Rejeitar
+            </button>
           </div>
         </div>
       </div>
@@ -320,45 +592,216 @@
 </div>
 
 <!-- MODAIS -->
-<div *ngIf="publicacaoAEliminarId" class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-  <div style="background: white; padding: 24px; border-radius: 8px; width: 90%; max-width: 400px; text-align: center;">
-    <h3 style="margin: 0 0 10px; color: #dc3545;">Eliminar Publicação</h3>
-    <p style="margin: 0 0 20px; color: #555;">
+<div
+  *ngIf="publicacaoAEliminarId"
+  class="modal-overlay"
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  "
+>
+  <div
+    style="
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    "
+  >
+    <h3 style="margin: 0 0 10px; color: #dc3545">Eliminar Publicação</h3>
+    <p style="margin: 0 0 20px; color: #555">
       Tens a certeza de que queres eliminar esta publicação?<br />
       <strong>Esta ação não pode ser desfeita.</strong>
     </p>
-    <div style="display: flex; gap: 10px; justify-content: center;">
-      <button class="btn" (click)="cancelarEliminarPublicacao()" [disabled]="estadoEliminarPublicacao" style="background: #6c757d; color: white; padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer;">Cancelar</button>
-      <button class="btn" (click)="executarEliminarPublicacao()" [disabled]="estadoEliminarPublicacao" style="background: #dc3545; color: white; padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer;">{{ estadoEliminarPublicacao ? 'A eliminar...' : 'Sim, eliminar' }}</button>
+    <div style="display: flex; gap: 10px; justify-content: center">
+      <button
+        class="btn"
+        (click)="cancelarEliminarPublicacao()"
+        [disabled]="estadoEliminarPublicacao"
+        style="
+          background: #6c757d;
+          color: white;
+          padding: 8px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        "
+      >
+        Cancelar
+      </button>
+      <button
+        class="btn"
+        (click)="executarEliminarPublicacao()"
+        [disabled]="estadoEliminarPublicacao"
+        style="
+          background: #dc3545;
+          color: white;
+          padding: 8px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        "
+      >
+        {{ estadoEliminarPublicacao ? 'A eliminar...' : 'Sim, eliminar' }}
+      </button>
     </div>
   </div>
 </div>
 
-<div *ngIf="comentarioAEliminarId" class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-  <div style="background: white; padding: 24px; border-radius: 8px; width: 90%; max-width: 400px; text-align: center;">
-    <h3 style="margin: 0 0 10px; color: #dc3545;">Eliminar Comentário</h3>
-    <p style="margin: 0 0 20px; color: #555;">
+<div
+  *ngIf="comentarioAEliminarId"
+  class="modal-overlay"
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  "
+>
+  <div
+    style="
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    "
+  >
+    <h3 style="margin: 0 0 10px; color: #dc3545">Eliminar Comentário</h3>
+    <p style="margin: 0 0 20px; color: #555">
       Tens a certeza de que queres eliminar este comentário?<br />
       <strong>Esta ação não pode ser desfeita.</strong>
     </p>
-    <div style="display: flex; gap: 10px; justify-content: center;">
-      <button class="btn" (click)="cancelarEliminarComentario()" [disabled]="estadoEliminarComentario" style="background: #6c757d; color: white; padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer;">Cancelar</button>
-      <button class="btn" (click)="executarEliminarComentario()" [disabled]="estadoEliminarComentario" style="background: #dc3545; color: white; padding: 8px 20px; border: none; border-radius: 4px; cursor: pointer;">{{ estadoEliminarComentario ? 'A eliminar...' : 'Sim, eliminar' }}</button>
+    <div style="display: flex; gap: 10px; justify-content: center">
+      <button
+        class="btn"
+        (click)="cancelarEliminarComentario()"
+        [disabled]="estadoEliminarComentario"
+        style="
+          background: #6c757d;
+          color: white;
+          padding: 8px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        "
+      >
+        Cancelar
+      </button>
+      <button
+        class="btn"
+        (click)="executarEliminarComentario()"
+        [disabled]="estadoEliminarComentario"
+        style="
+          background: #dc3545;
+          color: white;
+          padding: 8px 20px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        "
+      >
+        {{ estadoEliminarComentario ? 'A eliminar...' : 'Sim, eliminar' }}
+      </button>
     </div>
   </div>
 </div>
 
-<div *ngIf="mostrarFormDenuncia" class="modal-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
-  <div style="background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px;">
-    <h3 style="margin: 0 0 15px;">Denunciar Publicação</h3>
-    <textarea [(ngModel)]="motivoDenuncia" placeholder="Descreve o motivo da denúncia..." style="width: 100%; min-height: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;"></textarea>
-    <div style="display: flex; gap: 10px; justify-content: flex-end;">
-      <button class="btn" (click)="cancelarDenuncia()" style="background: #6c757d; color: white; padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer;">Cancelar</button>
-      <button class="btn" (click)="enviarDenuncia()" [disabled]="!motivoDenuncia.trim()" style="background: #dc3545; color: white; padding: 6px 14px; border: none; border-radius: 4px; cursor: pointer;">Enviar Denúncia</button>
+<div
+  *ngIf="mostrarFormDenuncia"
+  class="modal-overlay"
+  style="
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  "
+>
+  <div style="background: white; padding: 20px; border-radius: 8px; width: 90%; max-width: 400px">
+    <h3 style="margin: 0 0 15px">Denunciar Publicação</h3>
+    <textarea
+      [(ngModel)]="motivoDenuncia"
+      placeholder="Descreve o motivo da denúncia..."
+      style="
+        width: 100%;
+        min-height: 80px;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 10px;
+      "
+    ></textarea>
+    <div style="display: flex; gap: 10px; justify-content: flex-end">
+      <button
+        class="btn"
+        (click)="cancelarDenuncia()"
+        style="
+          background: #6c757d;
+          color: white;
+          padding: 6px 14px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        "
+      >
+        Cancelar
+      </button>
+      <button
+        class="btn"
+        (click)="enviarDenuncia()"
+        [disabled]="!motivoDenuncia.trim()"
+        style="
+          background: #dc3545;
+          color: white;
+          padding: 6px 14px;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        "
+      >
+        Enviar Denúncia
+      </button>
     </div>
   </div>
 </div>
 
-<div *ngIf="notificacao" style="position: fixed; bottom: 20px; right: 20px; padding: 12px 24px; border-radius: 6px; color: white; font-weight: 500; z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" [style.background]="notificacao.tipo === 'sucesso' ? '#28a745' : '#dc3545'">
+<div
+  *ngIf="notificacao"
+  style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 500;
+    z-index: 2000;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  "
+  [style.background]="notificacao.tipo === 'sucesso' ? '#28a745' : '#dc3545'"
+>
   {{ notificacao.mensagem }}
 </div>

@@ -1,28 +1,56 @@
 <div class="contentor_painel">
   <nav class="contentor_painel--navegacao">
     <div class="logotipo">
-      <img src="./barbell.png" alt="logotipo" srcset="" class="img-logotipo" />
+      <img src="./barbell.png" alt="logotipo" class="img-logotipo" />
     </div>
     <ul class="menu_navegacao">
-      <li class="item_navegacao"><span>Painel Analítico</span></li>
-      <li class="item_navegacao"><span>Utilizadores</span></li>
-      <li class="item_navegacao"><span>Publicacoes</span></li>
-      <li class="item_navegacao"><span>Denuncias</span></li>
+      <li class="item_navegacao">
+        <a routerLink="/admin/painel" routerLinkActive="ativo" [routerLinkActiveOptions]="{exact:true}">
+          <fa-icon [icon]="dashIcon"></fa-icon>
+          <span>Painel Analítico</span>
+        </a>
+      </li>
+      <li class="item_navegacao">
+        <a routerLink="/admin/utilizadores" routerLinkActive="ativo">
+          <fa-icon [icon]="usersIcon"></fa-icon>
+          <span>Utilizadores</span>
+        </a>
+      </li>
+      <li class="item_navegacao">
+        <a routerLink="/admin/publicacoes" routerLinkActive="ativo">
+          <fa-icon [icon]="postsIcon"></fa-icon>
+          <span>Publicações</span>
+        </a>
+      </li>
+      <li class="item_navegacao">
+        <a routerLink="/admin/denuncias" routerLinkActive="ativo">
+          <fa-icon [icon]="flagIcon"></fa-icon>
+          <span>Denúncias</span>
+          <span class="badge" *ngIf="denunciasPendentes > 0">{{ denunciasPendentes }}</span>
+        </a>
+      </li>
     </ul>
   </nav>
 
   <div class="conteudo">
     <header class="contentor_painel--cabecalho">
-      <div></div>
+      <div class="breadcrumb">
+        <span>NzolaNet</span>
+      </div>
       <div class="caixa_con_util">
         <div class="caixa-notif">
           <fa-icon [icon]="notifIcon"></fa-icon>
+          <span class="badge-notif" *ngIf="denunciasPendentes > 0">{{ denunciasPendentes }}</span>
         </div>
-        <div class="caixa-config">
-          <fa-icon [icon]="configIcon"></fa-icon>
-        </div>
-        <div class="caixa-util">
-          <img src="" alt="imagem_de_perfil" srcset="" class="img-util_perfil" />
+        <div class="caixa-util" (click)="alternarDropdown()">
+          <img [src]="adminFoto | base64Image" alt="Perfil" class="img-util_perfil" />
+          <span class="nome-util">{{ adminNome }}</span>
+          <div class="dropdown-menu" *ngIf="dropdownAberto">
+            <button (click)="sair()">
+              <fa-icon [icon]="sairIcon"></fa-icon>
+              <span>Sair</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>

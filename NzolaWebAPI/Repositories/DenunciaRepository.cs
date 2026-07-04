@@ -41,5 +41,15 @@ namespace NzolaWebAPI.Repositories
         {
             return await _contexto.SaveChangesAsync() > 0;
         }
+
+        public async Task<int> ContarTodasAsync()
+        {
+            return await _contexto.Denuncias.CountAsync();
+        }
+
+        public async Task<int> ContarPendentesAsync()
+        {
+            return await _contexto.Denuncias.CountAsync(d => d.EstadoDenuncia == EstadoDenuncia.Pendente);
+        }
     }
 }

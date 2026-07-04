@@ -9,6 +9,9 @@ using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
 {
+    /// <summary>
+    /// Controlador para gestão de notificações dos utilizadores.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class NotificacaoController : ControllerBase
@@ -27,7 +30,13 @@ namespace NzolaWebAPI.Controllers
             _hubContext = hubContext;
         }
 
+        /// <summary>
+        /// Lista todas as notificações do sistema.
+        /// </summary>
+        /// <returns>Lista de notificações</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<NotificacaoDto>), 200)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Listar()
         {
             var notificacoes = await _contexto
@@ -37,7 +46,15 @@ namespace NzolaWebAPI.Controllers
             return Ok(notificacoes);
         }
 
+        /// <summary>
+        /// Lista as notificações de um utilizador específico.
+        /// </summary>
+        /// <param name="utilizadorId">ID do utilizador</param>
+        /// <returns>Lista de notificações do utilizador</returns>
         [HttpGet("utilizador/{utilizadorId}")]
+        [ProducesResponseType(typeof(IEnumerable<NotificacaoDto>), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Listar([FromRoute] int utilizadorId)
         {
             var notificacoes = await _contexto
@@ -47,7 +64,15 @@ namespace NzolaWebAPI.Controllers
             return Ok(notificacoes);
         }
 
+        /// <summary>
+        /// Obtém uma notificação pelo seu ID.
+        /// </summary>
+        /// <param name="id">ID da notificação</param>
+        /// <returns>Notificação encontrada</returns>
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(NotificacaoDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> BuscarPorId([FromRoute] int id)
         {
             var notificacao = await _contexto.Notificacoes.FindAsync(id);
@@ -58,7 +83,16 @@ namespace NzolaWebAPI.Controllers
             return Ok(notificacao.ToNotificacaoDto());
         }
 
+        /// <summary>
+        /// Cria uma nova notificação para um utilizador.
+        /// </summary>
+        /// <param name="criarNotificacaoDto">Dados da notificação</param>
+        /// <param name="utilizadorId">ID do utilizador destinatário</param>
+        /// <returns>Notificação criada</returns>
         [HttpPost("{utilizadorId:int}")]
+        [ProducesResponseType(typeof(NotificacaoDto), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Criar([FromBody] CriarNotificacaoDto criarNotificacaoDto, [FromRoute] int utilizadorId)
         {
             var utilizador = await _utilizadorRepo.ObterPorIdAsync(utilizadorId);
@@ -82,7 +116,15 @@ namespace NzolaWebAPI.Controllers
             );
         }
 
+        /// <summary>
+        /// Marca uma notificação como lida.
+        /// </summary>
+        /// <param name="id">ID da notificação</param>
+        /// <returns>Notificação atualizada</returns>
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(NotificacaoDto), 200)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> MarcarComoLida([FromRoute] int id)
         {
             var notificacao = await _contexto.Notificacoes.FindAsync(id);
@@ -96,7 +138,15 @@ namespace NzolaWebAPI.Controllers
             return Ok(notificacao.ToNotificacaoDto());
         }
 
+        /// <summary>
+        /// Remove uma notificação do sistema.
+        /// </summary>
+        /// <param name="id">ID da notificação</param>
+        /// <returns>Sem conteúdo</returns>
         [HttpDelete("{id}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Apagar([FromRoute] int id)
         {
             var notificacao = await _contexto.Notificacoes.FindAsync(id);

@@ -1,19 +1,24 @@
 .contentor_painel
 {
   display: flex;
+  height: 100vh;
 }
 
 .contentor_painel--navegacao
 {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  width: 220px;
+  background: #1c1c2e;
+  color: #fff;
+  padding: 16px 0;
 }
 
 .logotipo
 {
   width: 48px;
   height: 48px;
+  margin: 0 auto 24px;
 }
 
 .logotipo img
@@ -21,17 +26,60 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .menu_navegacao
 {
   display: flex;
   flex-direction: column;
+  gap: 4px;
+  padding: 0 8px;
+}
+
+.item_navegacao a
+{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  color: #b0b0c0;
+  text-decoration: none;
+  font-size: 14px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.item_navegacao a:hover
+{
+  background: #2a2a40;
+  color: #fff;
+}
+
+.item_navegacao a.ativo
+{
+  background: #3a3a55;
+  color: #fff;
+  font-weight: 600;
+}
+
+.badge
+{
+  margin-left: auto;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 700;
 }
 
 .conteudo
 {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 
 .contentor_painel--cabecalho
@@ -39,10 +87,101 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 12px 24px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #fff;
+}
+
+.breadcrumb
+{
+  font-size: 14px;
+  color: #888;
 }
 
 .caixa_con_util
 {
   display: flex;
   align-items: center;
+  gap: 16px;
+}
+
+.caixa-notif
+{
+  position: relative;
+  font-size: 20px;
+  color: #555;
+  cursor: pointer;
+}
+
+.badge-notif
+{
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #e74c3c;
+  color: #fff;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.caixa-util
+{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.img-util_perfil
+{
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #e0e0e0;
+}
+
+.nome-util
+{
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.dropdown-menu
+{
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 100;
+  min-width: 160px;
+}
+
+.dropdown-menu button
+{
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  text-align: left;
+}
+
+.dropdown-menu button:hover
+{
+  background: #f5f5f5;
 }

@@ -184,3 +184,12 @@
 {
   border-radius: 0 44px 44px 0;
 }
+
+.foto-tabela
+{
+  width: 42px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid #d1d5db;
+}

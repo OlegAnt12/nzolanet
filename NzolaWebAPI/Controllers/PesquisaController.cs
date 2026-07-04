@@ -5,6 +5,9 @@ using NzolaWebAPI.Mappers;
 
 namespace NzolaWebAPI.Controllers
 {
+    /// <summary>
+    /// Controlador para pesquisa global de utilizadores e publicações.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class PesquisaController : ControllerBase
@@ -16,7 +19,19 @@ namespace NzolaWebAPI.Controllers
             _contexto = contexto;
         }
 
+        /// <summary>
+        /// Pesquisa utilizadores e publicações com base num termo de pesquisa. Procura por nome, username, email e texto de publicações.
+        /// </summary>
+        /// <param name="termo">Termo de pesquisa</param>
+        /// <param name="tipo">Tipo de pesquisa (tudo, publicacoes, perfis)</param>
+        /// <returns>Lista de publicações e perfis correspondentes ao termo de pesquisa</returns>
+        /// <response code="200">Resultados da pesquisa</response>
+        /// <response code="400">Termo de pesquisa inválido</response>
+        /// <response code="500">Erro interno do servidor</response>
         [HttpGet]
+        [ProducesResponseType(typeof(object), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
         public async Task<IActionResult> Pesquisar([FromQuery] string termo, [FromQuery] string tipo = "tudo")
         {
             if (string.IsNullOrWhiteSpace(termo) || termo.Length < 2)

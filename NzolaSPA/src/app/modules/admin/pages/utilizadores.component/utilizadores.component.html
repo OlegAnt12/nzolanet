@@ -1,1 +1,69 @@
-<p>utilizadores.component works!</p>
+<div class="contentor-analitico">
+  <div class="topo-anali">
+    <div class="area-navegacao">
+      <button type="button" class="btn btn-voltar">
+        <fa-icon [icon]="voltarIcon"></fa-icon>
+      </button>
+      <h1 class="titulo-desc-area">Utilizadores</h1>
+    </div>
+  </div>
+
+  <ng-container *ngIf="carregando; else conteudo">
+    <p class="estado-carregamento">A carregar utilizadores...</p>
+  </ng-container>
+
+  <ng-template #conteudo>
+    <ng-container *ngIf="erro; else tabela">
+      <p class="estado-erro">{{ erro }}</p>
+    </ng-container>
+
+    <ng-template #tabela>
+      <div class="tabela-dados">
+        <div class="area-desc-topo">
+          <h3>Total: {{ utilizadores.length }} utilizadores</h3>
+        </div>
+
+        <div class="area-tabela">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Nível</th>
+                <th>Estado</th>
+                <th>Privacidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let u of utilizadores">
+                <td>
+                  <img
+                    [src]="u.fotoPerfil || 'assets/default-avatar.png'"
+                    alt="Foto"
+                    class="foto-utilizador"
+                  />
+                </td>
+                <td>{{ u.id }}</td>
+                <td>{{ u.nomeCompleto }}</td>
+                <td>{{ u.nomeUtilizador }}</td>
+                <td>{{ u.email }}</td>
+                <td>{{ u.nivelAcesso === 1 ? 'Admin' : 'Normal' }}</td>
+                <td>
+                  <span class="badge" [class.badge-ativa]="u.estadoConta === 0"
+                       [class.badge-suspensa]="u.estadoConta === 1"
+                       [class.badge-banida]="u.estadoConta === 2">
+                    {{ u.estadoConta === 0 ? 'Ativa' : u.estadoConta === 1 ? 'Suspensa' : 'Banida' }}
+                  </span>
+                </td>
+                <td>{{ u.privacidade === 0 ? 'Público' : 'Privado' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>

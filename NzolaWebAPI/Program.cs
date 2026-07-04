@@ -47,7 +47,29 @@ builder
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Nzola Network API", Version = "v1" });
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Nzola Network API",
+        Version = "v1",
+        Description = "API da rede social NzolaNet. Fornece endpoints para autenticação, gestão de utilizadores, publicações, comentários, bazes (likes), seguidores, denúncias, notificações, pesquisa e painel administrativo.",
+        Contact = new OpenApiContact
+        {
+            Name = "Equipa NzolaNet",
+            Email = "suporte@nzolanet.ao"
+        },
+        License = new OpenApiLicense
+        {
+            Name = "Uso interno"
+        }
+    });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        options.IncludeXmlComments(xmlPath);
+    }
+
     options.OperationFilter<FormFileOperationFilter>();
     options.SchemaFilter<FormFileSchemaFilter>();
     options.MapType<IFormFile>(() => new OpenApiSchema { Type = "string", Format = "binary" });
@@ -129,6 +151,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUtilizadorService, UtilizadorService>();
 builder.Services.AddScoped<IDenunciaService, DenunciaService>();
 builder.Services.AddScoped<IPedidoSeguirService, PedidoSeguirService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 var app = builder.Build();
 
@@ -201,6 +224,12 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(pastaUploads),
     RequestPath = "/uploads"
 });
+
+using (var scope = app.Services.CreateScope())
+{
+    var contexto = scope.ServiceProvider.GetRequiredService<ContextoBDNzola>();
+    await DbInitializer.SeedAsync(contexto);
+}
 
 app.MapControllers();
 

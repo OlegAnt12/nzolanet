@@ -23,6 +23,9 @@ import { NotificacaoDto } from '../../../../dtos/notificacao/notificacao.dto';
 import { PesquisaService } from '../../../../services/pesquisa/pesquisa.service';
 import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
 import { filter, Subscription } from 'rxjs';
+import { faBell, faFlag, faHome, faMagnifyingGlass, faPowerOff } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faMessage, faUser } from '@fortawesome/free-regular-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-feed-principal.component',
@@ -34,6 +37,7 @@ import { filter, Subscription } from 'rxjs';
     FormsModule,
     RouterModule,
     Base64ImagePipe,
+    FontAwesomeModule
   ],
   templateUrl: './feed-principal.component.html',
   styleUrl: './feed-principal.component.css',
@@ -94,6 +98,15 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
   pedidosPendentes: any[] = [];
   notificacoes: NotificacaoDto[] = [];
   carregandoNotificacoes = false;
+
+  notifIcon=faBell;
+  feedIcon=faHome;
+  pesquisaIcon=faMagnifyingGlass;
+  utilizadorIcon=faUser;
+  comentarioIcon=faComment;
+  bandeiraIcon=faFlag;
+  mensagemIcon=faMessage;
+  shutdownIcon=faPowerOff;
 
   base64Image(base64String: string | undefined | null): string {
     if (!base64String) return './profile/Deafultdavy3k.jfif';

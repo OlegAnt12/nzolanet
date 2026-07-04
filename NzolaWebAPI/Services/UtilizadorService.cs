@@ -104,7 +104,6 @@ namespace NzolaWebAPI.Services
 
             var utilizadorDto = utilizador.ToUtilizadorDto();
 
-            bool podeVerPerfilCompleto = true;
             if (utilizadorLogadoId.HasValue && utilizadorLogadoId.Value != id)
             {
                 var relacao = await _seguidorRepository.ObterPorRelacaoAsync(
@@ -112,32 +111,18 @@ namespace NzolaWebAPI.Services
                     id
                 );
                 utilizadorDto.JaSegues = relacao != null;
-
-                if (utilizador.Privacidade == Models.Enums.EstadoAcesso.Privado && !utilizadorDto.JaSegues)
-                {
-                    podeVerPerfilCompleto = false;
-                }
             }
             else if (utilizadorLogadoId.HasValue && utilizadorLogadoId.Value == id)
             {
                 utilizadorDto.JaSegues = false;
             }
 
-            if (podeVerPerfilCompleto)
-            {
-                var seguidores = await _seguidorRepository.ContarSeguidoresAsync(id);
-                var seguindo = await _seguidorRepository.ContarSeguindoAsync(id);
-                var publicacoes = await _publicacaoRepository.ContarPorUtilizadorAsync(id);
-                utilizadorDto.Seguidores = seguidores;
-                utilizadorDto.Seguindo = seguindo;
-                utilizadorDto.Publicacoes = publicacoes;
-            }
-            else
-            {
-                utilizadorDto.Seguidores = 0;
-                utilizadorDto.Seguindo = 0;
-                utilizadorDto.Publicacoes = 0;
-            }
+            var seguidores = await _seguidorRepository.ContarSeguidoresAsync(id);
+            var seguindo = await _seguidorRepository.ContarSeguindoAsync(id);
+            var publicacoes = await _publicacaoRepository.ContarPorUtilizadorAsync(id);
+            utilizadorDto.Seguidores = seguidores;
+            utilizadorDto.Seguindo = seguindo;
+            utilizadorDto.Publicacoes = publicacoes;
 
             return utilizadorDto;
         }

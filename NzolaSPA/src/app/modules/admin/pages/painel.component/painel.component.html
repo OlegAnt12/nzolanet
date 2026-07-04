@@ -1,74 +1,108 @@
 <div class="contentor-analitico">
   <div class="topo-anali">
     <div class="area-navegacao">
-      <button type="button" class="btn btn-voltar">
+      <button type="button" class="btn btn-voltar" (click)="voltar()">
         <fa-icon [icon]="voltarIcon"></fa-icon>
       </button>
       <h1 class="titulo-desc-area">Painel Analítico</h1>
     </div>
     <div class="area-funcional">
-      <button type="button" class="btn btn-exportar">
+      <button type="button" class="btn btn-exportar" (click)="exportarRelatorio()">
         <fa-icon [icon]="exportarIcon" class="mr-1"></fa-icon>
         <span>Exportar Relatório</span>
       </button>
     </div>
   </div>
-  <div class="cartoes-metricos">
-    <div class="metrica-comercial">
-      <div class="cartao cartao-kpi">
-        <h3>Faturação</h3>
-        <strong>valorTotalVendas | number: '1.2-2' kz</strong>
-        <small>Média por venda: valorMedioVenda | number: '1.2-2' kz</small>
-        <span class="tendencia"> getVariacaoTexto(crescimentoFaturacao) vs período anterior </span>
-      </div>
-      <div class="cartao cartao-kpi">
-        <h3>Faturação</h3>
-        <strong>valorTotalVendas | number: '1.2-2' kz</strong>
-        <small>Média por venda: valorMedioVenda | number: '1.2-2' kz</small>
-        <span class="tendencia"> getVariacaoTexto(crescimentoFaturacao) vs período anterior </span>
-      </div>
 
-      <div class="cartao cartao-kpi">
-        <h3>Faturação</h3>
-        <strong>valorTotalVendas | number: '1.2-2' kz</strong>
-        <small>Média por venda: valorMedioVenda | number: '1.2-2' kz</small>
-        <span class="tendencia"> getVariacaoTexto(crescimentoFaturacao) vs período anterior </span>
-      </div>
-    </div>
+  <ng-container *ngIf="carregando; else conteudo">
+    <p class="estado-carregamento">A carregar estatísticas...</p>
+  </ng-container>
 
-    <div class="metrica-laboral">
-      <div class="cartao cartao-kpi">
-        <h3>Faturação</h3>
-        <strong>valorTotalVendas | number: '1.2-2'kz</strong>
-        <small>Média por venda: valorMedioVenda | number: '1.2-2' kz</small>
-        <span class="tendencia"> período anterior </span>
+  <ng-template #conteudo>
+    <ng-container *ngIf="erro; else dashboardConteudo">
+      <p class="estado-erro">{{ erro }}</p>
+    </ng-container>
+
+    <ng-template #dashboardConteudo>
+      <div class="cartoes-metricos">
+        <div class="metrica-comercial">
+          <div class="cartao cartao-kpi">
+            <fa-icon [icon]="faUsers" class="icone-kpi"></fa-icon>
+            <h3>Utilizadores</h3>
+            <strong>{{ dashboard?.totalUtilizadores }}</strong>
+            <small>Total de contas registadas</small>
+          </div>
+          <div class="cartao cartao-kpi">
+            <fa-icon [icon]="faFileAlt" class="icone-kpi"></fa-icon>
+            <h3>Publicações</h3>
+            <strong>{{ dashboard?.totalPublicacoes }}</strong>
+            <small>Total de publicações ativas</small>
+          </div>
+          <div class="cartao cartao-kpi">
+            <fa-icon [icon]="faFire" class="icone-kpi"></fa-icon>
+            <h3>Bazes</h3>
+            <strong>{{ dashboard?.totalBazes }}</strong>
+            <small>Total de interações</small>
+          </div>
+          <div class="cartao cartao-kpi">
+            <fa-icon [icon]="faFlag" class="icone-kpi"></fa-icon>
+            <h3>Denúncias</h3>
+            <strong>{{ dashboard?.totalDenuncias }}</strong>
+            <small>Total de denúncias recebidas</small>
+          </div>
+        </div>
+
+        <div class="metrica-laboral">
+          <div class="cartao cartao-kpi">
+            <fa-icon [icon]="faHourglassHalf" class="icone-kpi"></fa-icon>
+            <h3>Denúncias Pendentes</h3>
+            <strong>{{ dashboard?.denunciasPendentes }}</strong>
+            <small>Aguardando revisão</small>
+          </div>
+          <div class="cartao cartao-kpi">
+            <fa-icon [icon]="faUserCheck" class="icone-kpi"></fa-icon>
+            <h3>Contas Ativas</h3>
+            <strong>{{ dashboard?.utilizadoresAtivos }}</strong>
+            <small>Utilizadores com conta ativa</small>
+          </div>
+          <div class="cartao cartao-kpi">
+            <fa-icon [icon]="faUserLock" class="icone-kpi"></fa-icon>
+            <h3>Perfis Privados</h3>
+            <strong>{{ dashboard?.utilizadoresPrivados }}</strong>
+            <small>Contas em modo privado</small>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </ng-template>
+  </ng-template>
+
   <div class="area-pesquisa">
-    <p>Area por descrever</p>
+    <p>Pesquisar conteúdo</p>
     <div class="componentes-pesquisa">
       <div class="filtro-personalizado">
-        <input type="date" />
-        <input type="date" />
+        <input type="date" [(ngModel)]="dataInicio" />
+        <input type="date" [(ngModel)]="dataFim" />
       </div>
-      <select class="filtro-periodo">
-        <option>opcao.label</option>
+      <select class="filtro-periodo" [(ngModel)]="periodo" (change)="onPeriodoChange()">
+        <option value="7">Últimos 7 dias</option>
+        <option value="30">Últimos 30 dias</option>
+        <option value="90">Últimos 90 dias</option>
       </select>
       <div class="caixa-pesquisa">
-        <input type="text" placeholder="Pesquisar..." aria-label="Pesquisar" class="txt" />
-        <button type="button" class="btn btn-pesquisa">
+        <input type="text" placeholder="Pesquisar..." aria-label="Pesquisar" class="txt" [(ngModel)]="termoPesquisa" (keyup.enter)="pesquisar()" />
+        <button type="button" class="btn btn-pesquisa" (click)="pesquisar()">
           <fa-icon [icon]="pesquisaIcon" class="pesquisa-icon"></fa-icon>
         </button>
       </div>
     </div>
   </div>
+
   <div class="tabela-dados">
     <div class="area-desc-topo">
       <h3>Utilizadores</h3>
       <div class="area-desc-topo_acoes">
         <div class="lista_acoes">
-          <button type="button" class="btn btn-lista_acoes">lista</button>
+          <button type="button" class="btn btn-lista_acoes" (click)="irParaListaCompleta()">Lista Completa</button>
         </div>
       </div>
     </div>
@@ -76,107 +110,33 @@
     <div class="vista-grade">
       <div class="area-tabela">
         <table>
+          <thead>
+            <tr>
+              <th></th>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Nível</th>
+            </tr>
+          </thead>
           <tbody>
-            <tr>
+            <tr *ngFor="let u of ultimosUtilizadores">
               <td>
                 <img
-                  src="./billycm-children-2876359_1920.jpg"
+                  [src]="u.fotoPerfil || 'assets/default-avatar.png'"
                   alt="Foto do utilizador"
-                  style="
-                    width: 42px;
-                    height: 42px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    border: 1px solid #d1d5db;
-                  "
+                  class="foto-tabela"
                 />
               </td>
-              <td>u.id</td>
-              <td>u.nome</td>
-              <td>getPerfilLabel(u.perfil)</td>
-              
+              <td>{{ u.id }}</td>
+              <td>{{ u.nomeCompleto }}</td>
+              <td>{{ u.nivelAcesso === 1 ? 'Administrador' : 'Normal' }}</td>
             </tr>
-            <tr>
-              <td>
-                <img
-                  src="./billycm-children-2876359_1920.jpg"
-                  alt="Foto do utilizador"
-                  style="
-                    width: 42px;
-                    height: 42px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    border: 1px solid #d1d5db;
-                  "
-                />
-              </td>
-              <td>u.id</td>
-              <td>u.nome</td>
-              <td>getPerfilLabel(u.perfil)</td>
-              
-            </tr>
-            <tr>
-              <td>
-                <img
-                  src="./billycm-children-2876359_1920.jpg"
-                  alt="Foto do utilizador"
-                  style="
-                    width: 42px;
-                    height: 42px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    border: 1px solid #d1d5db;
-                  "
-                />
-              </td>
-              <td>u.id</td>
-              <td>u.nome</td>
-              <td>getPerfilLabel(u.perfil)</td>
-              
-            </tr>
-            <tr>
-              <td>
-                <img
-                  src="./billycm-children-2876359_1920.jpg"
-                  alt="Foto do utilizador"
-                  style="
-                    width: 42px;
-                    height: 42px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    border: 1px solid #d1d5db;
-                  "
-                />
-              </td>
-              <td>u.id</td>
-              <td>u.nome</td>
-              <td>getPerfilLabel(u.perfil)</td>
-              
-            </tr>
-            <tr>
-              <td>
-                <img
-                  src="./billycm-children-2876359_1920.jpg"
-                  alt="Foto do utilizador"
-                  style="
-                    width: 42px;
-                    height: 42px;
-                    object-fit: cover;
-                    border-radius: 50%;
-                    border: 1px solid #d1d5db;
-                  "
-                />
-              </td>
-              <td>u.id</td>
-              <td>u.nome</td>
-              <td>getPerfilLabel(u.perfil)</td>
-              
+            <tr *ngIf="ultimosUtilizadores.length === 0">
+              <td colspan="4" style="text-align:center;padding:16px;color:#6b7280;">Nenhum utilizador encontrado</td>
             </tr>
           </tbody>
         </table>
       </div>
-
-      <div class="metrica-tabela"></div>
     </div>
   </div>
 </div>

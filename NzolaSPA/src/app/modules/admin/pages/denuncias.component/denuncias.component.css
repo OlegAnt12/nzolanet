@@ -65,13 +65,12 @@
 {
   background-color: rgba(0,0,0,0.02);
 }
-.foto-utilizador
+.cell-texto
 {
-  width: 36px;
-  height: 36px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 1px solid #d1d5db;
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .badge
 {
@@ -81,18 +80,18 @@
   font-size: 0.8rem;
   font-weight: 500;
 }
-.badge-ativa
-{
-  background-color: #d1fae5;
-  color: #065f46;
-}
-.badge-suspensa
+.badge-pendente
 {
   background-color: #fef3c7;
   color: #92400e;
 }
-.badge-banida
+.badge-resolvida
 {
-  background-color: #fee2e2;
-  color: #991b1b;
+  background-color: #d1fae5;
+  color: #065f46;
+}
+.badge-ignorada
+{
+  background-color: #e5e7eb;
+  color: #4b5563;
 }
