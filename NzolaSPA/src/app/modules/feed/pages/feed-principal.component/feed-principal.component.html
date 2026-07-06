@@ -103,24 +103,16 @@
               <textarea
                 formControlName="texto"
                 class="txt txt-box"
-                placeholder="O que estás a pensar, dar um baze post?"
+                placeholder="O que estás a pensar?"
               ></textarea>
               <div class="base-formPost">
                 <div
                   class="area-botoes-auxiliares"
                   style="display: flex; gap: 10px; margin-top: 8px"
                 >
-                  <label
-                    for="upload-feed"
-                    style="
-                      cursor: pointer;
-                      background: #eee;
-                      padding: 6px 12px;
-                      border-radius: 4px;
-                      font-size: 13px;
-                    "
-                  >
-                    📁 Anexar Imagens/Vídeos
+                  <label class="lbl-upload"
+                    for="upload-feed">
+                    <span> <fa-icon [icon]="folderIcon"></fa-icon> Anexar Imagens/Vídeos </span>
                   </label>
                   <input
                     id="upload-feed"
@@ -132,7 +124,7 @@
                   />
                   <span
                     *ngIf="ficheirosSelecionados.length > 0"
-                    style="font-size: 12px; color: green; align-self: center"
+                    style="font-size: 12px; color: #0ff0fc; align-self: center"
                   >
                     {{ ficheirosSelecionados.length }} ficheiro(s) prontos!
                   </span>
@@ -143,7 +135,7 @@
                     class="btn btn-publicar"
                     [disabled]="publicacaoForm.invalid || enviarPost"
                   >
-                    {{ enviarPost ? 'A publicar...' : 'Publicar' }}
+                    <fa-icon [icon]="paperPlaneIcon"></fa-icon>
                   </button>
                 </div>
               </div>
@@ -169,19 +161,17 @@
               </div>
             </div>
             <div *ngIf="utilizadorLogado?.id == pub.autor?.id" class="opcoes-auxiliares">
-              <ul class="menu-opcoes">
-                <li class="item-opcoes" (click)="iniciarEdicao(pub)">
-                  <button
-                    class="btn"
-                    
-                  >
+              <div class="botao-opcoes" (click)="alternarMenuOpcoes(pub.id); $event.stopPropagation()">
+                <fa-icon [icon]="opcoesIcon"></fa-icon>
+              </div>
+              <ul class="menu-opcoes" *ngIf="menuAbertoPublicacaoId === pub.id">
+                <li class="item-opcoes">
+                  <button class="btn" (click)="iniciarEdicao(pub)">
                     Editar
                   </button>
                 </li>
-                <li class="item-opcoes" (click)="confirmarEliminarPublicacao(pub.id)">
-                  <button
-                    class="btn" 
-                  >
+                <li class="item-opcoes">
+                  <button class="btn" (click)="confirmarEliminarPublicacao(pub.id)">
                     Eliminar
                   </button>
                 </li>
@@ -327,7 +317,7 @@
                   [disabled]="comentarioForm.invalid"
                   style="background: #007bff; color: white; padding: 0 15px; border-radius: 4px"
                 >
-                  Enviar
+                  <fa-icon [icon]="paperPlaneIcon"></fa-icon>
                 </button>
               </div>
             </form>
@@ -360,36 +350,18 @@
                 "
               >
                 <div *ngIf="utilizadorLogado?.id == c.comentador.id" class="opcoes-auxiliares">
-                  <ul class="menu-opcoes">
+                  <div class="botao-opcoes" (click)="alternarMenuOpcoesComentario(c.id); $event.stopPropagation()">
+                    <fa-icon [icon]="opcoesIcon"></fa-icon>
+                  </div>
+                  <ul class="menu-opcoes" *ngIf="menuAbertoComentarioId === c.id">
                     <li class="item-opcoes">
-                      <div style="margin-top: 10px; text-align: right">
-                        <button
-                          class="btn"
-                          (click)="iniciarEdicaoComentario(c)"
-                          style="
-                            background: #ffc107;
-                            color: black;
-                            font-size: 12px;
-                            padding: 4px 10px;
-                          "
-                        >
-                          Editar
-                        </button>
-                      </div>
+                      <button class="btn" (click)="iniciarEdicaoComentario(c)">
+                        Editar
+                      </button>
                     </li>
                     <li class="item-opcoes">
-                      <button
-                        class="btn"
-                        (click)="confirmarEliminarComentario(c.id)"
-                        style="
-                          background: #ff375f;
-                          color: white;
-                          font-size: 12px;
-                          padding: 4px 10px;
-                          border-radius: 4px;
-                        "
-                      >
-                        🗑️ Eliminar
+                      <button class="btn" (click)="confirmarEliminarComentario(c.id)">
+                        Eliminar
                       </button>
                     </li>
                   </ul>

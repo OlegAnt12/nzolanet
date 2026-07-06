@@ -95,3 +95,50 @@
   background-color: #e5e7eb;
   color: #4b5563;
 }
+.cell-acoes
+{
+  white-space: nowrap;
+}
+.btn-acao
+{
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 4px;
+  transition: opacity 0.2s;
+}
+.btn-acao:hover
+{
+  opacity: 0.8;
+}
+.btn-acao.desativado
+{
+  opacity: 0.4;
+  pointer-events: none;
+}
+.btn-remover
+{
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+.btn-resolver
+{
+  background-color: #d1fae5;
+  color: #16a34a;
+}
+.btn-ignorar
+{
+  background-color: #e5e7eb;
+  color: #6b7280;
+}
+.texto-sem-acao
+{
+  color: #9ca3af;
+  font-size: 0.85rem;
+}

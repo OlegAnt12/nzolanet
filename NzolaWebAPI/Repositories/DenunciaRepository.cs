@@ -37,6 +37,18 @@ namespace NzolaWebAPI.Repositories
                 .ToListAsync();
         }
 
+        public async Task<Denuncia?> ObterPorIdAsync(int id)
+        {
+            return await _contexto.Denuncias
+                .Include(d => d.Denunciante)
+                .FirstOrDefaultAsync(d => d.Id == id);
+        }
+
+        public void Atualizar(Denuncia denuncia)
+        {
+            _contexto.Denuncias.Update(denuncia);
+        }
+
         public async Task<bool> SalvarAsync()
         {
             return await _contexto.SaveChangesAsync() > 0;

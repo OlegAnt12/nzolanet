@@ -39,4 +39,12 @@ export class AuthService {
   isAutenticado(): boolean {
     return this.isBrowser ? !!localStorage.getItem('token') : false;
   }
+
+  esqueciPassword(email: string): Observable<any> {
+    return this.api.post(`${this.endpoint}/esqueci-password`, { email });
+  }
+
+  redefinirPassword(token: string, novaPalavraPasse: string): Observable<any> {
+    return this.api.post(`${this.endpoint}/redefinir-password`, { token, novaPalavraPasse });
+  }
 }

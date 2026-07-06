@@ -29,19 +29,22 @@
               <tr>
                 <th>ID</th>
                 <th>Denunciante</th>
+                <th>Tipo</th>
                 <th>Motivo</th>
                 <th>Descrição</th>
                 <th>Data</th>
                 <th>Estado</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
               <tr *ngFor="let d of denuncias">
                 <td>{{ d.id }}</td>
                 <td>{{ d.nomeDenunciante }}</td>
+                <td>{{ getTipoEntidadeLabel(d.tipoEntidade) }}</td>
                 <td>{{ d.motivo }}</td>
                 <td class="cell-texto" [title]="d.descricao">
-                  {{ d.descricao.length > 80 ? (d.descricao | slice:0:80) + '...' : d.descricao }}
+                  {{ d.descricao.length > 60 ? (d.descricao | slice:0:60) + '...' : d.descricao }}
                 </td>
                 <td>{{ d.dataDenuncia | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td>
@@ -51,6 +54,32 @@
                         [class.badge-ignorada]="d.estadoDenuncia === 2">
                     {{ d.estadoDenuncia === 0 ? 'Pendente' : d.estadoDenuncia === 1 ? 'Resolvida' : 'Ignorada' }}
                   </span>
+                </td>
+                <td class="cell-acoes">
+                  <ng-container *ngIf="d.estadoDenuncia === 0; else estadoAcoes">
+                    <button type="button" class="btn btn-acao btn-remover"
+                            [class.desativado]="acaoEmCurso === d.id"
+                            *ngIf="d.tipoEntidade === 1 || d.tipoEntidade === 3"
+                            (click)="removerConteudoDenunciado(d.tipoEntidade, d.idEntidade, d.id)"
+                            title="Remover conteúdo">
+                      <fa-icon [icon]="removerIcon"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-acao btn-resolver"
+                            [class.desativado]="acaoEmCurso === d.id"
+                            (click)="marcarResolvida(d.id)"
+                            title="Marcar como resolvida">
+                      <fa-icon [icon]="resolverIcon"></fa-icon>
+                    </button>
+                    <button type="button" class="btn btn-acao btn-ignorar"
+                            [class.desativado]="acaoEmCurso === d.id"
+                            (click)="marcarIgnorada(d.id)"
+                            title="Ignorar denúncia">
+                      <fa-icon [icon]="ignorarIcon"></fa-icon>
+                    </button>
+                  </ng-container>
+                  <ng-template #estadoAcoes>
+                    <span class="texto-sem-acao">—</span>
+                  </ng-template>
                 </td>
               </tr>
             </tbody>

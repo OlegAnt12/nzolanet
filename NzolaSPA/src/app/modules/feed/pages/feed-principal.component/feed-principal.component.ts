@@ -1,4 +1,4 @@
-import { Component, ChangeDetectorRef, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, ChangeDetectorRef, HostListener, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { PublicacaoService } from '../../../../services/publicacao/publicacao.service';
 import { AuthService } from '../../../../services/auth/auth';
@@ -23,8 +23,8 @@ import { NotificacaoDto } from '../../../../dtos/notificacao/notificacao.dto';
 import { PesquisaService } from '../../../../services/pesquisa/pesquisa.service';
 import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
 import { filter, Subscription } from 'rxjs';
-import { faBell, faFlag, faHome, faMagnifyingGlass, faPowerOff } from '@fortawesome/free-solid-svg-icons';
-import { faComment, faMessage, faUser } from '@fortawesome/free-regular-svg-icons';
+import { faBell, faEllipsisV, faFlag, faHome, faMagnifyingGlass, faPaperPlane, faPowerOff } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faFolder, faMessage, faUser } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
@@ -107,6 +107,16 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
   bandeiraIcon=faFlag;
   mensagemIcon=faMessage;
   shutdownIcon=faPowerOff;
+  folderIcon=faFolder;
+  opcoesIcon=faEllipsisV;
+  paperPlaneIcon=faPaperPlane;
+  menuAbertoPublicacaoId: number | null = null;
+  menuAbertoComentarioId: number | null = null;
+
+  @HostListener('document:click')
+  aoClicarFora(): void {
+    this.fecharMenuOpcoes();
+  }
 
   base64Image(base64String: string | undefined | null): string {
     if (!base64String) return './profile/Deafultdavy3k.jfif';
@@ -229,7 +239,7 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
       next: (comentarioActualizado) => {
         this.mostrarNotificacao('Comentário atualizado com sucesso!', 'sucesso');
         setTimeout(() => {
-          
+
           this.cancelarEdicaoComentario();
 
           // CORREÇÃO DA PROPRIEDADE INEXISTENTE: Liberta o estado correto do componente
@@ -471,7 +481,7 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
         this.carregandoFeed = false;
         this.carregandoMais = false;
         this.cdr.detectChanges();
-        
+
       },
       error: (err) => {
         console.error('Erro ao carregar o feed', err);
@@ -495,7 +505,7 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
       this.mostrarNotificacao('Sessão expirada. Faz login novamente.', 'erro');
       return;
     }
-    
+
     const utilizadorId = this.utilizadorLogado.id;
     this.enviarPost = true;
 
@@ -779,9 +789,25 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
       });
   }
 
+  alternarMenuOpcoes(pubId: number): void {
+    this.menuAbertoPublicacaoId = this.menuAbertoPublicacaoId === pubId ? null : pubId;
+    if (this.menuAbertoPublicacaoId !== null) this.menuAbertoComentarioId = null;
+  }
+
+  alternarMenuOpcoesComentario(comentarioId: number): void {
+    this.menuAbertoComentarioId = this.menuAbertoComentarioId === comentarioId ? null : comentarioId;
+    if (this.menuAbertoComentarioId !== null) this.menuAbertoPublicacaoId = null;
+  }
+
+  fecharMenuOpcoes(): void {
+    this.menuAbertoPublicacaoId = null;
+    this.menuAbertoComentarioId = null;
+  }
+
   iniciarEdicao(pub: any): void {
     this.publicacaoAEditarId = pub.id;
     this.textoEdicaoControl.setValue(pub.texto);
+    this.fecharMenuOpcoes();
   }
 
   cancelarEdicao(): void {
@@ -861,6 +887,10 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
       },
     });
   }
+
+  readonly tipoEntidadePublicacao = 3;
+  readonly tipoEntidadeComentario = 1;
+  readonly tipoEntidadePerfil = 2;
 
   denunciaEmProgresso: { id: number; tipo: number } | null = null;
   motivoDenuncia = '';

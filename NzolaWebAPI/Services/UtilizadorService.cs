@@ -127,6 +127,44 @@ namespace NzolaWebAPI.Services
             return utilizadorDto;
         }
 
+        public async Task<string?> GerarTokenRedefinirPasswordAsync(string email)
+        {
+            var utilizador = await _utilizadorRepository.ObterPorEmailAsync(email);
+            if (utilizador == null) return null;
+
+            var token = Convert.ToHexString(Guid.NewGuid().ToByteArray()) +
+                        Convert.ToHexString(Guid.NewGuid().ToByteArray());
+
+            utilizador.ResetTokenRedefinirPassword = token;
+            utilizador.ResetTokenExpiraEm = DateTime.UtcNow.AddHours(1);
+
+            await _utilizadorRepository.SalvarAsync();
+
+            await _emailService.EnviarEmailRedefinirPasswordAsync(
+                utilizador.Email,
+                utilizador.NomeCompleto,
+                token
+            );
+
+            return token;
+        }
+
+        public async Task<bool> RedefinirPasswordAsync(string token, string novaPalavraPasse)
+        {
+            var utilizador = await _utilizadorRepository.ObterPorTokenRedefinirPasswordAsync(token);
+            if (utilizador == null) return false;
+
+            if (utilizador.ResetTokenExpiraEm == null ||
+                utilizador.ResetTokenExpiraEm < DateTime.UtcNow)
+                return false;
+
+            utilizador.PalavraPasse = novaPalavraPasse;
+            utilizador.ResetTokenRedefinirPassword = null;
+            utilizador.ResetTokenExpiraEm = null;
+
+            return await _utilizadorRepository.SalvarAsync();
+        }
+
         public async Task<object> ObterEstatisticasAsync(int id)
         {
             var seguidores = await _seguidorRepository.ContarSeguidoresAsync(id);

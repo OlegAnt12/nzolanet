@@ -16,11 +16,17 @@ namespace NzolaWebAPI.Controllers
     {
         private readonly ContextoBDNzola _contexto;
         private readonly ITokenService _tokenService;
+        private readonly IUtilizadorService _utilizadorService;
 
-        public AutenticacoesController(ContextoBDNzola contexto, ITokenService tokenService)
+        public AutenticacoesController(
+            ContextoBDNzola contexto,
+            ITokenService tokenService,
+            IUtilizadorService utilizadorService
+        )
         {
             _contexto = contexto;
             _tokenService = tokenService;
+            _utilizadorService = utilizadorService;
         }
 
         /// <summary>
@@ -140,6 +146,51 @@ namespace NzolaWebAPI.Controllers
             await _tokenService.RevogarRefreshTokenAsync(logoutRequest.RefreshToken);
             await _contexto.SaveChangesAsync();
             return Ok(new { mensagem = "Sessão terminada com sucesso!" });
+        }
+
+        /// <summary>
+        /// Envia um e-mail com link para redefinir a palavra-passe, caso o e-mail exista.
+        /// </summary>
+        /// <param name="dto">Objeto com o e-mail do utilizador</param>
+        /// <response code="200">Email de redefinição enviado (se a conta existir)</response>
+        /// <response code="400">Email inválido</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpPost("esqueci-password")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> EsqueciPassword([FromBody] EsqueciPasswordRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("E-mail inválido.");
+
+            var token = await _utilizadorService.GerarTokenRedefinirPasswordAsync(dto.Email);
+
+            return Ok(new { mensagem = "Se o e-mail existir, receberá um link de redefinição da palavra-passe." });
+        }
+
+        /// <summary>
+        /// Redefine a palavra-passe utilizando o token enviado por e-mail.
+        /// </summary>
+        /// <param name="dto">Objeto com o token e a nova palavra-passe</param>
+        /// <response code="200">Palavra-passe redefinida com sucesso</response>
+        /// <response code="400">Token inválido, expirado ou dados inválidos</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpPost("redefinir-password")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> RedefinirPassword([FromBody] RedefinirPasswordRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Dados inválidos.");
+
+            var resultado = await _utilizadorService.RedefinirPasswordAsync(dto.Token, dto.NovaPalavraPasse);
+
+            if (!resultado)
+                return BadRequest("Token inválido ou expirado.");
+
+            return Ok(new { mensagem = "Palavra-passe redefinida com sucesso!" });
         }
     }
 }

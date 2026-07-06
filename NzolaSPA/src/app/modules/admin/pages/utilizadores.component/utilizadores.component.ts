@@ -1,26 +1,43 @@
 import { Component, OnInit } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../../services/admin/admin.service';
 import { UtilizadorDto } from '../../../../dtos/utilizador/utilizadorfeed/utilizador.dto';
+import { CriarUtilizadorAdminRequestDto } from '../../../../dtos/admin/criar-utilizador-admin.dto';
 
 @Component({
   selector: 'app-utilizadores.component',
-  imports: [FontAwesomeModule, CommonModule],
+  imports: [FontAwesomeModule, CommonModule, FormsModule],
   templateUrl: './utilizadores.component.html',
   styleUrl: './utilizadores.component.css',
 })
 export class UtilizadoresComponent implements OnInit {
   voltarIcon = faArrowLeft;
+  adicionarIcon = faPlus;
+  fecharIcon = faTimes;
 
   utilizadores: UtilizadorDto[] = [];
   carregando = true;
   erro: string | null = null;
 
+  modalAberto = false;
+  formSubmetido = false;
+  criarCarregando = false;
+  criarErro: string | null = null;
+
+  novoUtilizador = new CriarUtilizadorAdminRequestDto();
+
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
+    this.carregarUtilizadores();
+  }
+
+  private carregarUtilizadores(): void {
+    this.carregando = true;
+    this.erro = null;
     this.adminService.listarUtilizadores().subscribe({
       next: (dados) => {
         this.utilizadores = dados;
@@ -29,6 +46,39 @@ export class UtilizadoresComponent implements OnInit {
       error: () => {
         this.erro = 'Não foi possível carregar a lista de utilizadores.';
         this.carregando = false;
+      },
+    });
+  }
+
+  abrirModal(): void {
+    this.novoUtilizador = new CriarUtilizadorAdminRequestDto();
+    this.formSubmetido = false;
+    this.criarErro = null;
+    this.modalAberto = true;
+  }
+
+  fecharModal(): void {
+    this.modalAberto = false;
+  }
+
+  onSubmit(): void {
+    this.formSubmetido = true;
+
+    if (!this.novoUtilizador.nomeCompleto || !this.novoUtilizador.nomeUtilizador ||
+        !this.novoUtilizador.email || !this.novoUtilizador.palavraPasse) return;
+
+    this.criarCarregando = true;
+    this.criarErro = null;
+
+    this.adminService.criarUtilizador(this.novoUtilizador).subscribe({
+      next: () => {
+        this.criarCarregando = false;
+        this.fecharModal();
+        this.carregarUtilizadores();
+      },
+      error: (err) => {
+        this.criarCarregando = false;
+        this.criarErro = err.error?.title || err.error || 'Erro ao criar utilizador.';
       },
     });
   }

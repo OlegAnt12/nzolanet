@@ -9,5 +9,6 @@ namespace NzolaWebAPI.Interfaces
     {
         Task SendEmailAsync(string toEmail, string subject, string body);
         Task EnviarEmailConfirmacaoAsync(string emailDestinatario, string nomeUtilizador);
+        Task EnviarEmailRedefinirPasswordAsync(string emailDestinatario, string nomeUtilizador, string token);
     }
 }

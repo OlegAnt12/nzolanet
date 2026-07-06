@@ -25,6 +25,13 @@ namespace NzolaWebAPI.Repositories
             return await _context.Utilizadores.FindAsync(id);
         }
 
+        public async Task<Utilizador?> ObterPorTokenRedefinirPasswordAsync(string token)
+        {
+            return await _context.Utilizadores.FirstOrDefaultAsync(
+                u => u.ResetTokenRedefinirPassword == token
+            );
+        }
+
         public async Task AdicionarAsync(Utilizador utilizador)
         {
             await _context.Utilizadores.AddAsync(utilizador);

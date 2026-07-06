@@ -16,5 +16,8 @@ namespace NzolaWebAPI.Interfaces
         Task<Utilizador?> AtualizarPerfilAsync(int utilizadorId, ActualizarPerfilRequestDto dto);
         Task<UtilizadorDto?> ObterPorIdServiceAsync(int id, int? utilizadorLogadoId = null);
         Task<object> ObterEstatisticasAsync(int id);
+
+        Task<string?> GerarTokenRedefinirPasswordAsync(string email);
+        Task<bool> RedefinirPasswordAsync(string token, string novaPalavraPasse);
     }
 }

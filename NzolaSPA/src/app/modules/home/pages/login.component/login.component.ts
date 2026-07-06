@@ -1,13 +1,13 @@
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../services/auth/auth';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-login.component',
-  imports: [ReactiveFormsModule, CommonModule, FontAwesomeModule],
+  imports: [ReactiveFormsModule, CommonModule, FontAwesomeModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

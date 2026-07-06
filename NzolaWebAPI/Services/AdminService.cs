@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +10,7 @@ using NzolaWebAPI.DTOs.Publicacao;
 using NzolaWebAPI.DTOs.Utilizador;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
+using NzolaWebAPI.Models;
 using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Services
@@ -63,6 +65,41 @@ namespace NzolaWebAPI.Services
                 .ToListAsync();
 
             return publicacoes.Select(p => p.ToPublicacaoFeedDto()).ToList();
+        }
+
+        public async Task<UtilizadorDto?> CriarUtilizadorAsync(CriarUtilizadorAdminRequestDto dto)
+        {
+            var emailExiste = await _contexto.Utilizadores.AnyAsync(u =>
+                u.Email.ToLower() == dto.Email.ToLower()
+            );
+
+            if (emailExiste) return null;
+
+            var nomeUtilizadorExiste = await _contexto.Utilizadores.AnyAsync(u =>
+                u.NomeUtilizador.ToLower() == dto.NomeUtilizador.ToLower()
+            );
+
+            if (nomeUtilizadorExiste) return null;
+
+            var utilizador = new Utilizador
+            {
+                NomeCompleto = dto.NomeCompleto,
+                NomeUtilizador = dto.NomeUtilizador,
+                Email = dto.Email,
+                PalavraPasse = dto.PalavraPasse,
+                Genero = dto.Genero,
+                DataNascimento = dto.DataNascimento,
+                NivelAcesso = NivelAcesso.Admin,
+                DataRegistro = DateTime.UtcNow,
+                ConcordaComTermos = true,
+                Privacidade = EstadoAcesso.Publico,
+                EstadoConta = EstadoConta.Activa,
+            };
+
+            _contexto.Utilizadores.Add(utilizador);
+            await _contexto.SaveChangesAsync();
+
+            return utilizador.ToUtilizadorDto();
         }
 
         public async Task<List<DenunciaDto>> ListarDenunciasAsync()

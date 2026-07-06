@@ -1,11 +1,9 @@
-.contentor
-{
+.contentor {
   background-color: #f3f5f4;
   min-height: 100vh;
 }
 
-.cabeca-feed
-{
+.cabeca-feed {
   position: fixed;
   width: calc(100% - 48px);
 
@@ -13,101 +11,86 @@
   padding: 20px 44px;
   margin: 12px 24px;
   border-radius: 12px;
-  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .25);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.25);
   z-index: 999;
 }
 
-.navegador
-{
+.navegador {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.sup-dir
-{
+.sup-dir {
   display: flex;
   align-items: center;
   gap: 24px;
 }
 
-.sup-esq
-{
+.sup-esq {
   display: flex;
   align-items: center;
   gap: 32px;
 }
 
-.sup-esq fa-icon
-{
+.sup-esq fa-icon {
   font-size: 16px;
-  
 }
 
-.home-feed
-{
+.home-feed {
   display: flex;
 }
 
-.caixa-pesquisa
-{
+.caixa-pesquisa {
   padding: 2px 12px 2px 6px;
   border-radius: 32px;
   background-color: #ccc;
   font-size: 16px;
 }
 
-.btn-pesquisa
-{
+.btn-pesquisa {
   background: transparent;
   margin-right: 8px;
 }
 
-.txt-pesquisa
-{
+.txt-pesquisa {
   background: transparent;
 }
 
-.btn-home-feed, .btn-notificacao
-{
+.btn-home-feed,
+.btn-notificacao {
   background: transparent;
   color: #ccc;
 }
 
-.btn-logout
-{
+.btn-logout {
   padding: 4px 10px;
   border-radius: 16px;
-  transition: all .3s;
+  transition: all 0.3s;
 }
 
-.btn-logout:hover
-{
+.btn-logout:hover {
   padding: 4px 10px;
   border-radius: 16px;
   background-color: #ff375f; /*#dc3545*/
   color: #fff;
 }
 
-.prev-util
-{
+.prev-util {
   width: 24%;
   /*background-color: aqua;*/
 }
 
-.prev-pub
-{
+.prev-pub {
   flex: 1;
 }
 
-.prev-noti
-{
+.prev-noti {
   width: 27%;
   padding: 7rem 44px 26px 2rem;
   box-sizing: border-box;
   /*background-color: chartreuse;*/
 }
-
 
 /**
 * Estilos Sérios
@@ -116,79 +99,72 @@
 **/
 
 /** Secção de Utilizador **/
-.seccao-utilizador
-{
+.seccao-utilizador {
   position: relative;
   width: 24%;
   padding: 8rem 28px 6px 44px;
 }
 
-.utilizador-area
-{
-position: fixed;
-width: 232px;
-
+.utilizador-area {
+  position: fixed;
+  width: 232px;
 }
 
-.utilizador-banner
-{
+.utilizador-banner {
   background-color: #fff;
   border-radius: 12px;
+  text-align: center;
 }
 
-.area-desc
-{
+.area-desc {
   padding: 20px 12px 6px;
   margin-top: -16px;
 }
 
-.infor-perfil
-{
-  padding: 0 12px 12px; 
+.infor-perfil {
+  padding: 0 12px 12px;
 }
 
-.metricas
-{
+.metricas {
   margin-bottom: 16px;
 }
 
-.mb-16
-{
+.mb-16 {
   margin-bottom: 16px;
 }
 
-.btn-acessar-perfil
-{
+.btn-acessar-perfil {
   width: 100%;
   padding: 8px;
+  background-color: #ff375f;
+  color: #fff;
   border-radius: 8px;
 }
 
-.publicacao-formlr
-{
+.btn-acessar-perfil:hover {
+  background-color: #1c1c2e;
+}
+
+.publicacao-formlr {
   border-radius: 16px;
   background-color: #fff;
   margin-bottom: 1.5rem;
 }
 
-.componentes-publicacao
-{
+.componentes-publicacao {
   position: relative;
 }
 
-.minifoto-perfil
-{
+.minifoto-perfil {
   margin-bottom: 8px;
 }
 
-.base-formPost
-{
+.base-formPost {
   display: flex;
   justify-content: space-between;
 }
 
-.area-texto
-{
+.area-texto {
   position: relative;
   border-radius: 16px;
   padding: 16px 12px 12px;
@@ -196,55 +172,60 @@ width: 232px;
   flex: 1;
 }
 
-.txt-box
-{
+.txt-box {
   font-size: 17px;
   background-color: transparent;
   width: 100%;
   resize: none;
   word-wrap: break-word;
-  height: 52px;
+  height: 72px;
   border-bottom: solid 1px #eeeff1;
 }
 
-.btn-publicar
-{
+.btn-publicar {
   width: 44px;
   height: 44px;
   border-radius: 50%;
   background-color: #272320;
   color: #b3b3b3;
-  transition: all .45s;
+  transition: all 0.45s;
 }
 
-.btn-publicar:hover
-{
-  box-shadow: 0 .25rem .5rem rgba(0,0,0,.45);
+.btn-publicar:hover {
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.45);
   color: #fff;
 }
 
-.base-text_area
-{
+.base-text_area {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+.lbl-upload
+{
+  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 36px;
+  font-size: 13px;
+}
+
+.lbl-upload:hover
+{
+  background: #eee;
+}
 
 /** Secção de Publicação**/
-.seccao-publicacao
-{
+.seccao-publicacao {
   flex: 1;
   padding: 7rem 56px 2rem;
 }
 
-.area-feed
-{
+.area-feed {
   padding: 6px;
 }
 
-.publicacao
-{
+.publicacao {
   padding: 12px 6px;
   background-color: #fff;
   border-radius: 16px;
@@ -252,23 +233,20 @@ width: 232px;
   /*border-bottom: solid 1px silver;*/
 }
 
-.cabeca-publicacao
-{
+.cabeca-publicacao {
   display: flex;
   padding: 0 6px;
   justify-content: space-between;
   align-items: center;
 }
 
-.autor-publicacao
-{
+.autor-publicacao {
   display: flex;
   gap: 12px;
   align-items: center;
 }
 
-.minifoto-perfil
-{
+.minifoto-perfil {
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -276,45 +254,66 @@ width: 232px;
   overflow: hidden;
 }
 
-.minifoto-perfil img
-{
+.minifoto-perfil img {
   width: 48px;
   height: 48px;
   object-fit: cover;
 }
 
-.opcoes-auxiliares
-{
-
+.opcoes-auxiliares {
+  position: relative;
 }
 
-.opcoes-auxiliares .menu-opcoes
-{
-  border-radius: 10px;
-  padding: 6px;
-  box-shadow: 0 .25rem .5rem rgba(0, 0, 0, .15);
-}
-
-.opcoes-auxiliares .item-opcoes
-{
-  padding: 3px 8px;
-  width: 128px;
-  transition: all .3s;
+.botao-opcoes {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  text-align: center;
   cursor: pointer;
 }
 
-.opcoes-auxiliares .item-opcoes:hover
-{
+.botao-opcoes:hover {
   background-color: #eeeff1;
 }
 
-.opcoes-auxiliares .item-opcoes .btn
-{
+.opcoes-auxiliares .menu-opcoes {
+  position: absolute;
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.15);
+  top: 120%;
+  right: 0;
+  /*transform: translateX(40%);*/
+  z-index: 99;
+}
+
+.opcoes-auxiliares .item-opcoes {
+  padding: 3px 8px;
+  width: 128px;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.opcoes-auxiliares .item-opcoes:first-child,
+.opcoes-auxiliares .item-opcoes:first-child button {
+  border-radius: 6px 6px 0 0;
+}
+
+.opcoes-auxiliares .item-opcoes:last-child,
+.opcoes-auxiliares .item-opcoes:last-child button {
+  border-radius: 0 0 6px 6px;
+}
+
+.opcoes-auxiliares .item-opcoes:hover {
+  background-color: #eeeff1;
+}
+
+.opcoes-auxiliares .item-opcoes .btn {
   background: transparent;
 }
 
-.opcoes-auxiliares .item-opcoes:not(:last-child)
-{
+.opcoes-auxiliares .item-opcoes:not(:last-child) {
   border-bottom: 1px solid #eee;
 }
 
@@ -326,7 +325,9 @@ width: 232px;
   border: none;
   cursor: pointer;
   font-weight: bold;
-  transition: background 0.2s, transform 0.1s;
+  transition:
+    background 0.2s,
+    transform 0.1s;
 }
 
 .btn-seguir:active {
@@ -349,34 +350,28 @@ width: 232px;
   background: #dc3545; /* Vermelho ao passar o mouse */
 }
 
-.texto-publicacao
-{
+.texto-publicacao {
   padding: 24px 8px 16px;
   margin-bottom: 3rem;
-
 }
 
-.conteudo-media
-{
+.conteudo-media {
   height: 397px;
   width: 100%;
   border-radius: 16px;
   overflow: hidden;
 }
-.conteudo-media img
-{
+.conteudo-media img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.base-publicacao
-{
+.base-publicacao {
   position: relative;
 }
 
-.lista-interacao
-{
+.lista-interacao {
   position: absolute;
   top: 0;
   left: 0;
@@ -389,8 +384,7 @@ width: 232px;
   background-color: #fff;
 }
 
-.lista-interacao::before
-{
+.lista-interacao::before {
   content: '';
   position: absolute;
   top: -24px;
@@ -402,8 +396,7 @@ width: 232px;
   box-shadow: -4px 6px 0 2px #fff;
 }
 
-.lista-interacao::after
-{
+.lista-interacao::after {
   content: '';
   position: absolute;
   top: 16px;
@@ -414,52 +407,44 @@ width: 232px;
   border-radius: 0 0 0 16px;
   box-shadow: -4px 6px 0 3px #fff;
 }
-.item-interacao
-{
+.item-interacao {
   display: flex;
   align-items: end;
   font-size: 14px;
 }
-.item-baze
-{
+.item-baze {
   width: 20px;
   display: inline;
-  transition: all .45s;
+  transition: all 0.45s;
   /*opacity: .33;*/
 }
 .item-baze:hover,
-.item-baze:active
-{
+.item-baze:active {
   opacity: 1;
 }
 
-.item-interacao img
-{
+.item-interacao img {
   object-fit: cover;
   width: 100%;
 }
 
 /** Secção de Notificações **/
-.seccao-notificacao
-{
+.seccao-notificacao {
   width: 31%;
   padding: 7rem 44px 26px 2rem;
 }
 
-.notificacoes
-{
-background-color: #fff;
+.notificacoes {
+  background-color: #fff;
   border-radius: 16px;
 }
 
-.topo-notificacao
-{
+.topo-notificacao {
   padding: 12px;
   border-bottom: 1px solid silver;
 }
 
-.notificacao
-{
+.notificacao {
   display: flex;
   gap: 16px;
   padding: 12px 16px;

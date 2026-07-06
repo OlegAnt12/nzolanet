@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NzolaWebAPI.Data;
 
@@ -11,9 +12,11 @@ using NzolaWebAPI.Data;
 namespace NzolaWebAPI.Migrations
 {
     [DbContext(typeof(ContextoBDNzola))]
-    partial class ContextoBDNzolaModelSnapshot : ModelSnapshot
+    [Migration("20260705182859_AddResetPasswordToken")]
+    partial class AddResetPasswordToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

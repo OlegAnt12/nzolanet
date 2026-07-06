@@ -33,5 +33,17 @@ namespace NzolaWebAPI.Services
             var denuncias = await _denunciaRepo.ListarPorEntidadeAsync(tipoEntidade, idEntidade);
             return denuncias.Select(d => d.ToDenunciaDto()).ToList();
         }
+
+        public async Task<DenunciaDto?> AtualizarEstadoDenunciaAsync(int id, EstadoDenuncia novoEstado)
+        {
+            var denuncia = await _denunciaRepo.ObterPorIdAsync(id);
+            if (denuncia == null) return null;
+
+            denuncia.EstadoDenuncia = novoEstado;
+            _denunciaRepo.Atualizar(denuncia);
+            await _denunciaRepo.SalvarAsync();
+
+            return denuncia.ToDenunciaDto();
+        }
     }
 }

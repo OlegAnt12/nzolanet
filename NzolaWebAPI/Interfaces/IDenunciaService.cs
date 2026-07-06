@@ -8,5 +8,6 @@ namespace NzolaWebAPI.Interfaces
         Task<DenunciaDto?> CriarDenunciaAsync(CriarDenunciaDto dto);
         Task<List<DenunciaDto>> ListarTodasAsync();
         Task<List<DenunciaDto>> ListarPorEntidadeAsync(TipoEntidade tipoEntidade, int idEntidade);
+        Task<DenunciaDto?> AtualizarEstadoDenunciaAsync(int id, EstadoDenuncia novoEstado);
     }
 }

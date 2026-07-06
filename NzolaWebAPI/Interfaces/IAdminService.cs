@@ -13,5 +13,6 @@ namespace NzolaWebAPI.Interfaces
         Task<List<UtilizadorDto>> ListarUtilizadoresAsync();
         Task<List<PublicacaoFeedDto>> ListarPublicacoesAsync();
         Task<List<DenunciaDto>> ListarDenunciasAsync();
+        Task<UtilizadorDto?> CriarUtilizadorAsync(CriarUtilizadorAdminRequestDto dto);
     }
 }

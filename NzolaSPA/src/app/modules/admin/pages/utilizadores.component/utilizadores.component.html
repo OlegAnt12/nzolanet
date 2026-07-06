@@ -21,6 +21,10 @@
       <div class="tabela-dados">
         <div class="area-desc-topo">
           <h3>Total: {{ utilizadores.length }} utilizadores</h3>
+          <button type="button" class="btn btn-adicionar" (click)="abrirModal()">
+            <fa-icon [icon]="adicionarIcon"></fa-icon>
+            Adicionar Utilizador
+          </button>
         </div>
 
         <div class="area-tabela">
@@ -66,4 +70,103 @@
       </div>
     </ng-template>
   </ng-template>
+</div>
+
+<!-- Modal Adicionar Utilizador -->
+<div class="modal-overlay" *ngIf="modalAberto" (click)="fecharModal()">
+  <div class="modal-contentor" (click)="$event.stopPropagation()">
+    <div class="modal-topo">
+      <h2>Adicionar Utilizador</h2>
+      <button type="button" class="btn-fechar-modal" (click)="fecharModal()">
+        <fa-icon [icon]="fecharIcon"></fa-icon>
+      </button>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #form="ngForm">
+      <div class="campos-grid">
+        <div class="campo-formulario">
+          <label for="nomeCompleto">Nome completo *</label>
+          <input
+            type="text"
+            id="nomeCompleto"
+            name="nomeCompleto"
+            [(ngModel)]="novoUtilizador.nomeCompleto"
+            required
+            #nomeInput="ngModel"
+          />
+          <span class="erro-campo" *ngIf="formSubmetido && nomeInput.invalid">Obrigatório</span>
+        </div>
+
+        <div class="campo-formulario">
+          <label for="nomeUtilizador">Nome de utilizador *</label>
+          <input
+            type="text"
+            id="nomeUtilizador"
+            name="nomeUtilizador"
+            [(ngModel)]="novoUtilizador.nomeUtilizador"
+            required
+            #userInput="ngModel"
+          />
+          <span class="erro-campo" *ngIf="formSubmetido && userInput.invalid">Obrigatório</span>
+        </div>
+
+        <div class="campo-formulario">
+          <label for="email">E-mail *</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            [(ngModel)]="novoUtilizador.email"
+            required
+            email
+            #emailInput="ngModel"
+          />
+          <span class="erro-campo" *ngIf="formSubmetido && emailInput.invalid">E-mail inválido</span>
+        </div>
+
+        <div class="campo-formulario">
+          <label for="palavraPasse">Palavra-passe *</label>
+          <input
+            type="password"
+            id="palavraPasse"
+            name="palavraPasse"
+            [(ngModel)]="novoUtilizador.palavraPasse"
+            required
+            minlength="6"
+            #passInput="ngModel"
+          />
+          <span class="erro-campo" *ngIf="formSubmetido && passInput.invalid">Mínimo 6 caracteres</span>
+        </div>
+
+        <div class="campo-formulario">
+          <label for="genero">Género</label>
+          <select id="genero" name="genero" [(ngModel)]="novoUtilizador.genero">
+            <option [value]="0">Masculino</option>
+            <option [value]="1">Feminino</option>
+          </select>
+        </div>
+
+        <div class="campo-formulario">
+          <label for="dataNascimento">Data de nascimento</label>
+          <input
+            type="date"
+            id="dataNascimento"
+            name="dataNascimento"
+            [(ngModel)]="novoUtilizador.dataNascimento"
+          />
+        </div>
+      </div>
+
+      <p class="aviso-nivel">Nível de acesso: <strong>Admin</strong></p>
+
+      <p class="erro-geral" *ngIf="criarErro">{{ criarErro }}</p>
+
+      <div class="modal-acoes">
+        <button type="button" class="btn btn-cancelar" (click)="fecharModal()">Cancelar</button>
+        <button type="submit" class="btn btn-criar" [disabled]="criarCarregando">
+          {{ criarCarregando ? 'A criar...' : 'Criar Utilizador' }}
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

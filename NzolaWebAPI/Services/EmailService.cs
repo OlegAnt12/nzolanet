@@ -71,5 +71,46 @@ namespace NzolaWebAPI.Services
 
             await EnviarAsync(mensagem);
         }
+
+        public async Task EnviarEmailRedefinirPasswordAsync(
+            string emailDestinatario,
+            string nomeUtilizador,
+            string token
+        )
+        {
+            var linkRedefinir = $"http://localhost:4200/home/redefinir-password?token={token}";
+
+            var mensagem = new MimeMessage();
+
+            mensagem.From.Add(
+                new MailboxAddress(_emailSettings.NomeEmissor, _emailSettings.EmailEmissor)
+            );
+
+            mensagem.To.Add(new MailboxAddress(nomeUtilizador, emailDestinatario));
+            mensagem.Subject = "Redefinição de palavra-passe — Nzola";
+
+            var corpoBuilder = new BodyBuilder
+            {
+                HtmlBody =
+                    $@"
+                <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee;'>
+                    <h2 style='color: #4A90E2;'>Olá, {nomeUtilizador}!</h2>
+                    <p>Recebemos um pedido de redefinição da tua palavra-passe na <strong>Nzola</strong>.</p>
+                    <p>Clica no botão abaixo para definires uma nova palavra-passe:</p>
+                    <div style='text-align: center; margin: 24px 0;'>
+                        <a href='{linkRedefinir}'
+                           style='background-color: #4A90E2; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;'>
+                            Redefinir palavra-passe
+                        </a>
+                    </div>
+                    <p>Se não foste tu, podes ignorar este e-mail.</p>
+                    <p style='font-size: 12px; color: #888;'>Este link é válido por 1 hora.</p>
+                </div>",
+            };
+
+            mensagem.Body = corpoBuilder.ToMessageBody();
+
+            await EnviarAsync(mensagem);
+        }
     }
 }

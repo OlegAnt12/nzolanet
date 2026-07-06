@@ -6,6 +6,7 @@ using NzolaWebAPI.DTOs.Denuncia;
 using NzolaWebAPI.DTOs.Publicacao;
 using NzolaWebAPI.DTOs.Utilizador;
 using NzolaWebAPI.Interfaces;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Controllers
 {
@@ -17,10 +18,12 @@ namespace NzolaWebAPI.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;
+        private readonly IDenunciaService _denunciaService;
 
-        public AdminController(IAdminService adminService)
+        public AdminController(IAdminService adminService, IDenunciaService denunciaService)
         {
             _adminService = adminService;
+            _denunciaService = denunciaService;
         }
 
         /// <summary>
@@ -81,6 +84,59 @@ namespace NzolaWebAPI.Controllers
         {
             var denuncias = await _adminService.ListarDenunciasAsync();
             return Ok(denuncias);
+        }
+
+        /// <summary>
+        /// Cria um novo utilizador com nível de acesso Admin.
+        /// </summary>
+        /// <param name="dto">Dados do novo utilizador admin</param>
+        /// <returns>Dados do utilizador criado</returns>
+        /// <response code="201">Utilizador admin criado com sucesso</response>
+        /// <response code="400">E-mail ou nome de utilizador já em uso, ou dados inválidos</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpPost("utilizadores")]
+        [ProducesResponseType(typeof(UtilizadorDto), 201)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> CriarUtilizador([FromBody] CriarUtilizadorAdminRequestDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest("Dados inválidos.");
+
+            var resultado = await _adminService.CriarUtilizadorAsync(dto);
+
+            if (resultado == null)
+                return BadRequest("E-mail ou nome de utilizador já em uso.");
+
+            return CreatedAtAction(nameof(ListarUtilizadores), resultado);
+        }
+
+        /// <summary>
+        /// Atualiza o estado de uma denúncia (Pendente, Resolvida, Ignorada). Ao resolver, permite remover o conteúdo denunciado.
+        /// </summary>
+        /// <param name="id">ID da denúncia</param>
+        /// <param name="estadoNovo">Novo estado: 0 = Pendente, 1 = Resolvida, 2 = Ignorada</param>
+        /// <returns>Denúncia atualizada</returns>
+        /// <response code="200">Estado da denúncia atualizado com sucesso</response>
+        /// <response code="400">Estado inválido</response>
+        /// <response code="404">Denúncia não encontrada</response>
+        /// <response code="500">Erro interno do servidor</response>
+        [HttpPut("denuncias/{id:int}/estado")]
+        [ProducesResponseType(typeof(DenunciaDto), 200)]
+        [ProducesResponseType(400)]
+        [ProducesResponseType(404)]
+        [ProducesResponseType(500)]
+        public async Task<IActionResult> AtualizarEstadoDenuncia(
+            [FromRoute] int id,
+            [FromBody] AtualizarEstadoDenunciaRequestDto estadoNovo)
+        {
+            if (!Enum.IsDefined(typeof(EstadoDenuncia), estadoNovo.EstadoDenuncia))
+                return BadRequest("Estado inválido. Valores permitidos: 0 (Pendente), 1 (Resolvida), 2 (Ignorada).");
+
+            var denuncia = await _denunciaService.AtualizarEstadoDenunciaAsync(id, estadoNovo.EstadoDenuncia);
+            if (denuncia == null) return NotFound("Denúncia não encontrada.");
+
+            return Ok(denuncia);
         }
     }
 }

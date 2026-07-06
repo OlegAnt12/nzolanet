@@ -7,6 +7,7 @@ namespace NzolaWebAPI.Interfaces
     {
         Task<Utilizador?> ObterPorEmailAsync(string email);
         Task<Utilizador?> ObterPorIdAsync(int id);
+        Task<Utilizador?> ObterPorTokenRedefinirPasswordAsync(string token);
 
         Task AdicionarAsync(Utilizador utilizador);
         Task<bool> ExisteEmailAsync(string email);

@@ -64,6 +64,9 @@ namespace NzolaWebAPI.Models
         public List<Comentario> Comentarios { get; set; } = new List<Comentario>();
         public List<Notificacao> Notificacoes { get; set; } = new List<Notificacao>();
         public List<Baze> Bazes { get; set; } = new List<Baze>();
-        public bool ConcordaComTermos { get; set; } 
+        public bool ConcordaComTermos { get; set; }
+
+        public string? ResetTokenRedefinirPassword { get; set; }
+        public DateTime? ResetTokenExpiraEm { get; set; }
     }
 }
