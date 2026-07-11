@@ -328,3 +328,81 @@ background-color: #fff;
   gap: 16px;
   padding: 12px 16px;
 }
+
+@media (max-width: 1024px) {
+  .home-feed {
+    flex-direction: column;
+  }
+
+  .seccao-utilizador,
+  .seccao-info {
+    display: none;
+  }
+
+  .seccao-publicacao {
+    padding: 6rem 16px 2rem !important;
+  }
+
+  .cabeca-feed {
+    padding: 16px !important;
+  }
+
+  .navegador {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sup-dir {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .sup-esq {
+    gap: 8px;
+  }
+
+  .sup-esq button span {
+    font-size: 13px;
+  }
+
+  .caixa-pesquisa {
+    width: 100%;
+  }
+
+  .txt-pesquisa {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .cabeca-feed {
+    padding: 12px !important;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .sup-esq button span {
+    font-size: 12px;
+  }
+
+  .sup-esq button span fa-icon {
+    margin-right: 2px;
+  }
+
+  .seccao-publicacao {
+    padding: 5rem 8px 1rem !important;
+  }
+
+  .conteudo-media {
+    height: 240px;
+  }
+
+  .lista-interacao {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .item-interacao {
+    font-size: 12px;
+  }
+}

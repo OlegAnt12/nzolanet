@@ -4,6 +4,7 @@
 - [ ] **Hashing de passwords** — usar BCrypt em vez de texto plano
 - [x] **Refresh token / expiração de JWT** — manter sessão segura sem login constante
 - [ ] **Rate limiting** — proteção contra brute force no login/registo
+- [ ] **SQL Server** — serviço `SQLEXPRESS` precisa de ser iniciado manualmente (`services.msc` ou SSMS)
 - [ ] **Sanitização de input** — prevenir XSS e SQL injection
 
 ## Autenticação & Utilizador
@@ -28,12 +29,30 @@
 - [x] **Denunciar conteúdo** — flag para moderação (frontend + backend ligados)
 
 ## UI/UX
-- [ ] **Responsividade** — adaptar interfaces para mobile/tablet
+- [x] **Responsividade completa** — media queries mobile/tablet para feed, perfil, admin, login, registo, esqueci-password, redefinir-password
 - [ ] **Modo escuro** — tema dark/light
 - [ ] **Animações de transição** — entre rotas e steps do wizard
 - [x] **Toast/Snackbar** — feedback visual de ações (sucesso/erro)
 - [ ] **Skeleton loading** — placeholders durante carregamento
 - [ ] **Upload otimizado** — compressão de imagens antes de enviar
+
+## Bugs Corrigidos
+- [x] **StackOverflowException nos mappers** — ciclo infinito entre `ToAutorPublicacaoDto` ↔ `ToSeguidorFeedDto` (substituído `AutorPublicacaoDto` por `UtilizadorSimplificadoDto` no `SeguidorFeedDto`)
+- [x] **Admin não acedia ao painel** — `nivelAcesso` perdido do `utilizadorLogado` ao serializar para `localStorage` no `FeedPrincipalComponent.atualizarListaSeguidos()`
+- [x] **Login não redirecionava admin** — adicionada verificação `res.utilizador?.nivelAcesso === 1 ? '/admin' : '/feed'`
+- [x] **Shadow FK `Baze.UtilizadorId1`** — `.WithMany()` sem especificar coleção `Bazes` causava segunda relação inferida por convenção (corrigido: `.WithMany(u => u.Bazes)`)
+- [x] **Cores inconsistentes no módulo home** — `esqueci-password` e `redefinir-password` usavam `#4A90E2` (azul) em vez de `#ff375f` (padrão da app)
+- [x] **AdminController sem [Authorize]** — qualquer endpoint admin podia ser chamado sem autenticação; adicionado `[Authorize(Roles = "Admin")]` + claim `ClaimTypes.Role` no JWT
+
+## Funcionalidades Implementadas
+- [x] **Notificações criadas pelo frontend** — ao dar baze, comentar e seguir, o frontend chama `POST /api/Notificacoes`
+- [x] **Toggle de privacidade (Público/Privado)** — endpoint `PUT /api/Utilizadores/{id}/privacidade` + UI com optimistic update
+- [x] **CSS completo do perfil** — header, detalhes, abas, listas, formulário de edição, toggle, responsivo
+- [x] **Link de admin na UI** — botão "Admin" visível na navegação do feed apenas para `nivelAcesso === 1`
+- [x] **Admin UI restrita** — admin não vê métricas, formulário de publicação, botões de seguir, tabs do perfil, nem "Editar Perfil"/"Eliminar Conta"
+- [x] **[Authorize] no AdminController** — endpoints admin exigem token com role "Admin"; JWT inclui `ClaimTypes.Role` e `nivelAcesso`
+- [x] **Responsividade completa** — media queries mobile/tablet em feed, perfil, admin, login, registo, esqueci-password, redefinir-password
+- [x] **Documentação das alterações** — `Docs/SPA/Alteracoes_Sessao.md`
 
 ## Qualidade & Manutenção
 - [ ] **Testes unitários (frontend)** — Jasmine/Karma para componentes e serviços

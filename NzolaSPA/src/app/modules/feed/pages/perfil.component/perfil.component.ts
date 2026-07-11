@@ -7,6 +7,8 @@ import { SeguidorService } from '../../../../services/seguidor/seguidor.service'
 import { PedidoSeguirService } from '../../../../services/pedido-seguir/pedido-seguir.service';
 import { UtilizadorDto } from '../../../../dtos/utilizador/utilizadorfeed/utilizador.dto';
 import { AuthService } from '../../../../services/auth/auth';
+import { NotificacaoService } from '../../../../services/Notificacao/notificacao.service';
+import { NovaNotificacaoDto } from '../../../../dtos/notificacao/notificacao.dto';
 import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
 import { RouterModule } from '@angular/router';
 import { PublicacaoService } from '../../../../services/publicacao/publicacao.service';
@@ -25,6 +27,7 @@ export class PerfilComponent implements OnInit {
 
   utilizador: UtilizadorDto = new UtilizadorDto();
   utilizadorLogadoId: number = 0;
+  utilizadorLogadoNivelAcesso: number = 0;
   dadosCarregados = false;
   modoEdicao = false;
   fotoSelecionada: File | null = null;
@@ -165,12 +168,20 @@ export class PerfilComponent implements OnInit {
     private seguidorService: SeguidorService,
     private pedidoSeguirService: PedidoSeguirService,
     private authService: AuthService,
+    private notificacaoService: NotificacaoService,
   ) {}
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       const idStr = this.getLocalStorageItem('utilizadorId');
       this.utilizadorLogadoId = idStr ? Number(idStr) : 0;
+      const userStr = this.getLocalStorageItem('utilizadorLogado');
+      if (userStr) {
+        try {
+          const userData = JSON.parse(userStr);
+          this.utilizadorLogadoNivelAcesso = userData.nivelAcesso ?? 0;
+        } catch { }
+      }
     }
 
     const perfilResolvido = this.route.snapshot.data['perfil'] as UtilizadorDto | null | undefined;
@@ -288,10 +299,34 @@ export class PerfilComponent implements OnInit {
           this.utilizador.seguidores = res.estaSeguindo
             ? this.utilizador.seguidores + 1
             : Math.max(0, this.utilizador.seguidores - 1);
+          if (res.estaSeguindo) {
+            const utilizadorLogado = JSON.parse(this.getLocalStorageItem('utilizadorLogado') || '{}');
+            const notif: NovaNotificacaoDto = {
+              utilizadorId: this.utilizador.id,
+              tipo: 2,
+              origemId: this.utilizadorLogadoId,
+              mensagem: `${utilizadorLogado.nomeUtilizador} começou a seguir-te`
+            };
+            this.notificacaoService.criarNotificacao(this.utilizador.id, notif).subscribe();
+          }
         },
         error: (err) => console.error('Erro ao seguir:', err),
       });
     }
+  }
+
+  alternarPrivacidade(event: Event): void {
+    const privada = (event.target as HTMLInputElement).checked;
+    this.utilizador.privacidade = privada ? 1 : 0;
+    this.perfilPrivado = privada;
+
+    this.utilizadorService.atualizarPrivacidade(this.utilizador.id, privada).subscribe({
+      error: () => {
+        this.utilizador.privacidade = privada ? 0 : 1;
+        this.perfilPrivado = !privada;
+        this.mostrarNotificacao('Erro ao alterar privacidade.', 'erro');
+      },
+    });
   }
 
   confirmarEliminarConta(): void {

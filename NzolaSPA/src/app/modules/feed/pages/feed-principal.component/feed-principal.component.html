@@ -39,6 +39,17 @@
           <span> <fa-icon [icon]="notifIcon"></fa-icon> Notificações </span>
         </button>
         <button
+          *ngIf="utilizadorLogado?.nivelAcesso === 1"
+          type="button"
+          class="btn btn-admin"
+          routerLink="/admin"
+        >
+          <span>
+            <fa-icon [icon]="adminIcon"></fa-icon>
+            Admin
+          </span>
+        </button>
+        <button
           type="button"
           class="btn btn-logout"
           (click)="$event.preventDefault(); executarLogout()"
@@ -75,11 +86,11 @@
               </p>
             </div>
           </div>
-          <div class="infor-perfil">
+          <div class="infor-perfil" *ngIf="utilizadorLogado?.nivelAcesso !== 1">
             <div class="metricas">
               <span>{{ estatisticaUtilizador.seguidores || 0 }} seguidores</span> •
               <span>{{ estatisticaUtilizador.seguindo || 0 }} seguindo</span> •
-              <span>{{ estatisticaUtilizador.publicacoes }} posts</span>
+              <span>{{ estatisticaUtilizador.publicacoes }} publicações</span>
             </div>
             <button
               type="button"
@@ -97,7 +108,7 @@
     <div class="seccao-publicacao prev-pub" style="flex: 1; min-width: 0">
       <!-- FEED -->
       <main class="area-feed" *ngIf="vistaAtiva === 'feed'">
-        <form [formGroup]="publicacaoForm" (ngSubmit)="fazerPublicacao()" class="publicacao-formlr">
+        <form [formGroup]="publicacaoForm" (ngSubmit)="fazerPublicacao()" class="publicacao-formlr" *ngIf="utilizadorLogado?.nivelAcesso !== 1">
           <div class="componentes-publicacao">
             <div class="area-texto">
               <textarea
@@ -177,7 +188,7 @@
                 </li>
               </ul>
             </div>
-            <div *ngIf="utilizadorLogado?.id != pub.autor?.id" class="opcao-seguir">
+            <div *ngIf="utilizadorLogado?.id != pub.autor?.id && utilizadorLogado?.nivelAcesso !== 1" class="opcao-seguir">
               <button
                 class="btn"
                 (click)="alternarSeguir(pub.autor)"
@@ -303,19 +314,19 @@
             style="padding: 15px; background: #f9f9f9; border-top: 1px solid #eee"
           >
             <form [formGroup]="comentarioForm" (ngSubmit)="enviarComentario(pub.id)">
-              <div style="display: flex; gap: 10px">
+              <div style="display: flex; gap: 10px; border-radius: 0 0 8px 8px;">
                 <input
                   type="text"
                   formControlName="textoComentario"
                   placeholder="Escreve um comentário..."
-                  class="txt"
-                  style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px"
+                  class="txt txt-comentario"
+                  
                 />
                 <button
                   type="submit"
-                  class="btn"
+                  class="btn btn-enviar-comentario"
                   [disabled]="comentarioForm.invalid"
-                  style="background: #007bff; color: white; padding: 0 15px; border-radius: 4px"
+                  
                 >
                   <fa-icon [icon]="paperPlaneIcon"></fa-icon>
                 </button>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminService } from '../../../../services/admin/admin.service';
 import { UtilizadorDto } from '../../../../dtos/utilizador/utilizadorfeed/utilizador.dto';
 import { CriarUtilizadorAdminRequestDto } from '../../../../dtos/admin/criar-utilizador-admin.dto';
+import { Subject, takeUntil, timeout, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-utilizadores.component',
@@ -13,7 +14,7 @@ import { CriarUtilizadorAdminRequestDto } from '../../../../dtos/admin/criar-uti
   templateUrl: './utilizadores.component.html',
   styleUrl: './utilizadores.component.css',
 })
-export class UtilizadoresComponent implements OnInit {
+export class UtilizadoresComponent implements OnInit, OnDestroy {
   voltarIcon = faArrowLeft;
   adicionarIcon = faPlus;
   fecharIcon = faTimes;
@@ -29,22 +30,35 @@ export class UtilizadoresComponent implements OnInit {
 
   novoUtilizador = new CriarUtilizadorAdminRequestDto();
 
+  private destroy$ = new Subject<void>();
+
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
+    console.log('UtilizadoresComponent.ngOnInit chamado');
     this.carregarUtilizadores();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private carregarUtilizadores(): void {
     this.carregando = true;
     this.erro = null;
-    this.adminService.listarUtilizadores().subscribe({
+    this.adminService.listarUtilizadores().pipe(
+      timeout(15000),
+      catchError((err) => {
+        console.error('Erro ao carregar utilizadores:', err);
+        this.erro = 'Não foi possível carregar a lista de utilizadores.';
+        this.carregando = false;
+        return of([]);
+      }),
+      takeUntil(this.destroy$),
+    ).subscribe({
       next: (dados) => {
         this.utilizadores = dados;
-        this.carregando = false;
-      },
-      error: () => {
-        this.erro = 'Não foi possível carregar a lista de utilizadores.';
         this.carregando = false;
       },
     });

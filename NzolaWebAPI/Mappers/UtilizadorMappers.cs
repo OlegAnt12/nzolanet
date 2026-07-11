@@ -49,7 +49,7 @@ namespace NzolaWebAPI.Mappers
             {
                 Id = modelUtilizador.Id,
                 NomeCompleto = modelUtilizador.NomeCompleto,
-                NomeUtilizador = modelUtilizador.NomeCompleto,
+                NomeUtilizador = modelUtilizador.NomeUtilizador,
                 FotoPerfil =
                     modelUtilizador.FotoPerfil != null
                         ? Convert.ToBase64String(modelUtilizador.FotoPerfil)

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NzolaWebAPI.Dtos.Admin;
 using NzolaWebAPI.DTOs.Denuncia;
@@ -15,6 +16,7 @@ namespace NzolaWebAPI.Controllers
     /// </summary>
     [Route("api/[Controller]")]
     [ApiController]
+    [Authorize(Roles = "Admin")]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _adminService;

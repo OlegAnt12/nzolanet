@@ -121,6 +121,19 @@ namespace NzolaWebAPI.Controllers
             return Ok(estatisticas);
         }
 
+        [HttpPut("{id}/privacidade")]
+        public async Task<IActionResult> AtualizarPrivacidade(
+            int id,
+            [FromBody] AtualizarPrivacidadeRequestDto dto
+        )
+        {
+            var resultado = await _utilizadorService.AtualizarPrivacidadeAsync(id, dto.Privada);
+            if (!resultado)
+                return NotFound("Utilizador não encontrado.");
+
+            return Ok(new { privada = dto.Privada });
+        }
+
         private int? ObterUtilizadorLogadoId()
         {
             // Implemente conforme sua autenticação (JWT, Session, etc)

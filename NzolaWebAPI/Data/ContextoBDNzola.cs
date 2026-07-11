@@ -53,12 +53,10 @@ namespace NzolaWebAPI.Data
                 .HasForeignKey(p => p.AutorId) // A chave estrangeira é o AutorId
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Se o erro persistir noutras tabelas como Comentarios ou Bazes,
-            // podes aplicar a mesma lógica nelas da seguinte forma:
             modelBuilder
                 .Entity<Baze>()
                 .HasOne(b => b.Utilizador)
-                .WithMany()
+                .WithMany(u => u.Bazes)
                 .HasForeignKey(b => b.UtilizadorId)
                 .OnDelete(DeleteBehavior.Restrict);
 

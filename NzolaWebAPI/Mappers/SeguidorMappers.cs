@@ -26,10 +26,10 @@ namespace NzolaWebAPI.Mappers
             {
                 Id = modelSeguidor.Id,
                 Seguidor = modelSeguidor.UtilizadorSeguidor != null
-            ? modelSeguidor.UtilizadorSeguidor.ToAutorPublicacaoDto()
+            ? modelSeguidor.UtilizadorSeguidor.ToUtilizadorSimplificadoDto()
             : null,
                 Seguido = modelSeguidor.UtilizadorSeguido != null
-            ? modelSeguidor.UtilizadorSeguido.ToAutorPublicacaoDto()
+            ? modelSeguidor.UtilizadorSeguido.ToUtilizadorSimplificadoDto()
             : null,
                 DataInicio = modelSeguidor.DataInicio,
             };

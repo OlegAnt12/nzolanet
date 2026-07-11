@@ -20,12 +20,12 @@
       <small *ngIf="perfilPrivado && !perfilCompletoVisivel">Esta conta é privada</small>
     </div>
     <div class="acoes-perfil">
-      <button *ngIf="ehPerfilProprio" (click)="abrirEdicao()">Editar Perfil</button>
-      <button *ngIf="!ehPerfilProprio && !utilizador.jaSegues && !pedidoPendente && !perfilPrivado"
+      <button *ngIf="ehPerfilProprio && utilizadorLogadoNivelAcesso !== 1" (click)="abrirEdicao()">Editar Perfil</button>
+      <button *ngIf="!ehPerfilProprio && utilizadorLogadoNivelAcesso !== 1 && !utilizador.jaSegues && !pedidoPendente && !perfilPrivado"
         (click)="alternarSeguir()">Seguir</button>
-      <button *ngIf="!ehPerfilProprio && !utilizador.jaSegues && !pedidoPendente && perfilPrivado"
+      <button *ngIf="!ehPerfilProprio && utilizadorLogadoNivelAcesso !== 1 && !utilizador.jaSegues && !pedidoPendente && perfilPrivado"
         (click)="alternarSeguir()">Solicitar Seguimento</button>
-      <button *ngIf="!ehPerfilProprio && utilizador.jaSegues"
+      <button *ngIf="!ehPerfilProprio && utilizadorLogadoNivelAcesso !== 1 && utilizador.jaSegues"
         (click)="alternarSeguir()">Seguindo</button>
       <span *ngIf="!ehPerfilProprio && pedidoPendente">Pedido enviado</span>
     </div>
@@ -34,10 +34,22 @@
   <div class="perfil-detalhes" *ngIf="!modoEdicao">
     <div class="detalhe"><span class="rotulo">Género</span><span>{{ generoTexto(utilizador.genero) }}</span></div>
     <div class="detalhe"><span class="rotulo">Data de Nascimento</span><span>{{ utilizador.dataNascimento | date:'dd/MM/yyyy' }}</span></div>
-    <div class="detalhe"><span class="rotulo">Privacidade</span><span>{{ utilizador.privacidade === 1 ? 'Privado' : 'Público' }}</span></div>
+    <div class="detalhe privacidade-linha">
+      <span class="rotulo">Privacidade</span>
+      <ng-container *ngIf="ehPerfilProprio; else privacidadeLeitura">
+        <label class="toggle-switch">
+          <input type="checkbox" [checked]="utilizador.privacidade === 1" (change)="alternarPrivacidade($event)" />
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">{{ utilizador.privacidade === 1 ? 'Privado' : 'Público' }}</span>
+      </ng-container>
+      <ng-template #privacidadeLeitura>
+        <span>{{ utilizador.privacidade === 1 ? 'Privado' : 'Público' }}</span>
+      </ng-template>
+    </div>
   </div>
 
-  <div class="perfil-seccoes" *ngIf="!modoEdicao">
+  <div class="perfil-seccoes" *ngIf="!modoEdicao && !(ehPerfilProprio && utilizadorLogadoNivelAcesso === 1)">
     <div class="perfil-seccoes-cabeca">
       <div class="seccoes-tabs">
         <button type="button" [class.ativo]="abaAtiva === 'publicacoes'" (click)="selecionarAba('publicacoes')"><span> Publicações </span> <strong>{{ utilizador.publicacoes }}</strong></button>
@@ -89,7 +101,7 @@
     </ng-template>
   </div>
 
-  <div class="edicao-perfil" *ngIf="modoEdicao">
+  <div class="edicao-perfil" *ngIf="modoEdicao && utilizadorLogadoNivelAcesso !== 1">
     <h3>Atualizar Perfil</h3>
     <form [formGroup]="perfilForm" (ngSubmit)="salvarPerfil()">
       <div class="foto-edit">
@@ -108,7 +120,7 @@
     </form>
   </div>
 
-  <div class="eliminar-conta" *ngIf="ehPerfilProprio && !modoEdicao">
+  <div class="eliminar-conta" *ngIf="ehPerfilProprio && !modoEdicao && utilizadorLogadoNivelAcesso !== 1">
     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;" />
     <button
       (click)="confirmarEliminarConta()"

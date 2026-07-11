@@ -48,7 +48,8 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('utilizadorLogado', JSON.stringify(res.utilizador));
           }
           this.carregar=false;
-          this.route.navigate(['/feed']);
+          const destino = res.utilizador?.nivelAcesso === 1 ? '/admin' : '/feed';
+          this.route.navigate([destino]);
         },
         error: (erro) => {
           console.log("Falha no Login", erro);

@@ -56,6 +56,9 @@ export class Layout implements OnInit {
       next: (dados) => {
         this.denunciasPendentes = dados.denunciasPendentes;
       },
+      error: (err) => {
+        console.error('Erro ao obter dashboard:', err);
+      },
     });
   }
 

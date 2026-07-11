@@ -90,3 +90,51 @@
 {
   text-align: center;
 }
+
+@media (max-width: 768px)
+{
+  .contentor-analitico
+  {
+    padding: 8px 10px;
+  }
+
+  .topo-anali
+  {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .area-navegacao
+  {
+    width: 100%;
+  }
+
+  .area-tabela
+  {
+    overflow-x: auto;
+  }
+
+  .area-tabela table th,
+  .area-tabela table td
+  {
+    font-size: 0.75rem;
+    padding: 4px 4px;
+  }
+
+  .cell-texto
+  {
+    max-width: 180px;
+  }
+
+  .autor-info
+  {
+    gap: 4px;
+  }
+
+  .foto-utilizador
+  {
+    width: 24px;
+    height: 24px;
+  }
+}

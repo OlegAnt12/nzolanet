@@ -31,6 +31,8 @@ namespace NzolaWebAPI.Services
                 new Claim("utilizadorId", utilizador.Id.ToString()),
                 new Claim("email", utilizador.Email),
                 new Claim("name", utilizador.NomeUtilizador),
+                new Claim(ClaimTypes.Role, utilizador.NivelAcesso == NzolaWebAPI.Models.Enums.NivelAcesso.Admin ? "Admin" : "User"),
+                new Claim("nivelAcesso", ((int)utilizador.NivelAcesso).ToString()),
             };
 
             var credenciais = new SigningCredentials(

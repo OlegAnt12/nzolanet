@@ -19,11 +19,11 @@ import { CriarDenunciaDto } from '../../../../dtos/denuncia/denuncia.dto';
 import { PedidoSeguirService } from '../../../../services/pedido-seguir/pedido-seguir.service';
 import { SignalRService } from '../../../../services/signalr/signalr.service';
 import { NotificacaoService } from '../../../../services/Notificacao/notificacao.service';
-import { NotificacaoDto } from '../../../../dtos/notificacao/notificacao.dto';
+import { NotificacaoDto, NovaNotificacaoDto } from '../../../../dtos/notificacao/notificacao.dto';
 import { PesquisaService } from '../../../../services/pesquisa/pesquisa.service';
 import { Base64ImagePipe } from '../../../../core/pipes/base64-image.pipe';
 import { filter, Subscription } from 'rxjs';
-import { faBell, faEllipsisV, faFlag, faHome, faMagnifyingGlass, faPaperPlane, faPowerOff } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faEllipsisV, faFlag, faHome, faMagnifyingGlass, faPaperPlane, faPowerOff, faUserShield } from '@fortawesome/free-solid-svg-icons';
 import { faComment, faFolder, faMessage, faUser } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
@@ -110,6 +110,7 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
   folderIcon=faFolder;
   opcoesIcon=faEllipsisV;
   paperPlaneIcon=faPaperPlane;
+  adminIcon=faUserShield;
   menuAbertoPublicacaoId: number | null = null;
   menuAbertoComentarioId: number | null = null;
 
@@ -345,13 +346,14 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
           nomeUtilizador: utilizadorReal.nomeUtilizador ? `${utilizadorReal.nomeUtilizador}` : '',
           email: utilizadorReal.email,
           seguidores: utilizadorReal.quantidadeSeguidores ?? 0,
-          seguindo: utilizadorReal.quantidadeSeguindo || 0, // NOVO
+          seguindo: utilizadorReal.quantidadeSeguindo || 0,
           publicacoes: utilizadorReal.quantidadePublicacoes ?? 0,
           fotoPerfil: fotoPerfilProcessada,
           biografia: utilizadorReal.biografia ?? 'Sem biografia definida.',
           privacidade: utilizadorReal.privacidade,
           genero: utilizadorReal.genero,
           dataNascimento: utilizadorReal.dataNascimento,
+          nivelAcesso: utilizadorReal.nivelAcesso ?? 0,
         };
 
         this.carregarListaSeguidos();
@@ -478,14 +480,17 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
         });
         this.feedPublicacoes = postsTratados;
         this.aplicarEstadoSeguirCache();
-        this.carregandoFeed = false;
-        this.carregandoMais = false;
-        this.cdr.detectChanges();
+        setTimeout(() => {
+          this.carregandoFeed = false;
+          this.carregandoMais = false;
+        });
 
       },
       error: (err) => {
         console.error('Erro ao carregar o feed', err);
-        this.carregandoFeed = false;
+        setTimeout(() => {
+          this.carregandoFeed = false;
+        });
       },
     });
   }
@@ -564,9 +569,17 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
             post.quantidadeBazes = resposta.quantidadeBazes;
             post.jaDeuBaze = false;
           } else {
-            //console.log('Baze adicionado com sucesso!');
             post.quantidadeBazes++;
             post.jaDeuBaze = true;
+            if (post.autor?.id && post.autor.id !== this.utilizadorLogado.id) {
+              const notif: NovaNotificacaoDto = {
+                utilizadorId: post.autor.id,
+                tipo: 0,
+                origemId: this.utilizadorLogado.id,
+                mensagem: `${this.utilizadorLogado.nomeUtilizador} deu baze à tua publicação`
+              };
+              this.notificacaoService.criarNotificacao(post.autor.id, notif).subscribe();
+            }
           }
           this.cdr.markForCheck();
         }
@@ -648,8 +661,16 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
 
     this.seguidorService.alternarSeguir(seguidorId, seguidoId).subscribe({
       next: (resposta) => {
-        //console.log('Sucesso:', resposta);
         this.atualizarListaSeguidos(seguidoId, novoEstado);
+        if (novoEstado) {
+          const notif: NovaNotificacaoDto = {
+            utilizadorId: seguidoId,
+            tipo: 2,
+            origemId: seguidorId,
+            mensagem: `${this.utilizadorLogado.nomeUtilizador} começou a seguir-te`
+          };
+          this.notificacaoService.criarNotificacao(seguidoId, notif).subscribe();
+        }
       },
       error: (erro) => {
         console.error('Erro:', erro);
@@ -778,6 +799,15 @@ export class FeedPrincipalComponent implements OnInit, OnDestroy {
 
             post.comentarios.push(comentarioGeradoPeloBackend);
             post.quantidadeComentarios++;
+            if (post.autor?.id && post.autor.id !== this.utilizadorLogado.id) {
+              const notif: NovaNotificacaoDto = {
+                utilizadorId: post.autor.id,
+                tipo: 1,
+                origemId: this.utilizadorLogado.id,
+                mensagem: `${this.utilizadorLogado.nomeUtilizador} comentou na tua publicação`
+              };
+              this.notificacaoService.criarNotificacao(post.autor.id, notif).subscribe();
+            }
           }
 
           this.comentarioForm.reset();

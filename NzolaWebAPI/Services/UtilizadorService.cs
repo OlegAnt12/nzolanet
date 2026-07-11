@@ -6,6 +6,7 @@ using NzolaWebAPI.DTOs.Utilizador;
 using NzolaWebAPI.Interfaces;
 using NzolaWebAPI.Mappers;
 using NzolaWebAPI.Models;
+using NzolaWebAPI.Models.Enums;
 
 namespace NzolaWebAPI.Services
 {
@@ -91,6 +92,15 @@ namespace NzolaWebAPI.Services
             // 4. Grava as alterações
             await _utilizadorRepository.SalvarAsync();
             return utilizador;
+        }
+
+        public async Task<bool> AtualizarPrivacidadeAsync(int utilizadorId, bool privada)
+        {
+            var utilizador = await _utilizadorRepository.ObterPorIdAsync(utilizadorId);
+            if (utilizador == null) return false;
+
+            utilizador.Privacidade = privada ? EstadoAcesso.Privado : EstadoAcesso.Publico;
+            return await _utilizadorRepository.SalvarAsync();
         }
 
         public async Task<UtilizadorDto?> ObterPorIdServiceAsync(

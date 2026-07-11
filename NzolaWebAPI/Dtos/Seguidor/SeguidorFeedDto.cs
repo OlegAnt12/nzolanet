@@ -10,10 +10,10 @@ namespace NzolaWebAPI.DTOs.Seguidor
     {
         public int Id { get; set; }
         public int SeguidorId { get; set; }
-        public AutorPublicacaoDto? Seguidor { get; set; }
+        public UtilizadorSimplificadoDto? Seguidor { get; set; }
 
         public int SeguidoId { get; set; }
-        public AutorPublicacaoDto? Seguido { get; set; }
+        public UtilizadorSimplificadoDto? Seguido { get; set; }
         public DateTime DataInicio { get; set; } 
     }
 }

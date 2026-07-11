@@ -76,6 +76,18 @@
   color: #fff;
 }
 
+.btn-admin {
+  background: transparent;
+  color: #ccc;
+}
+
+.btn-admin:hover {
+  padding: 4px 10px;
+  border-radius: 16px;
+  background-color: #4A90E2;
+  color: #fff;
+}
+
 .prev-util {
   width: 24%;
   /*background-color: aqua;*/
@@ -139,6 +151,7 @@
   background-color: #ff375f;
   color: #fff;
   border-radius: 8px;
+  transition: all .3s;
 }
 
 .btn-acessar-perfil:hover {
@@ -162,6 +175,7 @@
 .base-formPost {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .area-texto {
@@ -183,8 +197,9 @@
 }
 
 .btn-publicar {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
+  text-align: center;
   border-radius: 50%;
   background-color: #272320;
   color: #b3b3b3;
@@ -244,6 +259,13 @@
   display: flex;
   gap: 12px;
   align-items: center;
+}
+
+.area-desc
+.minifoto-perfil {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .minifoto-perfil {
@@ -366,6 +388,11 @@
   height: 100%;
   object-fit: cover;
 }
+.conteudo-media video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 .base-publicacao {
   position: relative;
@@ -428,6 +455,32 @@
   width: 100%;
 }
 
+.txt-comentario
+{
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 36px;
+}
+
+.btn-enviar-comentario
+{
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  border-radius: 50%;
+  /*background-color: #272320;*/
+  /*color: #b3b3b3;*/
+  background: #007bff;
+  color: white;
+  transition: all 0.4s;
+}
+
+.btn-enviar-comentario:hover
+{
+  background-color: #272320;
+}
+
 /** Secção de Notificações **/
 .seccao-notificacao {
   width: 31%;
@@ -448,4 +501,335 @@
   display: flex;
   gap: 16px;
   padding: 12px 16px;
+}
+
+@media (max-width: 1024px) {
+  .cabeca-feed {
+    width: calc(100% - 24px) !important;
+    margin: 8px 12px !important;
+    padding: 12px 16px !important;
+  }
+
+  .navegador {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sup-dir {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .sup-esq {
+    gap: 12px;
+  }
+
+  .sup-esq button span {
+    font-size: 13px;
+  }
+
+  .caixa-pesquisa {
+    width: 100%;
+  }
+
+  .txt-pesquisa {
+    width: 100%;
+  }
+
+  .seccao-utilizador,
+  .seccao-info {
+    display: none;
+  }
+
+  .seccao-publicacao {
+    padding: 6rem 16px 2rem !important;
+  }
+
+  .home-feed {
+    flex-direction: column;
+  }
+
+  .publicacao {
+    padding: 8px 4px;
+  }
+
+  .lista-interacao {
+    position: relative;
+    transform: none;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .lista-interacao::before,
+  .lista-interacao::after {
+    display: none;
+  }
+
+  .item-interacao {
+    font-size: 12px;
+  }
+
+  .conteudo-media {
+    height: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+  .navegador {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sup-dir {
+    flex: 1;
+    min-width: 140px;
+  }
+
+  .sup-esq {
+    gap: 8px;
+  }
+
+  .sup-esq button span {
+    font-size: 12px;
+  }
+
+  .caixa-pesquisa {
+    width: 100%;
+  }
+
+  .txt-pesquisa {
+    width: 100%;
+  }
+
+  .seccao-utilizador,
+  .seccao-info {
+    display: none;
+  }
+
+  .seccao-publicacao {
+    padding: 6rem 16px 2rem !important;
+  }
+
+  .home-feed {
+    flex-direction: column;
+  }
+
+  .publicacao {
+    padding: 8px 4px;
+  }
+
+  .lista-interacao {
+    position: relative;
+    transform: none;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .lista-interacao::before,
+  .lista-interacao::after {
+    display: none;
+  }
+
+  .item-interacao {
+    font-size: 12px;
+  }
+
+  .conteudo-media {
+    height: 280px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cabeca-feed {
+    width: calc(100% - 12px) !important;
+    margin: 4px 6px !important;
+    padding: 10px 12px !important;
+  }
+
+  .sup-dir {
+    gap: 8px;
+    min-width: unset;
+  }
+
+  .sup-esq {
+    gap: 4px;
+  }
+
+  .sup-esq button span fa-icon {
+    margin-right: 0;
+  }
+
+  .sup-esq button span {
+    font-size: 11px;
+  }
+
+  .logotipo {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .caixa-pesquisa {
+    padding: 1px 6px 1px 3px;
+  }
+
+  .btn-pesquisa {
+    margin-right: 4px;
+  }
+
+  .seccao-publicacao {
+    padding: 5rem 8px 1rem !important;
+  }
+
+  .area-feed {
+    padding: 0;
+  }
+
+  .publicacao-formlr {
+    margin-bottom: 0.75rem;
+  }
+
+  .area-texto {
+    padding: 10px 8px;
+  }
+
+  .txt-box {
+    font-size: 15px;
+    height: 56px;
+  }
+
+  .conteudo-media {
+    height: 200px;
+  }
+
+  .texto-publicacao {
+    padding: 16px 6px 12px;
+    margin-bottom: 1rem;
+  }
+
+  .item-interacao {
+    font-size: 11px;
+  }
+
+  .item-baze {
+    width: 16px;
+  }
+
+  .minifoto-perfil {
+    width: 36px;
+    height: 36px;
+  }
+
+  .minifoto-perfil img {
+    width: 36px;
+    height: 36px;
+  }
+
+  .cabeca-publicacao {
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .opcao-seguir button {
+    font-size: 11px !important;
+    padding: 3px 8px !important;
+  }
+
+  .seccao-comentarios-caixa {
+    padding: 10px !important;
+  }
+
+  .txt-comentario {
+    font-size: 13px;
+  }
+
+  .modal-contentor {
+    width: 95%;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .cabeca-feed {
+    padding: 8px 10px !important;
+  }
+
+  .sup-esq button span {
+    font-size: 0;
+  }
+
+  .sup-esq button span fa-icon {
+    font-size: 16px;
+    margin: 0;
+  }
+
+  .sup-esq {
+    gap: 2px;
+  }
+
+  .sup-esq button {
+    padding: 6px 8px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logotipo {
+    font-size: 11px;
+  }
+
+  .caixa-pesquisa {
+    padding: 1px 4px 1px 2px;
+  }
+
+  .txt-pesquisa {
+    font-size: 12px;
+    width: 80px;
+  }
+
+  .btn-pesquisa fa-icon {
+    font-size: 13px;
+  }
+
+  .seccao-publicacao {
+    padding: 4.5rem 6px 1rem !important;
+  }
+
+  .area-texto {
+    padding: 8px 6px;
+  }
+
+  .txt-box {
+    font-size: 14px;
+    height: 48px;
+  }
+
+  .conteudo-media {
+    height: 160px;
+  }
+
+  .item-interacao {
+    font-size: 10px;
+  }
+
+  .item-baze {
+    width: 14px;
+  }
+
+  .minifoto-perfil {
+    width: 32px;
+    height: 32px;
+  }
+
+  .minifoto-perfil img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .texto-publicacao {
+    padding: 12px 4px 10px;
+    margin-bottom: 0.75rem;
+  }
 }

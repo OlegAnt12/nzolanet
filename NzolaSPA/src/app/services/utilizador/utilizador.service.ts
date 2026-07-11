@@ -31,6 +31,10 @@ export class UtilizadorService {
     return this.api.put<any>(`${this.endpoint}/perfil`,utilizadorId, formData);
   }
 
+  atualizarPrivacidade(id: number, privada: boolean): Observable<any> {
+    return this.api.put<any>(`${this.endpoint}/${id}/privacidade`, id, { privada });
+  }
+
   eliminarConta(id: number): Observable<any> {
     return this.api.delete<any>(this.endpoint, id);
   }

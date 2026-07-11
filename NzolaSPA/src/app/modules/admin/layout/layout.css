@@ -185,3 +185,85 @@
 {
   background: #f5f5f5;
 }
+
+@media (max-width: 768px)
+{
+  .contentor_painel
+  {
+    flex-direction: column;
+  }
+
+  .contentor_painel--navegacao
+  {
+    width: 100%;
+    flex-direction: row;
+    padding: 8px 12px;
+    overflow-x: auto;
+    gap: 4px;
+  }
+
+  .contentor_painel--navegacao .logotipo
+  {
+    display: none;
+  }
+
+  .contentor_painel--navegacao .menu_navegacao
+  {
+    flex-direction: row;
+    gap: 2px;
+    padding: 0;
+  }
+
+  .contentor_painel--navegacao .item_navegacao a
+  {
+    font-size: 12px;
+    padding: 6px 10px;
+    white-space: nowrap;
+  }
+
+  .contentor_painel--navegacao .item_navegacao a span
+  {
+    display: none;
+  }
+
+  .contentor_painel--navegacao .badge
+  {
+    display: none;
+  }
+
+  .conteudo
+  {
+    overflow-y: visible;
+  }
+
+  .contentor_painel--cabecalho
+  {
+    padding: 8px 12px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nome-util
+  {
+    display: none;
+  }
+}
+
+@media (max-width: 480px)
+{
+  .contentor_painel--navegacao .item_navegacao a
+  {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+
+  .contentor_painel--cabecalho
+  {
+    padding: 6px 8px;
+  }
+
+  .caixa_con_util
+  {
+    gap: 8px;
+  }
+}

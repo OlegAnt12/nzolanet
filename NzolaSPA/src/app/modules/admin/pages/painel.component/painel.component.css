@@ -193,3 +193,68 @@
   border-radius: 50%;
   border: 1px solid #d1d5db;
 }
+
+@media (max-width: 768px)
+{
+  .contentor-analitico
+  {
+    padding: 8px 10px;
+  }
+
+  .topo-anali
+  {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .area-navegacao
+  {
+    width: 100%;
+  }
+
+  .cartoes-metricos
+  {
+    grid-template-columns: 1fr;
+  }
+
+  .metrica-comercial
+  {
+    grid-template-columns: 1fr;
+    margin-right: 0;
+  }
+
+  .metrica-laboral
+  {
+    margin-top: 8px;
+  }
+
+  .vista-grade
+  {
+    grid-template-columns: 1fr;
+  }
+
+  .area-pesquisa
+  {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .componentes-pesquisa
+  {
+    width: 100%;
+  }
+
+  .filtro-personalizado
+  {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .area-tabela
+  {
+    overflow-x: auto;
+  }
+}

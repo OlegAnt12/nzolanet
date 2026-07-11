@@ -53,7 +53,7 @@ namespace NzolaWebAPI.Data
                 ConcordaComTermos = true,
             };
 
-            contexto.Utilizadores.AddRange(admin, joao, maria);
+            await contexto.Utilizadores.AddRangeAsync(admin, joao, maria);
             await contexto.SaveChangesAsync();
 
             var publicacaoJoao = new Publicacao
@@ -70,7 +70,7 @@ namespace NzolaWebAPI.Data
                 DataPublicacao = DateTime.Now.AddDays(-1),
             };
 
-            contexto.Publicacoes.AddRange(publicacaoJoao, publicacaoMaria);
+            await contexto.Publicacoes.AddRangeAsync(publicacaoJoao, publicacaoMaria);
             await contexto.SaveChangesAsync();
 
             var seguir = new Seguidor
@@ -79,7 +79,7 @@ namespace NzolaWebAPI.Data
                 SeguidoId = maria.Id,
             };
 
-            contexto.Seguidores.Add(seguir);
+            await contexto.Seguidores.AddAsync(seguir);
             await contexto.SaveChangesAsync();
         }
     }
