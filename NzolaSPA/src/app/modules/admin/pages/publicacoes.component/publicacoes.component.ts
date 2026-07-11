@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, afterNextRender } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
@@ -33,18 +33,23 @@ export class PublicacoesComponent implements OnInit {
   carregando = true;
   erro: string | null = null;
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) {
+    afterNextRender(() => {
+      
+    });
+  }
 
   ngOnInit(): void {
     this.adminService.listarPublicacoes().subscribe({
-      next: (dados: any) => {
-        this.publicacoes = dados;
-        this.carregando = false;
-      },
-      error: () => {
-        this.erro = 'Não foi possível carregar a lista de publicações.';
-        this.carregando = false;
-      },
-    });
+        next: (dados: any) => {
+          this.publicacoes = dados;
+          this.carregando = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.erro = 'Não foi possível carregar a lista de publicações.';
+          this.carregando = false;
+        },
+      });
   }
 }

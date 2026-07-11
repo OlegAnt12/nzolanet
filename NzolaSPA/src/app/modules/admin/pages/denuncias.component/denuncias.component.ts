@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, afterNextRender } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft, faTrash, faCheck, faEye, faBan } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
@@ -24,10 +24,15 @@ export class DenunciasComponent implements OnInit {
   erro: string | null = null;
   acaoEmCurso: number | null = null;
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) {
+    /*afterNextRender(() => {
+      
+    });*/
+  }
 
   ngOnInit(): void {
     this.carregarDenuncias();
+    this.cdr.markForCheck();
   }
 
   private carregarDenuncias(): void {

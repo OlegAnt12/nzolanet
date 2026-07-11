@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, OnInit, PLATFORM_ID, afterNextRender } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faGear, faSignOutAlt, faChartLine, faUsers, faFileAlt, faFlag, faBell } from '@fortawesome/free-solid-svg-icons';
@@ -34,8 +34,26 @@ export class Layout implements OnInit {
     @Inject(PLATFORM_ID) platformId: Object,
     private authService: AuthService,
     private adminService: AdminService,
+    private cdr: ChangeDetectorRef
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
+
+    // Só faz pedidos HTTP no browser, após hidratação (evita falhas no SSR)
+    /*afterNextRender(() => {
+      
+    });*/
+  }
+
+  private carregarDashboard(): void {
+    this.adminService.obterDashboard().subscribe({
+      next: (dados) => {
+        this.denunciasPendentes = dados.denunciasPendentes;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Erro ao obter dashboard:', err);
+      },
+    });
   }
 
   ngOnInit(): void {
@@ -50,16 +68,9 @@ export class Layout implements OnInit {
           this.adminNome = 'Admin';
         }
       }
+      this.carregarDashboard();
+      this.cdr.markForCheck();
     }
-
-    this.adminService.obterDashboard().subscribe({
-      next: (dados) => {
-        this.denunciasPendentes = dados.denunciasPendentes;
-      },
-      error: (err) => {
-        console.error('Erro ao obter dashboard:', err);
-      },
-    });
   }
 
   alternarDropdown(): void {

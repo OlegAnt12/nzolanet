@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -104,6 +105,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidAudience = builder.Configuration["JWT:Audience"],
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
+            MapInboundClaims = true,
+            RoleClaimType = ClaimTypes.Role,
         };
 
         options.Events = new JwtBearerEvents
@@ -112,10 +115,44 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             {
                 var accessToken = context.Request.Query["access_token"];
                 var path = context.HttpContext.Request.Path;
+
+                // Log do header Authorization para debug
+                var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+                if (!string.IsNullOrEmpty(authHeader))
+                {
+                    var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                    logger.LogInformation("AuthHeader recebido: {AuthHeader}", authHeader[..Math.Min(authHeader.Length, 80)]);
+                }
+
                 if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/notifications"))
                 {
                     context.Token = accessToken;
                 }
+                return Task.CompletedTask;
+            },
+            OnChallenge = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning("JWT Challenge (401): {Error}, {ErrorDescription}", context.Error, context.ErrorDescription);
+                return Task.CompletedTask;
+            },
+            OnAuthenticationFailed = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogError(context.Exception, "JWT Authentication failed for: {Path}", context.HttpContext.Request.Path);
+                return Task.CompletedTask;
+            },
+            OnForbidden = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                logger.LogWarning("JWT Forbidden (403) for: {Path}", context.HttpContext.Request.Path);
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+                var claims = string.Join(", ", context.Principal!.Claims.Select(c => $"{c.Type}:{c.Value}"));
+                logger.LogInformation("JWT Token validado. Claims: {Claims}", claims);
                 return Task.CompletedTask;
             }
         };

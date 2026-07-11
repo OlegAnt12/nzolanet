@@ -17,16 +17,19 @@ namespace NzolaWebAPI.Controllers
         private readonly ContextoBDNzola _contexto;
         private readonly ITokenService _tokenService;
         private readonly IUtilizadorService _utilizadorService;
+        private readonly ILogger<AutenticacoesController> _logger;
 
         public AutenticacoesController(
             ContextoBDNzola contexto,
             ITokenService tokenService,
-            IUtilizadorService utilizadorService
+            IUtilizadorService utilizadorService,
+            ILogger<AutenticacoesController> logger
         )
         {
             _contexto = contexto;
             _tokenService = tokenService;
             _utilizadorService = utilizadorService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -113,22 +116,30 @@ namespace NzolaWebAPI.Controllers
         [ProducesResponseType(500)]
         public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestDto refreshRequest)
         {
-            var refreshToken = await _tokenService.ValidarRefreshTokenAsync(refreshRequest.RefreshToken);
-            if (refreshToken == null)
-                return Unauthorized("Refresh token inválido ou expirado");
-
-            await _tokenService.RevogarRefreshTokenAsync(refreshRequest.RefreshToken);
-
-            var novoToken = _tokenService.CriarToken(refreshToken.Utilizador);
-            var novoRefreshToken = _tokenService.GerarRefreshToken(refreshToken.UtilizadorId);
-            await _contexto.SaveChangesAsync();
-
-            return Ok(new RefreshTokenResponseDto
+            try
             {
-                Token = novoToken,
-                RefreshToken = novoRefreshToken.Token,
-                Utilizador = refreshToken.Utilizador.ToUtilizadorDto(),
-            });
+                var refreshToken = await _tokenService.ValidarRefreshTokenAsync(refreshRequest.RefreshToken);
+                if (refreshToken == null)
+                    return Unauthorized("Refresh token inválido ou expirado");
+
+                await _tokenService.RevogarRefreshTokenAsync(refreshRequest.RefreshToken);
+
+                var novoToken = _tokenService.CriarToken(refreshToken.Utilizador);
+                var novoRefreshToken = _tokenService.GerarRefreshToken(refreshToken.UtilizadorId);
+                await _contexto.SaveChangesAsync();
+
+                return Ok(new RefreshTokenResponseDto
+                {
+                    Token = novoToken,
+                    RefreshToken = novoRefreshToken.Token,
+                    Utilizador = refreshToken.Utilizador.ToUtilizadorDto(),
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao fazer refresh token");
+                return StatusCode(500, new { erro = "Erro interno ao renovar sessão.", detalhe = ex.Message });
+            }
         }
 
         /// <summary>

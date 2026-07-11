@@ -21,7 +21,10 @@ namespace NzolaWebAPI.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? RevokedAt { get; set; }
 
+        [NotMapped]
         public bool IsExpired => DateTime.UtcNow >= ExpiresAt;
+
+        [NotMapped]
         public bool IsActive => RevokedAt == null && !IsExpired;
     }
 }

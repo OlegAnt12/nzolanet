@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, afterNextRender, ChangeDetectorRef } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft, faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { CommonModule } from '@angular/common';
@@ -32,11 +32,15 @@ export class UtilizadoresComponent implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private cdr: ChangeDetectorRef) {
+    /*afterNextRender(() => {
+      
+    });*/
+  }
 
   ngOnInit(): void {
-    console.log('UtilizadoresComponent.ngOnInit chamado');
     this.carregarUtilizadores();
+    this.cdr.markForCheck();
   }
 
   ngOnDestroy(): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, afterNextRender } from '@angular/core';
 import { Router } from '@angular/router';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft, faFileExport, faSearch, faUsers, faFileAlt, faFire, faFlag, faHourglassHalf, faUserCheck, faUserLock } from '@fortawesome/free-solid-svg-icons';
@@ -41,25 +41,33 @@ export class PainelComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private router: Router,
-  ) {}
+    private cdr: ChangeDetectorRef
+  ) {
+    // Só faz pedidos HTTP após hidratação do SSR (evita 401 no servidor)
+    
+  }
 
   ngOnInit(): void {
-    this.adminService.obterDashboard().subscribe({
-      next: (dados) => {
-        this.dashboard = dados;
-        this.carregando = false;
-      },
-      error: () => {
-        this.erro = 'Não foi possível carregar as estatísticas.';
-        this.carregando = false;
-      },
-    });
+    
+      this.adminService.obterDashboard().subscribe({
+        next: (dados) => {
+          this.dashboard = dados;
+          this.carregando = false;
+          this.cdr.markForCheck();
+        },
+        error: () => {
+          this.erro = 'Não foi possível carregar as estatísticas.';
+          this.carregando = false;
+        },
+      });
 
-    this.adminService.listarUtilizadores().subscribe({
-      next: (dados) => {
-        this.ultimosUtilizadores = dados.slice(0, 5);
-      },
-    });
+      this.adminService.listarUtilizadores().subscribe({
+        next: (dados) => {
+          this.ultimosUtilizadores = dados.slice(0, 5);
+          this.cdr.markForCheck();
+        },
+      });
+      this.cdr.markForCheck();
   }
 
   voltar(): void {
